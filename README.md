@@ -1,36 +1,105 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# PT Ziotech Global Inovasi — Company Profile
 
-## Getting Started
+Website company profile untuk PT Ziotech Global Inovasi — perusahaan yang bergerak di bidang konstruksi, pertambangan, komersil, infrastruktur, penjualan consumable industri, dan solusi teknologi digitalisasi dengan spesialisasi Mechanical, Electrical & Plumbing (MEP).
 
-First, run the development server:
+## Fitur
+
+- Halaman publik: Home, About Us, Services, Projects, Contact
+- Halaman admin (CMS) untuk mengelola seluruh konten website (teks, gambar, layanan, proyek, kontak)
+- Firebase Realtime Database sebagai penyimpanan konten dengan sinkronisasi real-time
+- Animasi profesional menggunakan Framer Motion
+- Desain responsif untuk desktop, tablet, dan mobile
+
+## Tech Stack
+
+| Teknologi | Deskripsi |
+|---|---|
+| [React 19](https://react.dev) | UI Library |
+| [Vite 8](https://vitejs.dev) | Build tool & dev server |
+| [React Router v7](https://reactrouter.com) | Routing |
+| [Firebase RTDB](https://firebase.google.com/docs/database) | Realtime Database |
+| [Tailwind CSS v4](https://tailwindcss.com) | Styling |
+| [Framer Motion](https://motion.dev) | Animasi |
+| [Lucide React](https://lucide.dev) | Icons |
+
+## Instalasi
 
 ```bash
+# 1. Clone repository
+git clone <repo-url>
+cd Compro
+
+# 2. Install dependencies
+npm install
+
+# 3. Setup environment
+copy .env.example .env
+# Lalu isi .env dengan kredensial Firebase Anda
+
+# 4. Jalankan development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Buka http://localhost:5173
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Struktur Project
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+├── public/
+│   └── favicon.ico
+├── src/
+│   ├── assets/            # Logo & gambar statis
+│   ├── components/
+│   │   └── Layout.jsx     # Navbar & Footer
+│   ├── context/
+│   │   └── DataContext.jsx # Firebase data provider (real-time sync)
+│   ├── firebase/
+│   │   └── config.js      # Inisialisasi Firebase
+│   ├── pages/
+│   │   ├── Home.jsx       # Beranda
+│   │   ├── About.jsx      # Tentang kami
+│   │   ├── Service.jsx    # Layanan
+│   │   ├── Project.jsx    # Portofolio proyek
+│   │   ├── Contact.jsx    # Kontak
+│   │   └── admin/
+│   │       ├── Login.jsx      # Login admin
+│   │       └── Dashboard.jsx  # CMS dashboard
+│   ├── App.jsx            # Router setup
+│   ├── index.css          # Tailwind & tema
+│   └── main.jsx
+├── database.rules.json    # Firebase security rules
+├── .env.example           # Template environment variables
+└── vite.config.js
+```
 
-## Learn More
+## Halaman Admin
 
-To learn more about Next.js, take a look at the following resources:
+Akses halaman admin di `/admin/login`:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Login menggunakan Firebase Authentication (Email/Password)
+- Setelah login, kelola konten di `/admin/dashboard`:
+  - **Home**: Hero, stats, highlight section
+  - **About**: Visi, misi, sejarah perusahaan
+  - **Services**: Tambah/hapus/edit layanan beserta ruang lingkup dan gambarnya
+  - **Projects**: Tambah/hapus/edit portofolio proyek
+  - **Contact**: Informasi kontak, alamat, jam operasional
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Setup Firebase
 
-## Deploy on Vercel
+1. Buat project di [Firebase Console](https://console.firebase.google.com)
+2. Aktifkan Realtime Database dan Authentication (Email/Password)
+3. Salin konfigurasi web Firebase ke file `.env` (lihat `.env.example`)
+4. Deploy security rules dari `database.rules.json`
+5. Buat user admin di Firebase Authentication
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Scripts
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| Perintah | Fungsi |
+|---|---|
+| `npm run dev` | Development server |
+| `npm run build` | Build production ke `dist/` |
+| `npm run preview` | Preview hasil build |
+
+## License
+
+Copyright 2026 PT Ziotech Global Inovasi. All rights reserved.
