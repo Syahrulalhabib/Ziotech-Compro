@@ -23,7 +23,7 @@ function App() {
         <DataProvider>
           <BrowserRouter>
             <ScrollToTop />
-            <LangUrlSync />
+            {/* <LangUrlSync /> TRANSLATE_DISABLED */}
             <Layout>
               <Routes>
                 <Route path="/" element={<Home />} />

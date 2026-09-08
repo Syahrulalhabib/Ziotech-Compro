@@ -27,18 +27,18 @@ function syncUrlToLang(lang) {
 }
 
 export function LanguageProvider({ children }) {
-  const [lang, setLang] = useState(() => {
-    // URL wins over localStorage on first load
-    const fromUrl = getLangFromUrl();
-    if (fromUrl === 'en') return 'en';
-    return localStorage.getItem('ziotech_lang') || 'id';
-  });
+  // TRANSLATE_DISABLED: always default to 'id', ignore URL/localStorage lang state
+  const [lang, setLang] = useState('id');
 
   useEffect(() => {
-    localStorage.setItem('ziotech_lang', lang);
-    document.documentElement.lang = lang;
-    syncUrlToLang(lang);
-  }, [lang]);
+    document.documentElement.lang = 'id';
+    localStorage.removeItem('ziotech_lang');
+    // Strip /en prefix if user lands on it from old bookmark/cache
+    if (window.location.pathname.startsWith('/en')) {
+      const stripped = window.location.pathname.slice(3) || '/';
+      window.history.replaceState(null, '', stripped + window.location.search + window.location.hash);
+    }
+  }, []);
 
   const toggleLang = () => {
     setLang(prev => (prev === 'id' ? 'en' : 'id'));
