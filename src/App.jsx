@@ -3,6 +3,7 @@ import { LanguageProvider } from './context/LanguageContext';
 import { DataProvider } from './context/DataContext';
 import Layout from './components/Layout';
 import ScrollToTop from './components/ScrollToTop';
+import LangUrlSync from './components/LangUrlSync';
 import ErrorBoundary from './components/ErrorBoundary';
 import Home from './pages/Home';
 import About from './pages/About';
@@ -21,6 +22,7 @@ function App() {
         <DataProvider>
           <BrowserRouter>
             <ScrollToTop />
+            <LangUrlSync />
             <Layout>
               <Routes>
                 <Route path="/" element={<Home />} />
@@ -44,6 +46,7 @@ function App() {
 }
 
 export default App;
+
 
 
 

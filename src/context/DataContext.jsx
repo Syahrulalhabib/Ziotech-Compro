@@ -258,21 +258,27 @@ export function DataProvider({ children }) {
   }, []);
 
   // When language switches to 'en', dynamically translate Indonesian RTDB content
+  const [translating, setTranslating] = useState(false);
+
   useEffect(() => {
     let cancelled = false;
 
     if (lang === 'en' && rawData) {
+      setTranslating(true);
       translateContent(rawData, 'en')
         .then((translated) => {
           if (!cancelled) {
             setTranslatedData(translated);
+            setTranslating(false);
           }
         })
         .catch((err) => {
           console.warn('Translation error:', err);
+          if (!cancelled) setTranslating(false);
         });
     } else {
       setTranslatedData(null);
+      setTranslating(false);
     }
 
     return () => {
@@ -283,7 +289,7 @@ export function DataProvider({ children }) {
   const activeData = lang === 'en' && translatedData ? translatedData : rawData;
 
   return (
-    <DataContext.Provider value={{ data: activeData, rawData, loading }}>
+    <DataContext.Provider value={{ data: activeData, rawData, loading, translating }}>
       {children}
     </DataContext.Provider>
   );
