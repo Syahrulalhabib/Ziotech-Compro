@@ -244,6 +244,58 @@ const PageHeaderEditor = ({ page, label, formData, onChange, onImageUpload }) =>
     </div>
   </div>
 );
+const ConfirmModal = ({ isOpen, onClose, onConfirm, title, message, confirmText = "Hapus", isDestructive = true }) => {
+  if (!isOpen) return null;
+
+  return (
+    <AnimatePresence>
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.92, y: 10 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.92, y: 10 }}
+          transition={{ duration: 0.18, ease: "easeOut" }}
+          className="bg-white w-full max-w-md rounded-3xl p-6 sm:p-7 shadow-2xl border border-slate-100 relative"
+        >
+          <div className="flex items-start gap-4">
+            <div className={`p-3 rounded-2xl shrink-0 ${isDestructive ? 'bg-red-50 text-red-600' : 'bg-blue-50 text-blue-600'}`}>
+              <AlertCircle className="w-6 h-6" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <h3 className="text-lg font-bold text-slate-800 leading-snug">{title}</h3>
+              <p className="text-sm text-slate-500 mt-1.5 leading-relaxed">{message}</p>
+            </div>
+          </div>
+
+          <div className="flex items-center justify-end gap-3 mt-7 pt-4 border-t border-slate-100">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-100 active:scale-95 transition-all"
+            >
+              Batal
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                onConfirm();
+                onClose();
+              }}
+              className={`px-5 py-2.5 rounded-xl text-sm font-semibold text-white shadow-md active:scale-95 transition-all ${
+                isDestructive
+                  ? 'bg-red-600 hover:bg-red-700 shadow-red-500/20'
+                  : 'bg-blue-600 hover:bg-blue-700 shadow-blue-500/20'
+              }`}
+            >
+              {confirmText}
+            </button>
+          </div>
+        </motion.div>
+      </div>
+    </AnimatePresence>
+  );
+};
+
 
 export default function Dashboard() {
   const [user, setUser] = useState(null);
@@ -257,6 +309,14 @@ export default function Dashboard() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [messages, setMessages] = useState([]);
   const [selectedMessage, setSelectedMessage] = useState(null);
+  const [confirmModal, setConfirmModal] = useState({
+    isOpen: false,
+    title: '',
+    message: '',
+    confirmText: 'Hapus',
+    onConfirm: () => {}
+  });
+
   const scrollContainerRef = useRef(null);
 
   useEffect(() => {
@@ -384,18 +444,37 @@ export default function Dashboard() {
     setSaving(false);
   };
 
-  const handleDeleteMessage = async (id) => {
-    if (!window.confirm('Hapus pesan ini dari database?')) return;
-    try {
-      await remove(ref(db, `messages/${id}`));
-      if (selectedMessage?.id === id) {
-        setSelectedMessage(null);
+  const promptConfirm = ({ title, message, confirmText = 'Hapus', isDestructive = true, onConfirm }) => {
+    setConfirmModal({
+      isOpen: true,
+      title,
+      message,
+      confirmText,
+      isDestructive,
+      onConfirm
+    });
+  };
+
+  const handleDeleteMessage = (id, senderName) => {
+    promptConfirm({
+      title: 'Hapus Pesan Masuk?',
+      message: senderName 
+        ? `Apakah Anda yakin ingin menghapus pesan dari "${senderName}"? Tindakan ini tidak dapat dibatalkan.`
+        : 'Apakah Anda yakin ingin menghapus pesan ini dari database?',
+      confirmText: 'Ya, Hapus',
+      onConfirm: async () => {
+        try {
+          await remove(ref(db, `messages/${id}`));
+          if (selectedMessage?.id === id) {
+            setSelectedMessage(null);
+          }
+          showToast('success', 'Pesan berhasil dihapus.');
+        } catch (err) {
+          console.error('Delete message error:', err);
+          showToast('error', 'Gagal menghapus pesan.');
+        }
       }
-      showToast('success', 'Pesan berhasil dihapus.');
-    } catch (err) {
-      console.error('Delete message error:', err);
-      showToast('error', 'Gagal menghapus pesan.');
-    }
+    });
   };
 
   const handleMarkMessageStatus = async (id, status) => {
@@ -455,10 +534,22 @@ export default function Dashboard() {
   };
 
   const removeArrayItem = (section, index) => {
-    setFormData((prev) => {
-      const newArray = [...prev[section]];
-      newArray.splice(index, 1);
-      return { ...prev, [section]: newArray };
+    const item = formData?.[section]?.[index];
+    const itemName = item?.title || item?.name || `${section === 'services' ? 'Layanan' : 'Proyek'} #${index + 1}`;
+    const sectionLabel = section === 'services' ? 'Layanan' : section === 'projects' ? 'Proyek' : 'Item';
+
+    promptConfirm({
+      title: `Hapus ${sectionLabel}?`,
+      message: `Apakah Anda yakin ingin menghapus "${itemName}"? Item akan dihapus dari daftar CMS (jangan lupa klik "Simpan Perubahan" untuk mempublikasikan).`,
+      confirmText: 'Ya, Hapus',
+      onConfirm: () => {
+        setFormData((prev) => {
+          const newArray = [...prev[section]];
+          newArray.splice(index, 1);
+          return { ...prev, [section]: newArray };
+        });
+        showToast('info', `${sectionLabel} "${itemName}" telah dihapus.`);
+      }
     });
   };
 
@@ -771,7 +862,7 @@ export default function Dashboard() {
                         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                           <div className="flex-1">
                             <label className="block text-sm font-semibold text-slate-700">Gambar Background Hero (Slider)</label>
-                            <p className="text-xs text-slate-500 mt-1 mb-0">Panduan: Upload gambar dengan rasio lanskap/lebar (direkomendasikan 1920x1080 pixel). Anda dapat menggunakan fitur crop dari website penyedia gambar atau meng-edit gambar sebelum diupload agar gambar pas di layar utama.</p>
+                            <p className="text-xs text-slate-500 mt-1 mb-0">Format lanskap (disarankan 16:9 atau 1920×1080 px) agar pas di layar.</p>
                           </div>
                           <button
                             onClick={() => {
@@ -1092,11 +1183,7 @@ export default function Dashboard() {
 
                             <button
                               type="button"
-                              onClick={() => {
-                                const newProjects = [...formData.projects];
-                                newProjects.splice(index, 1);
-                                setFormData((prev) => ({ ...prev, projects: newProjects }));
-                              }}
+                              onClick={() => removeArrayItem('projects', index)}
                               className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors border border-transparent hover:border-red-100 shrink-0"
                               title="Hapus Proyek"
                             >
@@ -1315,7 +1402,7 @@ export default function Dashboard() {
                                   )}
 
                                 </div>
-                                <button onClick={() => handleDeleteMessage(msg.id)} className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg" title="Hapus Pesan">
+                                <button onClick={() => handleDeleteMessage(msg.id, msg.name)} className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg" title="Hapus Pesan">
                                   <Trash2 className="w-4 h-4" />
                                 </button>
                               </div>
@@ -1334,6 +1421,16 @@ export default function Dashboard() {
           </div>
         </div>
       </main>
+      {/* Confirm Action Modal */}
+      <ConfirmModal
+        isOpen={confirmModal.isOpen}
+        onClose={() => setConfirmModal((prev) => ({ ...prev, isOpen: false }))}
+        onConfirm={confirmModal.onConfirm}
+        title={confirmModal.title}
+        message={confirmModal.message}
+        confirmText={confirmModal.confirmText}
+        isDestructive={confirmModal.isDestructive}
+      />
     </div>
   );
 }
