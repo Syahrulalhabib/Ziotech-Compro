@@ -1,7 +1,7 @@
 import { DICTIONARY } from './dictionary.js';
 
 // Google Translate GTX endpoint with localStorage caching
-const TRANSLATE_CACHE_KEY = 'ziotech_translations_cache_v1';
+const TRANSLATE_CACHE_KEY = 'ziotech_translations_cache_v2';
 
 function getCache() {
   try {
