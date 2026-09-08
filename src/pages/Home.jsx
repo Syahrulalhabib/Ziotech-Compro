@@ -4,6 +4,7 @@ import { useData } from '../context/DataContext';
 import { useLanguage } from '../context/LanguageContext';
 import { ArrowRight, CheckCircle2, ChevronRight, Activity, Building2, Cpu, Wrench, CalendarClock, Briefcase, Handshake, Award } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { getServiceIcon } from '../data/serviceIcons';
 
 export default function Home() {
   const { data, loading } = useData();
@@ -40,31 +41,18 @@ export default function Home() {
       <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-red-600"></div>
     </div>
   );
-  // Map icon component dynamically
-  const iconMap = {
-    FiTool: Wrench,
-    Wrench: Wrench,
-    FiCheckSquare: Building2,
-    Building2: Building2,
-    FiTruck: Activity,
-    Activity: Activity,
-    FiCpu: Cpu,
-    Cpu: Cpu
-  };
+  const services = (() => {
+    const rawList = Array.isArray(data?.services) ? data.services : [];
+    // Hanya tampilkan layanan yang ditandai featured di CMS
+    const markedFeatured = rawList.filter(s => Boolean(s.featured));
 
-  const services = (Array.isArray(data?.services) && data.services.length > 0)
-    ? data.services.map((svc, idx) => ({
-        id: svc.id || idx + 1,
-        title: svc.title,
-        icon: iconMap[svc.icon] || [Wrench, Building2, Activity, Cpu][idx % 4],
-        desc: svc.description
-      }))
-    : [
-        { id: 1, title: 'Mechanical, Electrical & Plumbing (MEP)', icon: Wrench, desc: 'Instalasi dan pemeliharaan sistem mekanikal, elektrikal, dan pemipaan profesional.' },
-        { id: 2, title: 'Konstruksi & Infrastruktur', icon: Building2, desc: 'Pembangunan infrastruktur dengan standar kualitas dan keselamatan tinggi.' },
-        { id: 3, title: 'Pertambangan', icon: Activity, desc: 'Dukungan operasional dan penyediaan barang untuk industri pertambangan.' },
-        { id: 4, title: 'Solusi Digitalisasi', icon: Cpu, desc: 'Inovasi teknologi untuk meningkatkan efisiensi dan produktivitas industri.' }
-      ];
+    return markedFeatured.map((svc, idx) => ({
+      id: svc.id || idx + 1,
+      title: svc.title,
+      icon: getServiceIcon(svc.icon, idx),
+      desc: svc.description
+    }));
+  })();
 
     const features = [
       'Komitmen pada Kualitas',
@@ -81,11 +69,9 @@ export default function Home() {
       'Inovasi Berkelanjutan'
     ];
 
-  // Proyek unggulan: hanya yang ditandai admin (featured).
-  // Fallback: jika belum ada yang ditandai, tampilkan 6 proyek pertama (perilaku lama).
+  // Proyek unggulan: hanya yang ditandai admin (featured) di CMS
   const allProjects = Array.isArray(data?.projects) ? data.projects : [];
-  const markedFeatured = allProjects.filter(p => p.featured);
-  const displayProjects = (markedFeatured.length > 0 ? markedFeatured : allProjects).slice(0, 6);
+  const displayProjects = allProjects.filter(p => Boolean(p.featured)).slice(0, 6);
 
   return (
     <div className="overflow-hidden">
@@ -231,72 +217,17 @@ export default function Home() {
       </section>
 
       {/* Services Section */}
-      <section className="py-12 sm:py-24 bg-[var(--bg-light)]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-10 sm:mb-16">
-            <motion.span 
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-              className="text-[var(--accent-blue)] font-semibold tracking-wider uppercase text-xs sm:text-sm"
-            >
-              {t.home.serviceBadge}
-            </motion.span>
-            <motion.h2 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="text-2xl sm:text-3xl md:text-4xl font-bold mt-2"
-            >
-              {t.home.serviceTitle}
-            </motion.h2>
-            <div className="w-20 sm:w-24 h-1 bg-[var(--accent-gold)] mx-auto mt-4 sm:mt-6 rounded-full" />
-          </div>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
-            {services.map((service, idx) => {
-              const Icon = service.icon;
-              return (
-                <motion.div 
-                  key={service.id}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: idx * 0.1 }}
-                  className="bg-white rounded-2xl p-6 sm:p-8 lg:p-10 border border-gray-100 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 group flex flex-col justify-between"
-                >
-                  <div>
-                    <div className="w-12 h-12 sm:w-14 sm:h-14 bg-[var(--primary-blue)]/5 text-[var(--primary-blue)] rounded-xl flex items-center justify-center mb-5 sm:mb-6 group-hover:bg-[var(--primary-blue)] group-hover:text-white transition-colors duration-300">
-                      <Icon className="w-6 h-6 sm:w-7 sm:h-7" />
-                    </div>
-                    <h3 className="text-lg sm:text-xl font-bold text-[var(--primary-dark)] mb-3 sm:mb-4 group-hover:text-[var(--primary-blue)] transition-colors">{service.title}</h3>
-                    <p className="text-[var(--text-muted)] font-medium mb-6 leading-relaxed text-sm sm:text-base">
-                      {service.desc}
-                    </p>
-                  </div>
-                  <Link to={`/service/${service.id}`} className="inline-flex items-center text-[var(--accent-blue)] font-semibold group/link mt-auto text-sm">
-                    {t.common.viewDetail} 
-                    <ChevronRight className="w-4 h-4 ml-1 group-hover/link:translate-x-1 transition-transform" />
-                  </Link>
-                </motion.div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* Featured Projects Section - NEW! (Provides Proof of Work) */}
-      <section className="py-24 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
-            <div className="max-w-2xl">
+      {services.length > 0 && (
+        <section className="py-12 sm:py-24 bg-[var(--bg-light)]">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-10 sm:mb-16">
               <motion.span 
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
                 viewport={{ once: true }}
                 className="text-[var(--accent-blue)] font-semibold tracking-wider uppercase text-xs sm:text-sm"
               >
-                {t.home.portfolioBadge}
+                {t.home.serviceBadge}
               </motion.span>
               <motion.h2 
                 initial={{ opacity: 0, y: 20 }}
@@ -304,53 +235,126 @@ export default function Home() {
                 viewport={{ once: true }}
                 className="text-2xl sm:text-3xl md:text-4xl font-bold mt-2"
               >
-                {t.home.portfolioTitle}
+                {t.home.serviceTitle}
               </motion.h2>
-              <div className="w-20 sm:w-24 h-1 bg-[var(--accent-gold)] mt-4 sm:mt-6 rounded-full" />
+              <div className="w-20 sm:w-24 h-1 bg-[var(--accent-gold)] mx-auto mt-4 sm:mt-6 rounded-full" />
             </div>
-            <Link to="/project" className="btn-outline hidden md:flex items-center gap-2 shrink-0">
-              {t.common.viewAllProjects} <ArrowRight className="w-4 h-4" />
-            </Link>
-          </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-            {displayProjects.map((project, idx) => (
-              <motion.div
-                key={project.id || idx}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: idx * 0.1 }}
-                className="group rounded-2xl overflow-hidden bg-white border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col"
-              >
-                <div className="relative aspect-[4/3] overflow-hidden">
-                  <div className="absolute inset-0 bg-[var(--primary-dark)]/20 group-hover:bg-transparent transition-colors z-10 duration-500" />
-                  <img src={project.image} alt={project.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-                  <div className="absolute top-4 left-4 z-20">
-                    <span className="bg-white/95 backdrop-blur text-[var(--primary-dark)] text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider shadow-sm">
-                      {project.category}
-                    </span>
+            <div className={`grid gap-6 sm:gap-8 ${
+              services.length === 1
+                ? 'max-w-md mx-auto'
+                : services.length === 2
+                ? 'max-w-3xl mx-auto sm:grid-cols-2'
+                : services.length === 3
+                ? 'max-w-5xl mx-auto sm:grid-cols-2 lg:grid-cols-3'
+                : 'sm:grid-cols-2 lg:grid-cols-4'
+            }`}>
+              {services.map((service, idx) => {
+                const Icon = service.icon;
+                return (
+                  <motion.div 
+                    key={service.id}
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: idx * 0.1 }}
+                    className="bg-white rounded-2xl p-6 sm:p-8 lg:p-10 border border-gray-100 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 group flex flex-col justify-between"
+                  >
+                    <div>
+                      <div className="w-12 h-12 sm:w-14 sm:h-14 bg-[var(--primary-blue)]/5 text-[var(--primary-blue)] rounded-xl flex items-center justify-center mb-5 sm:mb-6 group-hover:bg-[var(--primary-blue)] group-hover:text-white transition-colors duration-300">
+                        <Icon className="w-6 h-6 sm:w-7 sm:h-7" />
+                      </div>
+                      <h3 className="text-lg sm:text-xl font-bold text-[var(--primary-dark)] mb-3 sm:mb-4 group-hover:text-[var(--primary-blue)] transition-colors">{service.title}</h3>
+                      <p className="text-[var(--text-muted)] font-medium mb-6 leading-relaxed text-sm sm:text-base">
+                        {service.desc}
+                      </p>
+                    </div>
+                    <Link to={`/service/${service.id}`} className="inline-flex items-center text-[var(--accent-blue)] font-semibold group/link mt-auto text-sm">
+                      {t.common.viewDetail} 
+                      <ChevronRight className="w-4 h-4 ml-1 group-hover/link:translate-x-1 transition-transform" />
+                    </Link>
+                  </motion.div>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Featured Projects Section - NEW! (Provides Proof of Work) */}
+      {displayProjects.length > 0 && (
+        <section className="py-24 bg-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
+              <div className="max-w-2xl">
+                <motion.span 
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
+                  viewport={{ once: true }}
+                  className="text-[var(--accent-blue)] font-semibold tracking-wider uppercase text-xs sm:text-sm"
+                >
+                  {t.home.portfolioBadge}
+                </motion.span>
+                <motion.h2 
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  className="text-2xl sm:text-3xl md:text-4xl font-bold mt-2"
+                >
+                  {t.home.portfolioTitle}
+                </motion.h2>
+                <div className="w-20 sm:w-24 h-1 bg-[var(--accent-gold)] mt-4 sm:mt-6 rounded-full" />
+              </div>
+              <Link to="/project" className="btn-outline hidden md:flex items-center gap-2 shrink-0">
+                {t.common.viewAllProjects} <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+
+            <div className={`grid gap-6 sm:gap-8 ${
+              displayProjects.length === 1
+                ? 'max-w-md mx-auto'
+                : displayProjects.length === 2
+                ? 'max-w-3xl mx-auto sm:grid-cols-2'
+                : 'sm:grid-cols-2 lg:grid-cols-3'
+            }`}>
+              {displayProjects.map((project, idx) => (
+                <motion.div
+                  key={project.id || idx}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: idx * 0.1 }}
+                  className="group rounded-2xl overflow-hidden bg-white border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col"
+                >
+                  <div className="relative aspect-[4/3] overflow-hidden">
+                    <div className="absolute inset-0 bg-[var(--primary-dark)]/20 group-hover:bg-transparent transition-colors z-10 duration-500" />
+                    <img src={project.image} alt={project.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                    <div className="absolute top-4 left-4 z-20">
+                      <span className="bg-white/95 backdrop-blur text-[var(--primary-dark)] text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider shadow-sm">
+                        {project.category}
+                      </span>
+                    </div>
                   </div>
-                </div>
-                <div className="p-5 sm:p-6 flex-1 flex flex-col justify-between">
-                  <h3 className="text-lg sm:text-xl font-bold text-[var(--primary-dark)] mb-3 group-hover:text-[var(--accent-blue)] transition-colors line-clamp-2">
-                    {project.title}
-                  </h3>
-                  <Link to={`/project/${project.id}`} className="inline-flex items-center text-[var(--accent-blue)] text-sm font-semibold group/link mt-auto pt-2">
-                    {t.common.viewDetail} <ArrowRight className="w-4 h-4 ml-1 group-hover/link:translate-x-1 transition-transform" />
-                  </Link>
-                </div>
-              </motion.div>
-            ))}
+                  <div className="p-5 sm:p-6 flex-1 flex flex-col justify-between">
+                    <h3 className="text-lg sm:text-xl font-bold text-[var(--primary-dark)] mb-3 group-hover:text-[var(--accent-blue)] transition-colors line-clamp-2">
+                      {project.title}
+                    </h3>
+                    <Link to={`/project/${project.id}`} className="inline-flex items-center text-[var(--accent-blue)] text-sm font-semibold group/link mt-auto pt-2">
+                      {t.common.viewDetail} <ArrowRight className="w-4 h-4 ml-1 group-hover/link:translate-x-1 transition-transform" />
+                    </Link>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+            
+            <div className="mt-8 sm:mt-10 text-center md:hidden">
+              <Link to="/project" className="btn-outline inline-flex items-center gap-2 text-sm">
+                {t.common.viewAllProjects} <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
           </div>
-          
-          <div className="mt-8 sm:mt-10 text-center md:hidden">
-            <Link to="/project" className="btn-outline inline-flex items-center gap-2 text-sm">
-              {t.common.viewAllProjects} <ArrowRight className="w-4 h-4" />
-            </Link>
-          </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Partners/Clients Section - Social Proof */}
       <section className="py-12 sm:py-16 bg-[var(--bg-light)] border-t border-b border-gray-200/50">

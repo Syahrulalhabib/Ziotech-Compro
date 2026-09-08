@@ -312,14 +312,14 @@ export default function Contact() {
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full btn-primary py-4 text-lg flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                    className="w-full py-4 px-6 rounded-xl font-semibold text-white bg-gradient-to-r from-[var(--primary-blue)] to-[var(--accent-blue)] hover:from-blue-900 hover:to-sky-700 shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 active:scale-[0.99] transition-all duration-200 flex items-center justify-center gap-2.5 text-base sm:text-lg disabled:opacity-70 disabled:cursor-not-allowed disabled:active:scale-100"
                   >
                     {isSubmitting ? (
                       <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                     ) : (
                       <>
-                        {t.contactPage.sendButton}
-                        <Send className="w-5 h-5" />
+                        <span>{t.contactPage.sendButton}</span>
+                        <Send className="w-5 h-5 transition-transform group-hover:translate-x-1" />
                       </>
                     )}
                   </button>

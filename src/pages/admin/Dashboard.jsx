@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { ref, set, onValue, remove, update } from 'firebase/database';
@@ -6,6 +6,7 @@ import { auth, db } from '../../firebase/config';
 import { useData } from '../../context/DataContext';
 import { LogOut, Save, Home, Info, LayoutDashboard, Image as ImageIcon, Type, Menu, X, CheckCircle2, AlertCircle, Briefcase, Wrench, Phone, Plus, Trash2, Star, CalendarClock, Building2, Share2, Globe, MapPin, Inbox, Mail, User, Clock, ExternalLink, Copy, Check } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { SERVICE_ICONS, getServiceIcon } from '../../data/serviceIcons';
 
 const defaultCompany = {
   name: 'PT Ziotech Global Inovasi',
@@ -43,6 +44,7 @@ const defaultServices = [
   {
     id: 'mep',
     title: 'Mechanical, Electrical & Plumbing (MEP)',
+    icon: 'Wrench',
     description: 'Solusi terpadu untuk kebutuhan mekanikal, elektrikal, dan pemipaan pada berbagai skala proyek.',
     features: [
       'Desain dan Instalasi Sistem HVAC',
@@ -255,6 +257,13 @@ export default function Dashboard() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [messages, setMessages] = useState([]);
   const [selectedMessage, setSelectedMessage] = useState(null);
+  const scrollContainerRef = useRef(null);
+
+  useEffect(() => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [activeTab]);
 
   useEffect(() => {
     // Safety fallback: if Firebase auth hangs or responds slowly, don't leave screen blank forever
@@ -317,8 +326,15 @@ export default function Dashboard() {
         return list.filter(Boolean);
       };
 
-      const services = cleanArray(parsedData.services, defaultServices);
-      const projects = cleanArray(parsedData.projects, defaultProjects);
+      const services = cleanArray(parsedData.services, defaultServices).map(s => ({
+        ...s,
+        icon: s.icon || 'Wrench',
+        featured: Boolean(s.featured)
+      }));
+      const projects = cleanArray(parsedData.projects, defaultProjects).map(p => ({
+        ...p,
+        featured: Boolean(p.featured)
+      }));
 
       setFormData({
         ...parsedData,
@@ -428,6 +444,14 @@ export default function Dashboard() {
       ...prev,
       [section]: [...(prev[section] || []), newItem]
     }));
+    setTimeout(() => {
+      const element = document.getElementById(`${section}-new-item`);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        const input = element.querySelector('input, textarea');
+        if (input) input.focus();
+      }
+    }, 100);
   };
 
   const removeArrayItem = (section, index) => {
@@ -716,7 +740,7 @@ export default function Dashboard() {
         </header>
 
         {/* Scrollable Content */}
-        <div className="flex-1 overflow-y-auto p-4 lg:p-8 scroll-smooth">
+        <div ref={scrollContainerRef} className="flex-1 overflow-y-auto p-4 lg:p-8 scroll-smooth">
           <div className="max-w-4xl mx-auto pb-20">
             
             <AnimatePresence mode="wait">
@@ -900,47 +924,110 @@ export default function Dashboard() {
                   <div className="flex justify-between items-center bg-white p-6 rounded-3xl shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100">
                     <div>
                       <h3 className="text-xl font-bold text-slate-800">Daftar Layanan</h3>
-                      <p className="text-sm text-slate-500 mt-1">Kelola layanan yang ditampilkan pada halaman Services.</p>
+                      <p className="text-sm text-slate-500 mt-1">
+                        Kelola layanan yang ditampilkan pada halaman Services.
+                        {(formData.services || []).filter(s => s.featured).length > 0 && (
+                          <span className="inline-flex items-center gap-1 ml-2 text-amber-600 font-semibold">
+                            <Star className="w-3.5 h-3.5 fill-amber-500 text-amber-500" />
+                            {(formData.services || []).filter(s => s.featured).length} layanan tampil di Beranda
+                          </span>
+                        )}
+                      </p>
                     </div>
                     <button 
-                      onClick={() => addArrayItem('services', { id: Date.now().toString(), title: 'Layanan Baru', description: '', features: [], image: '' })}
+                      onClick={() => addArrayItem('services', { id: Date.now().toString(), title: 'Layanan Baru', description: '', icon: 'Wrench', features: [], image: '', featured: false })}
                       className="flex items-center gap-2 bg-blue-100 text-blue-700 px-4 py-2 rounded-xl font-semibold hover:bg-blue-200 transition-colors"
                     >
                       <Plus className="w-5 h-5" /> Tambah Layanan
                     </button>
                   </div>
 
-                  {formData.services?.map((service, index) => (
-                    <div key={service.id || index} className="bg-white rounded-3xl p-6 lg:p-8 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100 relative group">
-                      <button 
-                        onClick={() => removeArrayItem('services', index)}
-                        className="absolute top-6 right-6 p-2 bg-red-50 text-red-600 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-100"
-                        title="Hapus Layanan"
+                  {formData.services?.map((service, index) => {
+                    const isLast = index === (formData.services?.length || 0) - 1;
+                    const ServiceItemIcon = getServiceIcon(service.icon, index);
+                    return (
+                      <div 
+                        key={service.id || index} 
+                        id={isLast ? 'services-new-item' : undefined}
+                        className="bg-white rounded-3xl p-6 lg:p-8 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100 relative group"
                       >
-                        <Trash2 className="w-5 h-5" />
-                      </button>
-                      <div className="flex items-center gap-4 mb-6 pb-4 border-b border-slate-100">
-                        <div className="p-3 bg-blue-50 text-blue-600 rounded-xl"><Wrench className="w-6 h-6" /></div>
-                        <h3 className="text-lg font-bold text-slate-800">Layanan #{index + 1}: {service.title}</h3>
-                      </div>
-                      <div className="grid md:grid-cols-2 gap-8">
-                        <div className="space-y-6">
-                          <InputField label="Nama Layanan" value={service.title} onChange={(e) => handleArrayChange('services', index, 'title', e.target.value)} />
-                          <InputField label="Deskripsi" value={service.description} onChange={(e) => handleArrayChange('services', index, 'description', e.target.value)} isTextarea />
-                          <InputField 
-                            label="Ruang Lingkup (Pisahkan dengan Enter)" 
-                            value={(service.features || []).join('\n')} 
-                            onChange={(e) => handleFeaturesChange(index, e.target.value)} 
-                            isTextarea 
-                            placeholder="Desain HVAC&#10;Pemasangan Pipa&#10;Perawatan Rutin"
-                          />
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 pb-4 border-b border-slate-100 gap-4">
+                          <div className="flex items-center gap-4 min-w-0 flex-1">
+                            <div className="p-3 bg-blue-50 text-blue-600 rounded-xl shrink-0"><ServiceItemIcon className="w-6 h-6" /></div>
+                            <h3 className="text-lg font-bold text-slate-800 truncate pr-2" title={`Layanan #${index + 1}: ${service.title}`}>
+                              Layanan #{index + 1}: {service.title}
+                            </h3>
+                          </div>
+                          <div className="flex items-center gap-2.5 shrink-0 self-start sm:self-auto">
+                            <button
+                              type="button"
+                              onClick={() => handleArrayChange('services', index, 'featured', !service.featured)}
+                              className={`flex items-center gap-2.5 pl-3 pr-4 py-2 rounded-full text-xs font-semibold border transition-all active:scale-95 whitespace-nowrap ${
+                                service.featured
+                                  ? 'bg-amber-50 text-amber-700 border-amber-300 hover:bg-amber-100'
+                                  : 'bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100'
+                              }`}
+                              title={service.featured ? 'Sembunyikan dari halaman Beranda' : 'Tampilkan di halaman Beranda (Layanan Unggulan)'}
+                            >
+                              <span className={`relative inline-block w-9 h-5 rounded-full transition-colors ${service.featured ? 'bg-amber-500' : 'bg-slate-300'}`}>
+                                <span className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${service.featured ? 'translate-x-4' : ''}`}></span>
+                              </span>
+                              <Star className={`w-4 h-4 ${service.featured ? 'fill-amber-500 text-amber-500' : 'text-slate-400'}`} />
+                              <span>{service.featured ? 'Tampil di Beranda' : 'Tidak Tampil'}</span>
+                            </button>
+                            <button 
+                              onClick={() => removeArrayItem('services', index)}
+                              className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors border border-transparent hover:border-red-100 shrink-0"
+                              title="Hapus Layanan"
+                            >
+                              <Trash2 className="w-5 h-5" />
+                            </button>
+                          </div>
                         </div>
-                        <div>
-                          <ImageUploadBox label="Gambar Layanan" value={service.image} onChange={(val) => handleArrayChange('services', index, 'image', val)} onImageUpload={handleImageUpload} />
+                        <div className="grid md:grid-cols-2 gap-8">
+                          <div className="space-y-6">
+                            <InputField label="Nama Layanan" value={service.title} onChange={(e) => handleArrayChange('services', index, 'title', e.target.value)} />
+                            <div>
+                              <label className="block text-sm font-semibold text-slate-700 mb-2">Pilih Icon Layanan</label>
+                              <div className="grid grid-cols-5 sm:grid-cols-5 gap-2 p-3 bg-slate-50 rounded-2xl border border-slate-200">
+                                {SERVICE_ICONS.map((item) => {
+                                  const IconComponent = item.icon;
+                                  const isSelected = (service.icon || 'Wrench') === item.id;
+                                  return (
+                                    <button
+                                      key={item.id}
+                                      type="button"
+                                      onClick={() => handleArrayChange('services', index, 'icon', item.id)}
+                                      className={`flex flex-col items-center justify-center p-2.5 rounded-xl border text-center transition-all ${
+                                        isSelected
+                                          ? 'bg-blue-600 text-white border-blue-600 shadow-sm'
+                                          : 'bg-white text-slate-600 border-slate-200 hover:bg-blue-50 hover:text-blue-600'
+                                      }`}
+                                      title={item.name}
+                                    >
+                                      <IconComponent className="w-5 h-5 mb-1" />
+                                      <span className="text-[10px] leading-tight font-medium truncate w-full">{item.id}</span>
+                                    </button>
+                                  );
+                                })}
+                              </div>
+                            </div>
+                            <InputField label="Deskripsi" value={service.description} onChange={(e) => handleArrayChange('services', index, 'description', e.target.value)} isTextarea />
+                            <InputField 
+                              label="Ruang Lingkup (Pisahkan dengan Enter)" 
+                              value={(service.features || []).join('\n')} 
+                              onChange={(e) => handleFeaturesChange(index, e.target.value)} 
+                              isTextarea 
+                              placeholder="Desain HVAC&#10;Pemasangan Pipa&#10;Perawatan Rutin"
+                            />
+                          </div>
+                          <div>
+                            <ImageUploadBox label="Gambar Layanan" value={service.image} onChange={(val) => handleArrayChange('services', index, 'image', val)} onImageUpload={handleImageUpload} />
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </motion.div>
               )}
 
@@ -969,46 +1056,54 @@ export default function Dashboard() {
                     </button>
                   </div>
 
-                  {formData.projects?.map((project, index) => (
-                    <div key={project.id || index} className="bg-white rounded-3xl p-6 lg:p-8 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100 relative group">
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 pb-4 border-b border-slate-100 gap-4">
-                        <div className="flex items-center gap-4">
-                          <div className="p-3 bg-purple-50 text-purple-600 rounded-xl"><Briefcase className="w-6 h-6" /></div>
-                          <h3 className="text-lg font-bold text-slate-800 break-words pr-8">Proyek #{index + 1}: {project.title}</h3>
-                        </div>
-                        <div className="flex flex-wrap items-center gap-2 self-start sm:self-auto">
-                          <button
-                            type="button"
-                            onClick={() => handleArrayChange('projects', index, 'featured', !project.featured)}
-                            className={`flex items-center gap-2.5 pl-3 pr-4 py-2 rounded-full text-xs font-semibold border transition-all active:scale-95 ${
-                              project.featured
-                                ? 'bg-amber-50 text-amber-700 border-amber-300 hover:bg-amber-100'
-                                : 'bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100'
-                            }`}
-                            title={project.featured ? 'Sembunyikan dari halaman Beranda' : 'Tampilkan di halaman Beranda (Proyek Unggulan)'}
-                          >
-                            {/* Toggle switch */}
-                            <span className={`relative inline-block w-9 h-5 rounded-full transition-colors ${project.featured ? 'bg-amber-500' : 'bg-slate-300'}`}>
-                              <span className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${project.featured ? 'translate-x-4' : ''}`}></span>
-                            </span>
-                            <Star className={`w-4 h-4 ${project.featured ? 'fill-amber-500 text-amber-500' : 'text-slate-400'}`} />
-                            <span className="hidden sm:inline">{project.featured ? 'Tampil di Beranda' : 'Tidak Tampil'}</span>
-                          </button>
+                  {formData.projects?.map((project, index) => {
+                    const isLast = index === (formData.projects?.length || 0) - 1;
+                    return (
+                      <div 
+                        key={project.id || index} 
+                        id={isLast ? 'projects-new-item' : undefined}
+                        className="bg-white rounded-3xl p-6 lg:p-8 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100 relative group"
+                      >
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 pb-4 border-b border-slate-100 gap-4">
+                          <div className="flex items-center gap-4 min-w-0 flex-1">
+                            <div className="p-3 bg-purple-50 text-purple-600 rounded-xl shrink-0"><Briefcase className="w-6 h-6" /></div>
+                            <h3 className="text-lg font-bold text-slate-800 truncate pr-2" title={`Proyek #${index + 1}: ${project.title}`}>
+                              Proyek #{index + 1}: {project.title}
+                            </h3>
+                          </div>
+                          <div className="flex items-center gap-2.5 shrink-0 self-start sm:self-auto">
+                            <button
+                              type="button"
+                              onClick={() => handleArrayChange('projects', index, 'featured', !project.featured)}
+                              className={`flex items-center gap-2.5 pl-3 pr-4 py-2 rounded-full text-xs font-semibold border transition-all active:scale-95 whitespace-nowrap ${
+                                project.featured
+                                  ? 'bg-amber-50 text-amber-700 border-amber-300 hover:bg-amber-100'
+                                  : 'bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100'
+                              }`}
+                              title={project.featured ? 'Sembunyikan dari halaman Beranda' : 'Tampilkan di halaman Beranda (Proyek Unggulan)'}
+                            >
+                              {/* Toggle switch */}
+                              <span className={`relative inline-block w-9 h-5 rounded-full transition-colors ${project.featured ? 'bg-amber-500' : 'bg-slate-300'}`}>
+                                <span className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${project.featured ? 'translate-x-4' : ''}`}></span>
+                              </span>
+                              <Star className={`w-4 h-4 ${project.featured ? 'fill-amber-500 text-amber-500' : 'text-slate-400'}`} />
+                              <span>{project.featured ? 'Tampil di Beranda' : 'Tidak Tampil'}</span>
+                            </button>
 
-                          <button
-                            type="button"
-                            onClick={() => {
-                              const newProjects = [...formData.projects];
-                              newProjects.splice(index, 1);
-                              setFormData((prev) => ({ ...prev, projects: newProjects }));
-                            }}
-                            className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors border border-transparent hover:border-red-100 shrink-0"
-                            title="Hapus Proyek"
-                          >
-                            <Trash2 className="w-5 h-5" />
-                          </button>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const newProjects = [...formData.projects];
+                                newProjects.splice(index, 1);
+                                setFormData((prev) => ({ ...prev, projects: newProjects }));
+                              }}
+                              className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors border border-transparent hover:border-red-100 shrink-0"
+                              title="Hapus Proyek"
+                            >
+                              <Trash2 className="w-5 h-5" />
+                            </button>
+                          </div>
                         </div>
-                      </div>
                       <div className="grid md:grid-cols-2 gap-8">
                         <div className="space-y-4">
                           <InputField label="Nama Proyek" value={project.title} onChange={(e) => handleArrayChange('projects', index, 'title', e.target.value)} />
@@ -1027,7 +1122,8 @@ export default function Dashboard() {
                         </div>
                       </div>
                     </div>
-                  ))}
+                  );
+                })}
                 </motion.div>
               )}
 

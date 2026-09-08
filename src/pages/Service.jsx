@@ -3,6 +3,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { Link } from 'react-router-dom';
 import { Wrench, Building2, Activity, Cpu, CheckCircle2, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { getServiceIcon } from '../data/serviceIcons';
 
 export default function Service() {
   const { data, loading } = useData();
@@ -106,7 +107,7 @@ export default function Service() {
       <section className="py-12 sm:py-20 bg-[var(--bg-light)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16 sm:space-y-24">
           {services.map((service, idx) => {
-            const Icon = service.icon;
+            const Icon = typeof service.icon === 'function' ? service.icon : getServiceIcon(service.icon, idx);
             const isEven = idx % 2 === 1;
             
             return (

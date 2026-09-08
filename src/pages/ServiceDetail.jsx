@@ -2,18 +2,8 @@ import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useData } from '../context/DataContext';
 import { useLanguage } from '../context/LanguageContext';
-import { ArrowLeft, CheckCircle2, Wrench, Building2, Activity, Cpu, ArrowRight } from 'lucide-react';
-
-const iconMap = {
-  1: Wrench,
-  2: Building2,
-  3: Activity,
-  4: Cpu,
-  mep: Wrench,
-  construction: Building2,
-  mining: Activity,
-  digital: Cpu
-};
+import { ArrowLeft, CheckCircle2, ArrowRight } from 'lucide-react';
+import { getServiceIcon } from '../data/serviceIcons';
 
 export default function ServiceDetail() {
   const { id } = useParams();
@@ -49,7 +39,7 @@ export default function ServiceDetail() {
   }
 
   if (!service) return null;
-  const Icon = iconMap[service.id] || Wrench;
+  const Icon = getServiceIcon(service.icon || service.id);
 
   return (
     <div className="pt-20 md:pt-32 pb-12 sm:pb-20 bg-gray-50 min-h-screen overflow-hidden">

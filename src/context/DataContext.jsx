@@ -186,6 +186,7 @@ export function DataProvider({ children }) {
             return {
               ...fallback,
               ...svc,
+              featured: Boolean(svc.featured),
               features: (svc.features && svc.features.length > 0)
                 ? svc.features
                 : (fallback?.features || []),
@@ -197,7 +198,12 @@ export function DataProvider({ children }) {
             const fallback =
               defaultData.projects.find(d => String(d.id) === String(proj.id)) ||
               defaultData.projects.find(d => d.title === proj.title);
-            return { ...fallback, ...proj, image: proj.image || fallback?.image || '' };
+            return {
+              ...fallback,
+              ...proj,
+              featured: Boolean(proj.featured),
+              image: proj.image || fallback?.image || ''
+            };
           });
 
           // Merge pageHeaders: pastikan setiap halaman punya title/subtitle/image
