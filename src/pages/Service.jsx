@@ -83,8 +83,8 @@ export default function Service() {
       <section className="relative bg-[#0b1329] text-white pt-36 pb-20 md:pt-44 md:pb-28 overflow-hidden">
         {header.image ? (
           <div className="absolute inset-0 z-0">
-            <img src={header.image} alt="Background" className="w-full h-full object-cover opacity-25" />
-            <div className="absolute inset-0 bg-gradient-to-r from-[#0b1329] via-[#0b1329]/90 to-transparent" />
+            <img src={header.image} alt="Background" className="w-full h-full object-cover" />
+            <div className="absolute inset-0 bg-black/50" />
           </div>
         ) : (
           <div className="absolute inset-0 z-0 opacity-20 bg-[radial-gradient(#0284c7_1px,transparent_1px)] [background-size:24px_24px]" />
@@ -98,7 +98,7 @@ export default function Service() {
             className="max-w-3xl"
           >
             <span className="text-[11px] font-bold tracking-widest text-[#38bdf8] uppercase block mb-3">
-              KOMPETENSI & LAYANAN
+              {t.servicePage.heroBadge}
             </span>
             <h1 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight mb-4 leading-tight">
               {header.title || t.servicePage.defaultHeaderTitle}
@@ -143,7 +143,7 @@ export default function Service() {
                 {/* Content Side */}
                 <div className="w-full lg:w-1/2">
                   <span className="text-[10px] font-bold tracking-widest text-[#0284c7] uppercase mb-2 block">
-                    SEKTOR LAYANAN 0{idx + 1}
+                    {t.servicePage.sectorLabel} 0{idx + 1}
                   </span>
                   <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0f172a] mb-3 leading-tight">
                     {service.title}

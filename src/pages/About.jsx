@@ -35,8 +35,8 @@ export default function About() {
       <section className="relative bg-[#0b1329] text-white pt-36 pb-20 md:pt-44 md:pb-28 overflow-hidden">
         {header.image ? (
           <div className="absolute inset-0 z-0">
-            <img src={header.image} alt="Background" className="w-full h-full object-cover opacity-25" />
-            <div className="absolute inset-0 bg-gradient-to-r from-[#0b1329] via-[#0b1329]/90 to-transparent" />
+            <img src={header.image} alt="Background" className="w-full h-full object-cover" />
+            <div className="absolute inset-0 bg-black/50" />
           </div>
         ) : (
           <div className="absolute inset-0 z-0 opacity-20 bg-[radial-gradient(#0284c7_1px,transparent_1px)] [background-size:24px_24px]" />
@@ -50,7 +50,7 @@ export default function About() {
             className="max-w-3xl"
           >
             <span className="text-[11px] font-bold tracking-widest text-[#38bdf8] uppercase block mb-3">
-              PROFIL KORPORASI
+              {t.aboutPage.heroBadge}
             </span>
             <h1 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight mb-4 leading-tight">
               {header.title || t.aboutPage.defaultHeaderTitle}

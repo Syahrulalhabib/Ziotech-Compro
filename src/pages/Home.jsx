@@ -88,30 +88,30 @@ export default function Home() {
 
   const focusPillars = [
     {
-      label: 'LAYANAN UTAMA',
-      title: 'Mechanical, Electrical & Plumbing (MEP)',
-      desc: 'Instalasi sistem engineering presisi tinggi gedung & fasilitas industri.',
+      label: t.home?.fp1Label || 'LAYANAN UTAMA',
+      title: t.home?.fp1Title || 'Mechanical, Electrical & Plumbing (MEP)',
+      desc: t.home?.fp1Desc || 'Instalasi sistem engineering presisi tinggi gedung & fasilitas industri.',
       link: '/service/1',
       image: 'https://images.unsplash.com/photo-1581092921461-eab62e97a780?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
     },
     {
-      label: 'INFRASTRUKTUR',
-      title: 'Konstruksi Sipil & Bangunan Komersial',
-      desc: 'Pengerjaan struktur kokoh dengan standar keamanan dan K3 terdepan.',
+      label: t.home?.fp2Label || 'INFRASTRUKTUR',
+      title: t.home?.fp2Title || 'Konstruksi Sipil & Bangunan Komersial',
+      desc: t.home?.fp2Desc || 'Pengerjaan struktur kokoh dengan standar keamanan dan K3 terdepan.',
       link: '/service/2',
       image: 'https://images.unsplash.com/photo-1541888086425-d81bb19240f5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
     },
     {
-      label: 'INDUSTRI & TAMBANG',
-      title: 'Suplai & Penunjang Pertambangan',
-      desc: 'Pengadaan komponen teknis dan perawatan fasilitas operasional tambang.',
+      label: t.home?.fp3Label || 'INDUSTRI & TAMBANG',
+      title: t.home?.fp3Title || 'Suplai & Penunjang Pertambangan',
+      desc: t.home?.fp3Desc || 'Pengadaan komponen teknis dan perawatan fasilitas operasional tambang.',
       link: '/service/3',
       image: 'https://images.unsplash.com/photo-1578328819058-b69f3a3b0f6b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
     },
     {
-      label: 'TRANSFORMASI',
-      title: 'Solusi Digitalisasi & Otomasi Gedung',
-      desc: 'Sistem Building Automation & pemantauan energi pintar terintegrasi.',
+      label: t.home?.fp4Label || 'TRANSFORMASI',
+      title: t.home?.fp4Title || 'Solusi Digitalisasi & Otomasi Gedung',
+      desc: t.home?.fp4Desc || 'Sistem Building Automation & pemantauan energi pintar terintegrasi.',
       link: '/service/4',
       image: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
     }
@@ -344,28 +344,28 @@ export default function Home() {
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
             {[
               {
-                category: 'PENGALAMAN INDUSTRI',
+                category: t.home?.stat1Category || 'PENGALAMAN INDUSTRI',
                 value: '10+',
-                unit: 'Tahun',
-                label: 'Dedikasi melayani sektor infrastruktur & industri nasional'
+                unit: t.home?.stat1Unit || 'Tahun',
+                label: t.home?.stat1Label || 'Dedikasi melayani sektor infrastruktur & industri nasional'
               },
               {
-                category: 'PORTOFOLIO PROYEK',
+                category: t.home?.stat2Category || 'PORTOFOLIO PROYEK',
                 value: '50+',
-                unit: 'Proyek Selesai',
-                label: 'Penyelesaian tepat mutu, tepat waktu, dan standar K3 tinggi'
+                unit: t.home?.stat2Unit || 'Proyek Selesai',
+                label: t.home?.stat2Label || 'Penyelesaian tepat mutu, tepat waktu, dan standar K3 tinggi'
               },
               {
-                category: 'KEPUASAN KLIEN',
+                category: t.home?.stat3Category || 'KEPUASAN KLIEN',
                 value: '99%',
-                unit: 'Tingkat Kepuasan',
-                label: 'Retensi dan kepercayaan berkesinambungan dari mitra'
+                unit: t.home?.stat3Unit || 'Tingkat Kepuasan',
+                label: t.home?.stat3Label || 'Retensi dan kepercayaan berkesinambungan dari mitra'
               },
               {
-                category: 'TIM AHLI & TEKNIS',
+                category: t.home?.stat4Category || 'TIM AHLI & TEKNIS',
                 value: '30+',
-                unit: 'Tenaga Profesional',
-                label: 'Insinyur & staf teknis bersertifikasi lisensi resmi'
+                unit: t.home?.stat4Unit || 'Tenaga Profesional',
+                label: t.home?.stat4Label || 'Insinyur & staf teknis bersertifikasi lisensi resmi'
               }
             ].map((stat, idx) => (
               <div key={idx} className="border-l-2 border-slate-200 pl-4 sm:pl-6">
@@ -395,7 +395,7 @@ export default function Home() {
               {t.home?.ourFocusBadge || 'PILAR UTAMA'}
             </span>
             <h2 className="text-2xl sm:text-4xl font-extrabold text-[#0f172a]">
-              Spesialisasi dan Ruang Lingkup Kerja
+              {t.home?.ourFocusTitle || 'Spesialisasi dan Ruang Lingkup Kerja'}
             </h2>
           </div>
 
@@ -532,17 +532,23 @@ export default function Home() {
           </div>
 
           <div className="flex flex-wrap items-center gap-2.5 mb-10">
-            {['ALL', 'MEP', 'KONSTRUKSI', 'TAMBANG', 'DIGITALISASI'].map((cat) => (
+            {[
+              { key: 'ALL', label: t.home?.catAll || 'Semua' },
+              { key: 'MEP', label: t.home?.catMep || 'MEP' },
+              { key: 'KONSTRUKSI', label: t.home?.catKonstruksi || 'Konstruksi' },
+              { key: 'TAMBANG', label: t.home?.catTambang || 'Pertambangan' },
+              { key: 'DIGITALISASI', label: t.home?.catDigitalisasi || 'Digitalisasi' },
+            ].map(({ key, label }) => (
               <button
-                key={cat}
-                onClick={() => setActiveTabCategory(cat)}
+                key={key}
+                onClick={() => setActiveTabCategory(key)}
                 className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${
-                  activeTabCategory === cat
+                  activeTabCategory === key
                     ? 'bg-[#1e3a8a] text-white shadow-sm'
                     : 'bg-white border border-slate-200 text-slate-600 hover:border-slate-400'
                 }`}
               >
-                {cat === 'ALL' ? (t.home?.allCategory || 'Semua') : cat}
+                {label}
               </button>
             ))}
           </div>
@@ -627,7 +633,7 @@ export default function Home() {
               {t.home?.clientPartnersTitle || 'KEMITRAAN STRATEGIS'}
             </span>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0f172a]">
-              Dipercaya oleh Ragam Institusi & Mitra Terkemuka
+              {t.home?.partnersSectionTitle || 'Dipercaya oleh Ragam Institusi & Mitra Terkemuka'}
             </h2>
           </div>
 
@@ -667,7 +673,7 @@ export default function Home() {
         </div>
         <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center relative z-10">
           <span className="text-[11px] font-bold tracking-widest text-[#38bdf8] uppercase mb-4 block">
-            KOLABORASI & KONSULTASI
+            {t.home?.ctaBadge || 'KOLABORASI & KONSULTASI'}
           </span>
           <h2 className="text-2xl sm:text-4xl md:text-5xl font-extrabold text-white mb-6 leading-tight">
             {t.common?.readyToCollaborate || 'Siap Berkolaborasi Bersama Kami?'}
