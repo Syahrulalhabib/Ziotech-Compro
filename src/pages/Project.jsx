@@ -11,8 +11,8 @@ export default function Project() {
   const [activeCategory, setActiveCategory] = useState('Semua');
 
   if (loading) return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-red-600"></div>
+    <div className="min-h-screen flex items-center justify-center bg-white">
+      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#0284c7]"></div>
     </div>
   );
 
@@ -27,26 +27,32 @@ export default function Project() {
   const header = data?.pageHeaders?.project || {};
 
   return (
-    <div className="pt-20 md:pt-32 overflow-hidden">
-      {/* Header */}
-      <section className="bg-[var(--primary-dark)] text-white py-16 md:py-28 mt-[-5rem] md:mt-[-8rem] relative overflow-hidden">
-        {header.image && (
-          <>
-            <div className="absolute inset-0 z-0">
-              <img src={header.image} alt="Background" className="w-full h-full object-cover" />
-            </div>
-            <div className="absolute inset-0 bg-[var(--primary-dark)]/20 z-10"></div>
-          </>
+    <div className="overflow-hidden bg-[#f8fafc]">
+      {/* 1. Header (Pertamina corporate style) */}
+      <section className="relative bg-[#0b1329] text-white pt-36 pb-20 md:pt-44 md:pb-28 overflow-hidden">
+        {header.image ? (
+          <div className="absolute inset-0 z-0">
+            <img src={header.image} alt="Background" className="w-full h-full object-cover opacity-25" />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#0b1329] via-[#0b1329]/90 to-transparent" />
+          </div>
+        ) : (
+          <div className="absolute inset-0 z-0 opacity-20 bg-[radial-gradient(#0284c7_1px,transparent_1px)] [background-size:24px_24px]" />
         )}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20 pt-16 sm:pt-20 flex justify-start">
+        
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-left max-w-3xl"
+            transition={{ duration: 0.5 }}
+            className="max-w-3xl"
           >
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-6 drop-shadow-md text-white">{header.title || t.projectPage.defaultHeaderTitle}</h1>
-            <p className="text-base sm:text-xl text-white font-medium drop-shadow-sm">
+            <span className="text-[11px] font-bold tracking-widest text-[#38bdf8] uppercase block mb-3">
+              REKAM JEJAK & PORTOFOLIO
+            </span>
+            <h1 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight mb-4 leading-tight">
+              {header.title || t.projectPage.defaultHeaderTitle}
+            </h1>
+            <p className="text-sm sm:text-lg text-slate-300 font-light leading-relaxed">
               {header.subtitle || t.projectPage.defaultHeaderSubtitle}
             </p>
           </motion.div>
@@ -54,27 +60,25 @@ export default function Project() {
       </section>
 
       {/* Projects Section */}
-      <section className="py-12 sm:py-20 bg-[var(--bg-light)] min-h-screen">
+      <section className="py-16 sm:py-24 bg-[#f8fafc] min-h-screen">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-          {/* Filter Categories */}
+          {/* Pertamina-style Pill Category Filter */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="flex flex-wrap justify-center gap-2 sm:gap-3 mb-10 sm:mb-16"
+            transition={{ delay: 0.1 }}
+            className="flex flex-wrap justify-center items-center gap-2 mb-12 sm:mb-16"
           >
-            <div className="flex items-center gap-2 mr-4 text-gray-500 font-medium hidden md:flex">
-              <Filter className="w-5 h-5" /> {t.common.filterLabel}
-            </div>
             {categories.map((category) => (
               <button
                 key={category}
                 onClick={() => setActiveCategory(category)}
-                className={`px-4 sm:px-6 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-semibold transition-all duration-300 ${activeCategory === category
-                    ? 'bg-[var(--accent-blue)] text-white shadow-lg shadow-blue-500/30'
-                    : 'bg-white text-gray-600 hover:bg-blue-50 border border-gray-200 hover:border-blue-200'
-                  }`}
+                className={`cursor-pointer px-4 sm:px-5 py-2 rounded-full text-xs font-semibold transition-all duration-200 ${
+                  activeCategory === category
+                    ? 'bg-[#0f172a] text-white shadow-sm'
+                    : 'bg-white text-slate-600 hover:bg-slate-50 border border-slate-200'
+                }`}
               >
                 {category === 'Semua' ? t.common.all : category}
               </button>
@@ -91,53 +95,59 @@ export default function Project() {
                 <motion.div
                   key={project.id}
                   layout
-                  initial={{ opacity: 0, scale: 0.9 }}
+                  initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.9 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
                   transition={{ duration: 0.3 }}
-                  className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 border border-gray-100 group cursor-pointer"
+                  className="bg-white rounded-2xl overflow-hidden border border-slate-100 hover:border-slate-300 hover:shadow-md transition-all duration-300 group flex flex-col justify-between"
                 >
-                  {/* Project Image */}
-                  <div className="relative h-64 overflow-hidden">
-                    <img
-                      src={project.image}
-                      alt={project.title}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
-                      <p className="text-white text-sm font-medium line-clamp-2">
+                  <div>
+                    {/* Project Image */}
+                    <div className="relative aspect-[16/10] overflow-hidden bg-slate-100">
+                      <img
+                        src={project.image}
+                        alt={project.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                      <div className="absolute top-3.5 right-3.5 bg-white/95 backdrop-blur-sm text-[#0f172a] text-[11px] font-bold px-3 py-1 rounded-full border border-slate-100 shadow-sm">
+                        {project.category}
+                      </div>
+                    </div>
+
+                    {/* Project Info */}
+                    <div className="p-6">
+                      <h3 className="text-lg font-bold text-[#0f172a] mb-2 line-clamp-2 group-hover:text-[#0284c7] transition-colors">
+                        {project.title}
+                      </h3>
+                      
+                      <p className="text-slate-500 text-xs sm:text-sm line-clamp-2 mb-5">
                         {project.description}
                       </p>
-                    </div>
-                    <div className="absolute top-4 right-4 bg-[var(--accent-gold)] text-[var(--primary-dark)] text-xs font-bold px-3 py-1.5 rounded-full shadow-md">
-                      {project.category}
+
+                      <div className="space-y-2 text-xs text-slate-500 font-medium">
+                        <div className="flex items-center gap-2.5">
+                          <Building2 className="w-3.5 h-3.5 text-[#0284c7] shrink-0" />
+                          <span className="truncate">{project.client}</span>
+                        </div>
+                        <div className="flex items-center gap-2.5">
+                          <MapPin className="w-3.5 h-3.5 text-[#0284c7] shrink-0" />
+                          <span className="truncate">{project.location}</span>
+                        </div>
+                        <div className="flex items-center gap-2.5">
+                          <Calendar className="w-3.5 h-3.5 text-[#0284c7] shrink-0" />
+                          <span>{t.common.yearPrefix} {project.year}</span>
+                        </div>
+                      </div>
                     </div>
                   </div>
 
-                  {/* Project Info */}
-                  <div className="p-6">
-                    <h3 className="text-xl font-bold text-[var(--primary-dark)] mb-4 line-clamp-2 group-hover:text-[var(--primary-blue)] transition-colors">
-                      {project.title}
-                    </h3>
-                    
-                    <div className="space-y-3 text-sm text-[var(--text-muted)] font-medium mb-6">
-                      <div className="flex items-center gap-3">
-                        <Building2 className="w-4 h-4 text-[var(--primary-blue)]" />
-                        <span className="font-medium">{project.client}</span>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <MapPin className="w-4 h-4 text-[var(--primary-blue)]" />
-                        <span>{project.location}</span>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <Calendar className="w-4 h-4 text-[var(--primary-blue)]" />
-                        <span>{t.common.yearPrefix} {project.year}</span>
-                      </div>
-                    </div>
-
-                    <Link to={`/project/${project.id}`} className="pt-4 border-t border-gray-100 flex items-center text-[var(--accent-blue)] font-medium text-sm group/link">
+                  <div className="px-6 pb-6 pt-2">
+                    <Link 
+                      to={`/project/${project.id}`} 
+                      className="pertamina-btn-pill w-full justify-center text-center"
+                    >
                       {t.common.viewDetail}
-                      <ChevronRight className="w-4 h-4 ml-1 group-hover/link:translate-x-1 transition-transform" />
+                      <ChevronRight className="w-3.5 h-3.5 text-[#0284c7]" />
                     </Link>
                   </div>
                 </motion.div>
@@ -147,9 +157,9 @@ export default function Project() {
 
           {/* Empty State */}
           {filteredProjects.length === 0 && (
-            <div className="text-center py-20 text-gray-500">
-              <Building2 className="w-16 h-16 mx-auto mb-4 text-gray-300" />
-              <p className="text-lg">{t.common.emptyProjects}</p>
+            <div className="text-center py-20 bg-white rounded-2xl border border-slate-100 p-8 max-w-md mx-auto">
+              <Building2 className="w-12 h-12 mx-auto mb-3 text-slate-300" />
+              <p className="text-sm font-semibold text-slate-600">{t.common.emptyProjects}</p>
             </div>
           )}
 

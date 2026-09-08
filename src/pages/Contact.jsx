@@ -20,8 +20,8 @@ export default function Contact() {
   const [isSuccess, setIsSuccess] = useState(false);
 
   if (loading) return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-red-600"></div>
+    <div className="min-h-screen flex items-center justify-center bg-white">
+      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#0284c7]"></div>
     </div>
   );
 
@@ -148,59 +148,68 @@ export default function Contact() {
   const header = data?.pageHeaders?.contact || {};
 
   return (
-    <div className="pt-20 md:pt-32 overflow-hidden">
-      {/* Header */}
-      <section className="bg-[var(--primary-dark)] text-white py-16 md:py-28 mt-[-5rem] md:mt-[-8rem] relative overflow-hidden">
-        {header.image && (
-          <>
-            <div className="absolute inset-0 z-0">
-              <img src={header.image} alt="Contact Background" className="w-full h-full object-cover" />
-            </div>
-            <div className="absolute inset-0 bg-[var(--primary-dark)]/20 z-10" />
-          </>
+    <div className="overflow-hidden bg-[#f8fafc]">
+      {/* 1. Header (Pertamina corporate style) */}
+      <section className="relative bg-[#0b1329] text-white pt-36 pb-20 md:pt-44 md:pb-28 overflow-hidden">
+        {header.image ? (
+          <div className="absolute inset-0 z-0">
+            <img src={header.image} alt="Contact Background" className="w-full h-full object-cover opacity-25" />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#0b1329] via-[#0b1329]/90 to-transparent" />
+          </div>
+        ) : (
+          <div className="absolute inset-0 z-0 opacity-20 bg-[radial-gradient(#0284c7_1px,transparent_1px)] [background-size:24px_24px]" />
         )}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20 pt-16 sm:pt-20 flex justify-start">
+        
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-left max-w-3xl"
+            transition={{ duration: 0.5 }}
+            className="max-w-3xl"
           >
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-6 drop-shadow-md text-white">{header.title || t.contactPage.defaultHeaderTitle}</h1>
-            <p className="text-base sm:text-xl text-white font-medium drop-shadow-sm">
+            <span className="text-[11px] font-bold tracking-widest text-[#38bdf8] uppercase block mb-3">
+              KOMUNIKASI & KERJASAMA
+            </span>
+            <h1 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight mb-4 leading-tight">
+              {header.title || t.contactPage.defaultHeaderTitle}
+            </h1>
+            <p className="text-sm sm:text-lg text-slate-300 font-light leading-relaxed">
               {header.subtitle || t.contactPage.defaultHeaderSubtitle}
             </p>
           </motion.div>
         </div>
       </section>
 
-      <section className="py-12 sm:py-20 bg-[var(--bg-light)]">
+      <section className="py-16 sm:py-24 bg-[#f8fafc]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-3 gap-8 lg:gap-12">
+          <div className="grid lg:grid-cols-12 gap-10 lg:gap-12">
 
             {/* Contact Information */}
-            <div className="lg:col-span-1 space-y-8">
+            <div className="lg:col-span-5 space-y-8">
               <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.6 }}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
               >
-                <h2 className="text-xl sm:text-2xl font-bold text-[var(--primary-dark)] mb-4 sm:mb-6">{t.contactPage.title}</h2>
-                <p className="text-[var(--text-muted)] font-medium mb-6 sm:mb-8 text-sm sm:text-base">
+                <span className="text-[11px] font-bold tracking-widest text-[#0284c7] uppercase mb-2 block">
+                  HUBUNGI KAMI
+                </span>
+                <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0f172a] mb-4">{t.contactPage.title}</h2>
+                <p className="text-slate-500 font-medium mb-8 text-sm sm:text-base leading-relaxed">
                   {t.contactPage.subtitle}
                 </p>
 
-                <div className="space-y-4 sm:space-y-6">
+                <div className="space-y-4">
                   {contactInfo.map((info, idx) => {
                     const Icon = info.icon;
                     return (
-                      <div key={idx} className="flex items-start gap-4">
-                        <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center shrink-0 bg-[var(--primary-blue)]/10`}>
-                          <Icon className={`w-5 h-5 sm:w-6 sm:h-6 text-[var(--primary-blue)]`} />
+                      <div key={idx} className="bg-white p-5 rounded-2xl border border-slate-100 flex items-start gap-4 shadow-sm">
+                        <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 bg-slate-50 text-[#0284c7]">
+                          <Icon className="w-5 h-5" />
                         </div>
                         <div className="min-w-0 flex-1">
-                          <h3 className="font-semibold text-sm sm:text-base text-[var(--primary-dark)]">{info.title}</h3>
-                          <p className="text-[var(--text-muted)] font-medium mt-0.5 sm:mt-1 text-sm break-words">{info.detail}</p>
+                          <h3 className="font-bold text-xs sm:text-sm text-[#0f172a]">{info.title}</h3>
+                          <p className="text-slate-500 font-medium mt-1 text-xs sm:text-sm break-words">{info.detail}</p>
                         </div>
                       </div>
                     );
@@ -210,14 +219,14 @@ export default function Contact() {
             </div>
 
             {/* Contact Form */}
-            <div className="lg:col-span-2">
+            <div className="lg:col-span-7">
               <motion.div
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.6, delay: 0.2 }}
-                className="bg-white rounded-2xl shadow-xl p-5 sm:p-8 border border-gray-100"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+                className="bg-white rounded-3xl p-7 sm:p-10 border border-slate-100 shadow-sm"
               >
-                <h2 className="text-xl sm:text-2xl font-bold text-[var(--primary-dark)] mb-6">{t.contactPage.formTitle}</h2>
+                <h2 className="text-xl sm:text-2xl font-extrabold text-[#0f172a] mb-6">{t.contactPage.formTitle}</h2>
 
                 <AnimatePresence>
                   {isSuccess && (
@@ -225,18 +234,18 @@ export default function Contact() {
                       initial={{ opacity: 0, y: -10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
-                      className="mb-6 p-4 bg-green-50 text-green-700 rounded-lg flex items-center gap-3 border border-green-100"
+                      className="mb-6 p-4 bg-emerald-50 text-emerald-800 rounded-xl flex items-center gap-3 border border-emerald-100 text-sm"
                     >
-                      <CheckCircle2 className="w-5 h-5 text-green-500" />
+                      <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
                       {t.contactPage.successDesc}
                     </motion.div>
                   )}
                 </AnimatePresence>
 
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="grid md:grid-cols-2 gap-6">
+                <form onSubmit={handleSubmit} className="space-y-5">
+                  <div className="grid md:grid-cols-2 gap-5">
                     <div>
-                      <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">{t.contactPage.nameLabel} *</label>
+                      <label htmlFor="name" className="block text-xs font-semibold text-slate-700 mb-2 uppercase tracking-wider">{t.contactPage.nameLabel} *</label>
                       <input
                         type="text"
                         id="name"
@@ -244,12 +253,12 @@ export default function Contact() {
                         value={formState.name}
                         onChange={handleChange}
                         required
-                        className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[var(--accent-blue)] focus:border-[var(--accent-blue)] outline-none transition-shadow"
+                        className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:ring-2 focus:ring-[#0284c7] focus:border-[#0284c7] outline-none text-sm transition-all"
                         placeholder={t.contactPage.namePlaceholder}
                       />
                     </div>
                     <div>
-                      <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">{t.contactPage.emailLabel} *</label>
+                      <label htmlFor="email" className="block text-xs font-semibold text-slate-700 mb-2 uppercase tracking-wider">{t.contactPage.emailLabel} *</label>
                       <input
                         type="email"
                         id="email"
@@ -257,34 +266,34 @@ export default function Contact() {
                         value={formState.email}
                         onChange={handleChange}
                         required
-                        className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[var(--accent-blue)] focus:border-[var(--accent-blue)] outline-none transition-shadow"
+                        className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:ring-2 focus:ring-[#0284c7] focus:border-[#0284c7] outline-none text-sm transition-all"
                         placeholder={t.contactPage.emailPlaceholder}
                       />
                     </div>
                   </div>
 
-                  <div className="grid md:grid-cols-2 gap-6">
+                  <div className="grid md:grid-cols-2 gap-5">
                     <div>
-                      <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">{t.contactPage.phoneLabel}</label>
+                      <label htmlFor="phone" className="block text-xs font-semibold text-slate-700 mb-2 uppercase tracking-wider">{t.contactPage.phoneLabel}</label>
                       <input
                         type="tel"
                         id="phone"
                         name="phone"
                         value={formState.phone}
                         onChange={handleChange}
-                        className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[var(--accent-blue)] focus:border-[var(--accent-blue)] outline-none transition-shadow"
+                        className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:ring-2 focus:ring-[#0284c7] focus:border-[#0284c7] outline-none text-sm transition-all"
                         placeholder={t.contactPage.phonePlaceholder}
                       />
                     </div>
                     <div>
-                      <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-2">{t.contactPage.subjectLabel} *</label>
+                      <label htmlFor="subject" className="block text-xs font-semibold text-slate-700 mb-2 uppercase tracking-wider">{t.contactPage.subjectLabel} *</label>
                       <select
                         id="subject"
                         name="subject"
                         value={formState.subject}
                         onChange={handleChange}
                         required
-                        className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[var(--accent-blue)] focus:border-[var(--accent-blue)] outline-none transition-shadow"
+                        className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:ring-2 focus:ring-[#0284c7] focus:border-[#0284c7] outline-none text-sm transition-all"
                       >
                         <option value="">{t.contactPage.subjectPlaceholder}</option>
                         <option value="Pertanyaan Layanan MEP">{t.contactPage.optMep}</option>
@@ -296,15 +305,15 @@ export default function Contact() {
                   </div>
 
                   <div>
-                    <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">{t.contactPage.messageLabel} *</label>
+                    <label htmlFor="message" className="block text-xs font-semibold text-slate-700 mb-2 uppercase tracking-wider">{t.contactPage.messageLabel} *</label>
                     <textarea
                       id="message"
                       name="message"
                       value={formState.message}
                       onChange={handleChange}
                       required
-                      rows="5"
-                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[var(--accent-blue)] focus:border-[var(--accent-blue)] outline-none transition-shadow resize-none"
+                      rows="4"
+                      className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:ring-2 focus:ring-[#0284c7] focus:border-[#0284c7] outline-none text-sm transition-all resize-none"
                       placeholder={t.contactPage.messagePlaceholder}
                     ></textarea>
                   </div>
@@ -312,14 +321,14 @@ export default function Contact() {
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full py-4 px-6 rounded-xl font-semibold text-white bg-gradient-to-r from-[var(--primary-blue)] to-[var(--accent-blue)] hover:from-blue-900 hover:to-sky-700 shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 active:scale-[0.99] transition-all duration-200 flex items-center justify-center gap-2.5 text-base sm:text-lg disabled:opacity-70 disabled:cursor-not-allowed disabled:active:scale-100"
+                    className="pertamina-btn-pill !bg-[#0f172a] !text-white !border-[#0f172a] hover:!bg-[#0284c7] hover:!border-[#0284c7] w-full justify-center text-center py-3.5"
                   >
                     {isSubmitting ? (
-                      <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                     ) : (
                       <>
                         <span>{t.contactPage.sendButton}</span>
-                        <Send className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+                        <Send className="w-4 h-4 text-white" />
                       </>
                     )}
                   </button>
@@ -331,10 +340,10 @@ export default function Contact() {
       </section>
 
       {/* Map Section */}
-      <section className="py-12 bg-[var(--bg-light)]">
+      <section className="pb-20 bg-[#f8fafc]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-white p-3 md:p-4 rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
-            <div className="relative w-full h-[320px] md:h-[400px] rounded-xl overflow-hidden bg-slate-100">
+          <div className="bg-white p-3 md:p-4 rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+            <div className="relative w-full h-[320px] md:h-[420px] rounded-2xl overflow-hidden bg-slate-100">
               {mapSrc ? (
                 <iframe
                   title="Google Maps Lokasi Kantor PT Ziotech Global Inovasi"

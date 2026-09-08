@@ -25,6 +25,12 @@ const defaultData = {
       'Inovasi Berkelanjutan'
     ],
     heroInterval: 5000,
+    introImageUrl: "",
+    introTag: "INNOVATION & INTEGRITY",
+    introBadge: "INOVASI & KUALITAS",
+    introTitle: "Menghadirkan Solusi Teknik dan Konstruksi Terbaik untuk Negeri",
+    introDescription: "PT. Ziotech Global Inovasi hadir sebagai mitra strategis dengan komitmen pada kualitas, efisiensi, dan inovasi berkelanjutan khususnya di spesialisasi Mechanical, Electrical & Plumbing (MEP).",
+    introDescription2: "Dengan tim profesional bersertifikasi, dedikasi tinggi, dan standar mutu ketat, kami siap memberikan solusi engineering terbaik yang efisien, tepat waktu, dan berorientasi jangka panjang.",
     aboutPreviewImageUrl: "https://images.unsplash.com/photo-1503387762-592deb58ef4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
     clientPartnersTitle: "Dipercaya Oleh Berbagai Perusahaan Terkemuka",
     clientPartners: [

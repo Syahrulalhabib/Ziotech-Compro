@@ -4,7 +4,7 @@ import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { ref, set, onValue, remove, update } from 'firebase/database';
 import { auth, db } from '../../firebase/config';
 import { useData } from '../../context/DataContext';
-import { LogOut, Save, Home, Info, LayoutDashboard, Image as ImageIcon, Type, Menu, X, CheckCircle2, AlertCircle, Briefcase, Wrench, Phone, Plus, Trash2, Star, CalendarClock, Building2, Share2, Globe, MapPin, Inbox, Mail, User, Clock, ExternalLink, Copy, Check } from 'lucide-react';
+import { LogOut, Save, Home, Info, LayoutDashboard, Image as ImageIcon, Type, Menu, X, CheckCircle2, AlertCircle, Briefcase, Wrench, Phone, Plus, Trash2, Star, CalendarClock, Building2, Share2, Globe, MapPin, Inbox, Mail, User, Clock, ExternalLink, Copy, Check, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { SERVICE_ICONS, getServiceIcon } from '../../data/serviceIcons';
 
@@ -119,7 +119,7 @@ const defaultProjects = [
 ];
 
 // --- COMPONENTS MOVED OUTSIDE to prevent focus loss on every keystroke ---
-const InputField = ({ label, icon: Icon, type = "text", value, onChange, placeholder, isTextarea }) => (
+const InputField = ({ label, icon: Icon, type = "text", value, onChange, onBlur, placeholder, isTextarea, helperText, min, max, step }) => (
   <div className="space-y-1.5 w-full">
     <label className="flex items-center gap-2 text-sm font-semibold text-slate-700">
       {Icon && <Icon className="w-4 h-4 text-slate-400" />}
@@ -127,8 +127,9 @@ const InputField = ({ label, icon: Icon, type = "text", value, onChange, placeho
     </label>
     {isTextarea ? (
       <textarea
-        value={value}
+        value={value ?? ''}
         onChange={onChange}
+        onBlur={onBlur}
         placeholder={placeholder}
         rows="3"
         className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all outline-none resize-y text-slate-700"
@@ -136,12 +137,17 @@ const InputField = ({ label, icon: Icon, type = "text", value, onChange, placeho
     ) : (
       <input
         type={type}
-        value={value}
+        value={value ?? ''}
         onChange={onChange}
+        onBlur={onBlur}
+        min={min}
+        max={max}
+        step={step}
         placeholder={placeholder}
         className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all outline-none text-slate-700"
       />
     )}
+    {helperText && <p className="text-xs text-slate-500 mt-1">{helperText}</p>}
   </div>
 );
 
@@ -854,8 +860,18 @@ export default function Dashboard() {
                         icon={CalendarClock} 
                         label="Interval Gambar (milidetik, cth: 5000 = 5 detik)" 
                         type="number"
-                        value={formData.home?.heroInterval || 5000} 
-                        onChange={(e) => handleChange('home', 'heroInterval', parseInt(e.target.value) || 5000)} 
+                        min="1000"
+                        step="500"
+                        placeholder="5000"
+                        helperText="Durasi tiap slide gambar berganti otomatis (minimal 1000 ms)."
+                        value={formData.home?.heroInterval ?? ''} 
+                        onChange={(e) => handleChange('home', 'heroInterval', e.target.value === '' ? '' : Number(e.target.value))} 
+                        onBlur={(e) => {
+                          const val = Number(e.target.value);
+                          if (!val || val < 1000) {
+                            handleChange('home', 'heroInterval', 5000);
+                          }
+                        }}
                       />
                       
                       <div className="space-y-4 pt-2">
@@ -906,6 +922,65 @@ export default function Dashboard() {
                             Belum ada gambar slider. Klik Tambah Gambar untuk memulai.
                           </div>
                         )}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-white rounded-3xl p-6 lg:p-8 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100">
+                    <div className="flex items-center gap-4 mb-8 pb-5 border-b border-slate-100">
+                      <div className="p-3 bg-sky-50 text-[#0284c7] rounded-xl"><Sparkles className="w-6 h-6" /></div>
+                      <div>
+                        <h3 className="text-xl font-bold text-slate-800">Visual & Teks Editorial Intro (Inovasi & Kualitas)</h3>
+                        <p className="text-sm text-slate-500 mt-1">Kelola gambar kotak dan teks editorial intro di bawah hero beranda.</p>
+                      </div>
+                    </div>
+                    <div className="space-y-6">
+                      <InputField 
+                        icon={Type} 
+                        label="Label Tag Foto (Overlay Bawah Foto)" 
+                        value={formData.home?.introTag ?? 'INNOVATION & INTEGRITY'} 
+                        onChange={(e) => handleChange('home', 'introTag', e.target.value)} 
+                        placeholder="INNOVATION & INTEGRITY"
+                      />
+                      <ImageUploadBox 
+                        aspect={1}
+                        label="Gambar Intro (Rasio 1:1 / Persegi)" 
+                        value={formData.home?.introImageUrl || ''} 
+                        onChange={(val) => handleChange('home', 'introImageUrl', val)} 
+                        onImageUpload={handleImageUpload} 
+                      />
+                      <p className="text-xs text-slate-400">
+                        *Jika gambar dikosongkan, beranda otomatis menampilkan grafis geometris Pertamina style.
+                      </p>
+                      <div className="pt-4 border-t border-slate-100 space-y-6">
+                        <InputField 
+                          icon={Type} 
+                          label="Badge Intro (Kategori Atas Judul)" 
+                          value={formData.home?.introBadge ?? 'INOVASI & KUALITAS'} 
+                          onChange={(e) => handleChange('home', 'introBadge', e.target.value)} 
+                          placeholder="INOVASI & KUALITAS"
+                        />
+                        <InputField 
+                          icon={Type} 
+                          label="Judul Intro" 
+                          value={formData.home?.introTitle ?? 'Menghadirkan Solusi Teknik dan Konstruksi Terbaik untuk Negeri'} 
+                          onChange={(e) => handleChange('home', 'introTitle', e.target.value)} 
+                          placeholder="Menghadirkan Solusi Teknik dan Konstruksi Terbaik untuk Negeri"
+                        />
+                        <InputField 
+                          icon={Type} 
+                          label="Paragraf 1" 
+                          value={formData.home?.introDescription ?? 'PT. Ziotech Global Inovasi hadir sebagai mitra strategis dengan komitmen pada kualitas, efisiensi, dan inovasi berkelanjutan khususnya di spesialisasi Mechanical, Electrical & Plumbing (MEP).'} 
+                          onChange={(e) => handleChange('home', 'introDescription', e.target.value)} 
+                          isTextarea
+                        />
+                        <InputField 
+                          icon={Type} 
+                          label="Paragraf 2" 
+                          value={formData.home?.introDescription2 ?? 'Dengan tim profesional bersertifikasi, dedikasi tinggi, dan standar mutu ketat, kami siap memberikan solusi engineering terbaik yang efisien, tepat waktu, dan berorientasi jangka panjang.'} 
+                          onChange={(e) => handleChange('home', 'introDescription2', e.target.value)} 
+                          isTextarea
+                        />
                       </div>
                     </div>
                   </div>

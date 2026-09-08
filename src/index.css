@@ -135,3 +135,93 @@
     transform: translateX(0);
   }
 }
+
+/* Pertamina-style pill buttons and utility styles */
+.pertamina-btn-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 9999px;
+  border: 1px solid #cbd5e1;
+  background-color: #ffffff;
+  padding: 0.55rem 1.4rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #0f172a;
+  transition: all 0.25s ease;
+  white-space: nowrap;
+}
+.pertamina-btn-pill:hover {
+  border-color: #0284c7;
+  color: #0284c7;
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.12);
+  transform: translateY(-1px);
+}
+.pertamina-btn-pill-dark {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background-color: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(8px);
+  padding: 0.55rem 1.35rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #ffffff;
+  transition: all 0.25s ease;
+  white-space: nowrap;
+}
+.pertamina-btn-pill-dark:hover {
+  background-color: #ffffff;
+  color: #0f172a;
+  border-color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #1e3a8a;
+  color: #ffffff;
+  font-weight: 600;
+  padding: 0.625rem 1.5rem;
+  border-radius: 9999px;
+  transition: all 0.2s ease;
+}
+.btn-primary:hover {
+  background-color: #1e40af;
+}
+
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #cbd5e1;
+  background-color: #ffffff;
+  color: #0f172a;
+  font-weight: 600;
+  padding: 0.5rem 1.25rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+}
+.btn-outline:hover {
+  border-color: #0f172a;
+}
+
+.btn-gold {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #0284c7;
+  color: #ffffff;
+  font-weight: 600;
+  padding: 0.625rem 1.5rem;
+  border-radius: 9999px;
+  transition: all 0.2s ease;
+}
+.btn-gold:hover {
+  background-color: #0369a1;
+}

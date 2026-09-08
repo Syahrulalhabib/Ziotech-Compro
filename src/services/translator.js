@@ -66,6 +66,11 @@ export async function translateContent(data, targetLang = 'en') {
   if (clone.home) {
     if (clone.home.heroTitle) clone.home.heroTitle = await translateText(clone.home.heroTitle);
     if (clone.home.heroSubtitle) clone.home.heroSubtitle = await translateText(clone.home.heroSubtitle);
+    if (clone.home.introBadge) clone.home.introBadge = await translateText(clone.home.introBadge);
+    if (clone.home.introTitle) clone.home.introTitle = await translateText(clone.home.introTitle);
+    if (clone.home.introDescription) clone.home.introDescription = await translateText(clone.home.introDescription);
+    if (clone.home.introDescription2) clone.home.introDescription2 = await translateText(clone.home.introDescription2);
+    if (clone.home.introTag) clone.home.introTag = await translateText(clone.home.introTag);
     if (clone.home.clientPartnersTitle) clone.home.clientPartnersTitle = await translateText(clone.home.clientPartnersTitle);
     if (Array.isArray(clone.home.heroTitles)) {
       clone.home.heroTitles = await Promise.all(clone.home.heroTitles.map(t => translateText(t)));

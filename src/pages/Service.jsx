@@ -10,8 +10,8 @@ export default function Service() {
   const { t } = useLanguage();
 
   if (loading) return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-red-600"></div>
+    <div className="min-h-screen flex items-center justify-center bg-white">
+      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#0284c7]"></div>
     </div>
   );
 
@@ -78,34 +78,41 @@ export default function Service() {
   const header = data?.pageHeaders?.service || {};
 
   return (
-    <div className="pt-20 md:pt-32 overflow-hidden">
-      {/* Header */}
-      <section className="bg-[var(--primary-dark)] text-white py-16 md:py-28 mt-[-5rem] md:mt-[-8rem] relative overflow-hidden">
-        {header.image && (
-          <>
-            <div className="absolute inset-0 z-0">
-              <img src={header.image} alt="Background" className="w-full h-full object-cover" />
-            </div>
-            <div className="absolute inset-0 bg-[var(--primary-dark)]/20 z-10"></div>
-          </>
+    <div className="overflow-hidden bg-[#f8fafc]">
+      {/* 1. Header (Pertamina corporate style) */}
+      <section className="relative bg-[#0b1329] text-white pt-36 pb-20 md:pt-44 md:pb-28 overflow-hidden">
+        {header.image ? (
+          <div className="absolute inset-0 z-0">
+            <img src={header.image} alt="Background" className="w-full h-full object-cover opacity-25" />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#0b1329] via-[#0b1329]/90 to-transparent" />
+          </div>
+        ) : (
+          <div className="absolute inset-0 z-0 opacity-20 bg-[radial-gradient(#0284c7_1px,transparent_1px)] [background-size:24px_24px]" />
         )}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20 pt-16 sm:pt-20 flex justify-start">
+        
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-left max-w-3xl"
+            transition={{ duration: 0.5 }}
+            className="max-w-3xl"
           >
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-6 drop-shadow-md text-white">{header.title || t.servicePage.defaultHeaderTitle}</h1>
-            <p className="text-base sm:text-xl text-white font-medium drop-shadow-sm">
+            <span className="text-[11px] font-bold tracking-widest text-[#38bdf8] uppercase block mb-3">
+              KOMPETENSI & LAYANAN
+            </span>
+            <h1 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight mb-4 leading-tight">
+              {header.title || t.servicePage.defaultHeaderTitle}
+            </h1>
+            <p className="text-sm sm:text-lg text-slate-300 font-light leading-relaxed">
               {header.subtitle || t.servicePage.defaultHeaderSubtitle}
             </p>
           </motion.div>
         </div>
       </section>
-      {/* Services List */}
-      <section className="py-12 sm:py-20 bg-[var(--bg-light)]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16 sm:space-y-24">
+
+      {/* 2. Services List */}
+      <section className="py-20 sm:py-28 bg-[#f8fafc]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12 sm:space-y-16">
           {services.map((service, idx) => {
             const Icon = typeof service.icon === 'function' ? service.icon : getServiceIcon(service.icon, idx);
             const isEven = idx % 2 === 1;
@@ -113,54 +120,58 @@ export default function Service() {
             return (
               <motion.div 
                 key={service.id}
-                initial={{ opacity: 0, y: 40 }}
+                initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-100px" }}
-                transition={{ duration: 0.6 }}
-                className={`flex flex-col ${isEven ? 'lg:flex-row-reverse' : 'lg:flex-row'} gap-8 lg:gap-12 items-center`}
+                transition={{ duration: 0.5 }}
+                className={`bg-white rounded-3xl p-6 sm:p-10 lg:p-12 border border-slate-100 flex flex-col ${isEven ? 'lg:flex-row-reverse' : 'lg:flex-row'} gap-8 lg:gap-14 items-center shadow-sm hover:shadow-md transition-shadow`}
               >
                 {/* Image Side */}
                 <div className="w-full lg:w-1/2">
-                  <div className="relative rounded-2xl overflow-hidden shadow-2xl group">
-                    <div className="absolute inset-0 bg-[var(--primary-blue)]/20 group-hover:bg-transparent transition-colors duration-500 z-10"></div>
+                  <div className="relative rounded-2xl overflow-hidden aspect-[16/11] border border-slate-100 group">
                     <img 
                       src={service.image} 
                       alt={service.title} 
-                      className="w-full h-[260px] sm:h-[350px] md:h-[400px] object-cover group-hover:scale-105 transition-transform duration-700"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
-                    <div className="absolute top-4 left-4 z-20 bg-white p-2.5 sm:p-3 rounded-xl shadow-lg">
-                      {Icon ? <Icon className="w-6 h-6 sm:w-8 sm:h-8 text-[var(--accent-blue)]" /> : <Wrench className="w-6 h-6 sm:w-8 sm:h-8 text-[var(--accent-blue)]" />}
+                    <div className="absolute top-4 left-4 z-20 bg-white/95 backdrop-blur-sm p-3 rounded-xl shadow-sm border border-slate-100">
+                      {Icon ? <Icon className="w-6 h-6 text-[#0284c7]" /> : <Wrench className="w-6 h-6 text-[#0284c7]" />}
                     </div>
                   </div>
                 </div>
 
                 {/* Content Side */}
                 <div className="w-full lg:w-1/2">
-                  <h2 className="text-2xl sm:text-3xl font-bold text-[var(--primary-dark)] mb-3 sm:mb-4">{service.title}</h2>
-                  <p className="text-base sm:text-lg text-gray-600 mb-6 sm:mb-8 leading-relaxed">
+                  <span className="text-[10px] font-bold tracking-widest text-[#0284c7] uppercase mb-2 block">
+                    SEKTOR LAYANAN 0{idx + 1}
+                  </span>
+                  <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0f172a] mb-3 leading-tight">
+                    {service.title}
+                  </h2>
+                  <p className="text-sm sm:text-base text-slate-600 mb-6 leading-relaxed">
                     {service.description}
                   </p>
                   
-                  <div className="bg-white p-5 sm:p-6 rounded-xl border border-gray-100 shadow-sm">
-                    <h3 className="font-semibold text-[var(--primary-dark)] mb-3 sm:mb-4 flex items-center gap-2 text-sm sm:text-base">
-                      <Wrench className="w-4 h-4 sm:w-5 sm:h-5 text-[var(--accent-gold)]" /> {t.common.scopeOfWork}:
+                  <div className="bg-[#f8fafc] p-5 sm:p-6 rounded-2xl border border-slate-100 mb-8">
+                    <h3 className="font-bold text-[#0f172a] mb-3 flex items-center gap-2 text-xs sm:text-sm tracking-wide uppercase">
+                      {t.common.scopeOfWork}
                     </h3>
-                    <ul className="space-y-2.5 sm:space-y-3">
+                    <ul className="space-y-2.5">
                       {(service.features || []).map((feature, fIdx) => (
                         <li key={fIdx} className="flex items-start gap-3">
-                          <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 text-[var(--accent-blue)] shrink-0 mt-0.5" />
-                          <span className="text-gray-700 text-sm sm:text-base">{feature}</span>
+                          <CheckCircle2 className="w-4 h-4 text-[#0284c7] shrink-0 mt-0.5" />
+                          <span className="text-slate-600 text-xs sm:text-sm">{feature}</span>
                         </li>
                       ))}
                     </ul>
                   </div>
 
-                  <div className="mt-8">
+                  <div>
                     <Link 
                       to={`/service/${service.id}`} 
-                      className="inline-flex items-center gap-2 text-[var(--accent-blue)] font-bold hover:text-[var(--primary-blue)] transition-colors group/link"
+                      className="pertamina-btn-pill"
                     >
-                      {t.common.viewDetail} <ArrowRight className="w-4 h-4 group-hover/link:translate-x-1 transition-transform" />
+                      {t.common.viewDetail} <ArrowRight className="w-3.5 h-3.5 text-[#0284c7]" />
                     </Link>
                   </div>
                 </div>
