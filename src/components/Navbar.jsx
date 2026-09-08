@@ -83,15 +83,15 @@ export default function Navbar() {
               );
             })}
             
-            {/* Translate Button Desktop */}
-            <div className="pl-2 border-l border-white/20">
+            {/* Translate Button Desktop - DISABLED */}
+            {/* <div className="pl-2 border-l border-white/20">
               <LanguageToggle />
-            </div>
+            </div> */}
           </nav>
 
           {/* Mobile Right Controls (Toggle + Menu Button) */}
           <div className="flex items-center gap-3 lg:hidden">
-            <LanguageToggle />
+            {/* <LanguageToggle /> DISABLED */}
             <button 
               className="text-white hover:text-[var(--accent-gold)] transition-colors p-1"
               onClick={() => setIsOpen(!isOpen)}

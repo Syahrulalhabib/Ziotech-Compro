@@ -1,7 +1,7 @@
 import { DICTIONARY } from './dictionary.js';
 
 // Google Translate GTX endpoint with localStorage caching
-const TRANSLATE_CACHE_KEY = 'ziotech_translations_cache_v2';
+const TRANSLATE_CACHE_KEY = 'ziotech_translations_cache_v4';
 
 function getCache() {
   try {
@@ -105,8 +105,12 @@ export async function translateContent(data, targetLang = 'en') {
         const s = { ...svc };
         if (s.title) s.title = await translateText(s.title);
         if (s.description) s.description = await translateText(s.description);
-        if (Array.isArray(s.features)) {
-          s.features = await Promise.all(s.features.map(f => translateText(f)));
+        if (s.shortDesc) s.shortDesc = await translateText(s.shortDesc);
+        const featsRaw = Array.isArray(s.features)
+          ? s.features
+          : (s.features && typeof s.features === 'object' ? Object.values(s.features) : []);
+        if (featsRaw.length > 0) {
+          s.features = await Promise.all(featsRaw.map(f => translateText(f)));
         }
         return s;
       })

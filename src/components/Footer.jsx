@@ -182,7 +182,7 @@ export default function Footer() {
         <div className="pt-6 sm:pt-8 border-t border-white/10 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs sm:text-sm text-gray-500 text-center sm:text-left">
           <p>&copy; {new Date().getFullYear()} {company.name}. {t.common.rightsReserved}</p>
           <div className="flex items-center gap-5">
-            <LanguageToggle className="!bg-white/5 !border-white/10" />
+            {/* <LanguageToggle className="!bg-white/5 !border-white/10" /> DISABLED */}
           </div>
         </div>
       </div>

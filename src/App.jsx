@@ -14,6 +14,7 @@ import ProjectDetail from './pages/ProjectDetail';
 import Contact from './pages/Contact';
 import Login from './pages/admin/Login';
 import Dashboard from './pages/admin/Dashboard';
+import NotFound from './pages/NotFound';
 
 function App() {
   return (
@@ -35,7 +36,7 @@ function App() {
                 <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
                 <Route path="/admin/login" element={<Login />} />
                 <Route path="/admin/dashboard" element={<Dashboard />} />
-                <Route path="*" element={<Navigate to="/" replace />} />
+                <Route path="*" element={<NotFound />} />
               </Routes>
             </Layout>
           </BrowserRouter>

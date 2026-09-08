@@ -76,6 +76,9 @@ export const DICTIONARY = {
   'Digitalisasi': 'Digitalization',
 
   // Home & About
+  'INOVASI & KUALITAS': 'INNOVATION & QUALITY',
+  'Menghadirkan Solusi Teknik dan Konstruksi Terbaik untuk Negeri': 'Delivering the Best Engineering & Construction Solutions for the Nation',
+  'Didirikan dengan semangat profesionalisme dan integritas tinggi, PT Ziotech Global Inovasi fokus menghadirkan layanan teknik MEP dan konstruksi yang berorientasi nilai tambah.': 'Founded on strong professionalism and integrity, PT Ziotech Global Inovasi focuses on delivering MEP engineering and construction services oriented toward added value.',
   'Solusi Cerdas untuk Infrastruktur & Industri Anda': 'Smart Solutions for Your Infrastructure & Industry',
   'PT. Ziotech Global Inovasi hadir sebagai mitra strategis dengan komitmen pada kualitas, efisiensi, dan inovasi berkelanjutan khususnya di spesialisasi Mechanical, Eletrical & Plumbing (MEP).': 'PT Ziotech Global Inovasi stands as a trusted strategic partner committed to quality, efficiency, and sustainable innovation, specializing in Mechanical, Electrical & Plumbing (MEP).',
   'PT. Ziotech Global Inovasi hadir sebagai mitra strategis dengan komitmen pada kualitas, efisiensi, dan inovasi berkelanjutan khususnya di spesialisasi Mechanical, Electrical & Plumbing (MEP).': 'PT Ziotech Global Inovasi stands as a trusted strategic partner committed to quality, efficiency, and sustainable innovation, specializing in Mechanical, Electrical & Plumbing (MEP).',

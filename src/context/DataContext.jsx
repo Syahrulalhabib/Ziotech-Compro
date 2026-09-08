@@ -193,9 +193,16 @@ export function DataProvider({ children }) {
               ...fallback,
               ...svc,
               featured: Boolean(svc.featured),
-              features: (svc.features && svc.features.length > 0)
-                ? svc.features
-                : (fallback?.features || []),
+              features: (() => {
+                const f = svc.features;
+                if (!f) return fallback?.features || [];
+                if (Array.isArray(f) && f.length > 0) return f;
+                if (!Array.isArray(f) && typeof f === 'object') {
+                  const arr = Object.values(f).filter(Boolean);
+                  return arr.length > 0 ? arr : (fallback?.features || []);
+                }
+                return fallback?.features || [];
+              })(),
               image: svc.image || fallback?.image || ''
             };
           });
@@ -260,6 +267,8 @@ export function DataProvider({ children }) {
   // When language switches to 'en', dynamically translate Indonesian RTDB content
   const [translating, setTranslating] = useState(false);
 
+  // TRANSLATE_DISABLED: comment out translate trigger until feature is re-enabled
+  /* TRANSLATE_DISABLED
   useEffect(() => {
     let cancelled = false;
 
@@ -285,8 +294,10 @@ export function DataProvider({ children }) {
       cancelled = true;
     };
   }, [lang, rawData]);
+  */
 
-  const activeData = lang === 'en' && translatedData ? translatedData : rawData;
+  // TRANSLATE_DISABLED: always use rawData until translate feature is re-enabled
+  const activeData = rawData;
 
   return (
     <DataContext.Provider value={{ data: activeData, rawData, loading, translating }}>
