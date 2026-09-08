@@ -1,10 +1,13 @@
 import { useState } from 'react';
 import { useData } from '../context/DataContext';
+import { useLanguage } from '../context/LanguageContext';
+import { Link } from 'react-router-dom';
 import { MapPin, Calendar, Building2, ChevronRight, Filter } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Project() {
   const { data, loading } = useData();
+  const { t } = useLanguage();
   const [activeCategory, setActiveCategory] = useState('Semua');
 
   if (loading) return (
@@ -24,9 +27,9 @@ export default function Project() {
   const header = data?.pageHeaders?.project || {};
 
   return (
-    <div className="pt-24 md:pt-32">
+    <div className="pt-20 md:pt-32 overflow-hidden">
       {/* Header */}
-      <section className="bg-[var(--primary-dark)] text-white py-28 mt-[-6rem] md:mt-[-8rem] relative overflow-hidden">
+      <section className="bg-[var(--primary-dark)] text-white py-16 md:py-28 mt-[-5rem] md:mt-[-8rem] relative overflow-hidden">
         {header.image && (
           <>
             <div className="absolute inset-0 z-0">
@@ -35,23 +38,23 @@ export default function Project() {
             <div className="absolute inset-0 bg-[var(--primary-dark)]/20 z-10"></div>
           </>
         )}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20 pt-20 flex justify-start">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20 pt-16 sm:pt-20 flex justify-start">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             className="text-left max-w-3xl"
           >
-            <h1 className="text-4xl md:text-5xl font-bold mb-6 drop-shadow-md text-white">{header.title || 'Portofolio Proyek'}</h1>
-            <p className="text-xl text-white font-medium drop-shadow-sm">
-              {header.subtitle || 'Bukti nyata komitmen kami dalam memberikan hasil karya terbaik di berbagai sektor industri.'}
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-6 drop-shadow-md text-white">{header.title || t.projectPage.defaultHeaderTitle}</h1>
+            <p className="text-base sm:text-xl text-white font-medium drop-shadow-sm">
+              {header.subtitle || t.projectPage.defaultHeaderSubtitle}
             </p>
           </motion.div>
         </div>
       </section>
 
       {/* Projects Section */}
-      <section className="py-20 bg-[var(--bg-light)] min-h-screen">
+      <section className="py-12 sm:py-20 bg-[var(--bg-light)] min-h-screen">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
           {/* Filter Categories */}
@@ -59,21 +62,21 @@ export default function Project() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="flex flex-wrap justify-center gap-3 mb-16"
+            className="flex flex-wrap justify-center gap-2 sm:gap-3 mb-10 sm:mb-16"
           >
             <div className="flex items-center gap-2 mr-4 text-gray-500 font-medium hidden md:flex">
-              <Filter className="w-5 h-5" /> Filter:
+              <Filter className="w-5 h-5" /> {t.common.filterLabel}
             </div>
             {categories.map((category) => (
               <button
                 key={category}
                 onClick={() => setActiveCategory(category)}
-                className={`px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 ${activeCategory === category
+                className={`px-4 sm:px-6 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-semibold transition-all duration-300 ${activeCategory === category
                     ? 'bg-[var(--accent-blue)] text-white shadow-lg shadow-blue-500/30'
                     : 'bg-white text-gray-600 hover:bg-blue-50 border border-gray-200 hover:border-blue-200'
                   }`}
               >
-                {category}
+                {category === 'Semua' ? t.common.all : category}
               </button>
             ))}
           </motion.div>
@@ -81,7 +84,7 @@ export default function Project() {
           {/* Project Grid */}
           <motion.div
             layout
-            className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
+            className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8"
           >
             <AnimatePresence>
               {filteredProjects.map((project) => (
@@ -128,14 +131,14 @@ export default function Project() {
                       </div>
                       <div className="flex items-center gap-3">
                         <Calendar className="w-4 h-4 text-[var(--primary-blue)]" />
-                        <span>Tahun {project.year}</span>
+                        <span>{t.common.yearPrefix} {project.year}</span>
                       </div>
                     </div>
 
-                    <div className="pt-4 border-t border-gray-100 flex items-center text-[var(--accent-blue)] font-medium text-sm group/link">
-                      Lihat Detail
+                    <Link to={`/project/${project.id}`} className="pt-4 border-t border-gray-100 flex items-center text-[var(--accent-blue)] font-medium text-sm group/link">
+                      {t.common.viewDetail}
                       <ChevronRight className="w-4 h-4 ml-1 group-hover/link:translate-x-1 transition-transform" />
-                    </div>
+                    </Link>
                   </div>
                 </motion.div>
               ))}
@@ -146,7 +149,7 @@ export default function Project() {
           {filteredProjects.length === 0 && (
             <div className="text-center py-20 text-gray-500">
               <Building2 className="w-16 h-16 mx-auto mb-4 text-gray-300" />
-              <p className="text-lg">Belum ada proyek untuk kategori ini.</p>
+              <p className="text-lg">{t.common.emptyProjects}</p>
             </div>
           )}
 
@@ -155,3 +158,5 @@ export default function Project() {
     </div>
   );
 }
+
+

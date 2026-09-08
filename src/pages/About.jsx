@@ -1,9 +1,11 @@
 import { useData } from '../context/DataContext';
+import { useLanguage } from '../context/LanguageContext';
 import { Target, Lightbulb, Shield, Users, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function About() {
   const { data, loading } = useData();
+  const { t } = useLanguage();
 
   if (loading) return (
     <div className="min-h-screen flex items-center justify-center">
@@ -12,25 +14,25 @@ export default function About() {
   );
 
   const aboutData = data?.about || {
-    description: 'Didirikan dengan semangat profesionalisme dan integritas, PT Ziotech Global Inovasi berfokus pada penyediaan layanan dan produk yang mampu meningkatkan produktivitas serta memberikan nilai tambah bagi setiap klien.',
-    vision: 'Menjadi perusahaan terkemuka di bidang konstruksi, pertambangan, komersil, dan infrastruktur dengan solusi inovatif dan berkelanjutan.',
-    mission: '1. Memberikan layanan dan produk berkualitas tinggi.\n2. Mengedepankan inovasi dan teknologi.\n3. Membangun kemitraan strategis jangka panjang.\n4. Berkontribusi pada pembangunan infrastruktur nasional.',
+    description: t.aboutPage.defaultDesc,
+    vision: t.aboutPage.defaultVision,
+    mission: t.aboutPage.defaultMission,
     image: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80'
   };
 
   const header = data?.pageHeaders?.about || {};
 
   const values = [
-    { icon: Shield, title: 'Integritas', desc: 'Kami menjunjung tinggi kejujuran dan etika profesional dalam setiap aspek pekerjaan.' },
-    { icon: Lightbulb, title: 'Inovasi', desc: 'Terus berinovasi memberikan solusi terbaik menggunakan teknologi terkini.' },
-    { icon: Target, title: 'Kualitas', desc: 'Berkomitmen penuh pada standar kualitas tinggi untuk kepuasan klien.' },
-    { icon: Users, title: 'Kolaborasi', desc: 'Membangun sinergi yang kuat dengan mitra dan seluruh pemangku kepentingan.' }
+    { icon: Shield, title: t.aboutPage.val1Title, desc: t.aboutPage.val1Desc },
+    { icon: Lightbulb, title: t.aboutPage.val2Title, desc: t.aboutPage.val2Desc },
+    { icon: Target, title: t.aboutPage.val3Title, desc: t.aboutPage.val3Desc },
+    { icon: Users, title: t.aboutPage.val4Title, desc: t.aboutPage.val4Desc }
   ];
 
   return (
-    <div className="pt-24 md:pt-32">
+    <div className="pt-20 md:pt-32 overflow-hidden">
       {/* Page Header */}
-      <section className="bg-[var(--primary-dark)] text-white py-28 relative overflow-hidden mt-[-6rem] md:mt-[-8rem]">
+      <section className="bg-[var(--primary-dark)] text-white py-16 md:py-28 relative overflow-hidden mt-[-5rem] md:mt-[-8rem]">
         {header.image && (
           <>
             <div className="absolute inset-0 z-0">
@@ -41,38 +43,38 @@ export default function About() {
         )}
         <div className="absolute inset-0 bg-gradient-to-r from-[var(--primary-dark)]/70 to-transparent z-10 pointer-events-none"></div>
         
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20 pt-20 flex justify-start">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20 pt-16 sm:pt-20 flex justify-start">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             className="text-left max-w-3xl"
           >
-            <h1 className="text-4xl md:text-5xl font-bold mb-4 drop-shadow-md text-white">{header.title || 'Tentang Kami'}</h1>
-            <p className="text-xl text-white max-w-2xl drop-shadow-sm font-medium">{header.subtitle || 'Mengenal lebih dekat PT Ziotech Global Inovasi, visi, misi, dan nilai-nilai perusahaan.'}</p>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-3 sm:mb-4 drop-shadow-md text-white">{header.title || t.aboutPage.defaultHeaderTitle}</h1>
+            <p className="text-base sm:text-xl text-white max-w-2xl drop-shadow-sm font-medium">{header.subtitle || t.aboutPage.defaultHeaderSubtitle}</p>
           </motion.div>
         </div>
       </section>
 
       {/* Main About Content */}
-      <section className="py-20 bg-white">
+      <section className="py-12 sm:py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
+          <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
             <motion.div 
               initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               className="relative"
             >
-              <div className="absolute -inset-4 bg-[var(--accent-gold)]/20 rounded-2xl transform rotate-3"></div>
+              <div className="absolute -inset-2 sm:-inset-4 bg-[var(--accent-gold)]/20 rounded-2xl transform rotate-3"></div>
               <img 
                 src={aboutData.image || "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"} 
                 alt="Tentang Ziotech" 
-                className="relative rounded-2xl shadow-xl w-full h-[500px] object-cover"
+                className="relative rounded-2xl shadow-xl w-full h-[320px] sm:h-[420px] md:h-[500px] object-cover"
               />
-              <div className="absolute -bottom-8 -right-8 bg-white p-6 rounded-xl shadow-lg hidden md:block">
-                <div className="text-4xl font-bold text-[var(--primary-blue)] mb-1">10+</div>
-                <div className="text-sm font-semibold text-gray-600">Tahun<br/>Pengalaman</div>
+              <div className="absolute -bottom-6 -right-6 bg-white p-4 sm:p-6 rounded-xl shadow-lg hidden sm:block">
+                <div className="text-3xl sm:text-4xl font-bold text-[var(--primary-blue)] mb-1">10+</div>
+                <div className="text-xs sm:text-sm font-semibold text-gray-600">{t.aboutPage.statsYears}</div>
               </div>
             </motion.div>
 
@@ -81,23 +83,23 @@ export default function About() {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
             >
-              <h2 className="text-3xl font-bold text-[var(--primary-dark)] mb-6">Mitra Terpercaya Untuk Solusi Industri</h2>
+              <h2 className="text-2xl sm:text-3xl font-bold text-[var(--primary-dark)] mb-4 sm:mb-6">{t.aboutPage.mainTitle}</h2>
               <div className="prose prose-lg text-gray-600">
-                <p className="leading-relaxed mb-6">{aboutData.description}</p>
+                <p className="leading-relaxed mb-6 text-sm sm:text-base">{aboutData.description}</p>
                 
-                <div className="mt-10 space-y-8">
-                  <div className="bg-[var(--bg-light)] p-6 rounded-xl border-l-4 border-[var(--primary-blue)]">
-                    <h3 className="text-xl font-bold text-[var(--primary-dark)] mb-3 flex items-center gap-2">
-                      <Target className="text-[var(--primary-blue)]" /> Visi Kami
+                <div className="mt-8 sm:mt-10 space-y-6 sm:space-y-8">
+                  <div className="bg-[var(--bg-light)] p-5 sm:p-6 rounded-xl border-l-4 border-[var(--primary-blue)]">
+                    <h3 className="text-lg sm:text-xl font-bold text-[var(--primary-dark)] mb-2 sm:mb-3 flex items-center gap-2">
+                      <Target className="text-[var(--primary-blue)] w-5 h-5" /> {t.aboutPage.visionTitle}
                     </h3>
-                    <p className="text-gray-700">{aboutData.vision}</p>
+                    <p className="text-gray-700 text-sm sm:text-base">{aboutData.vision}</p>
                   </div>
                   
-                  <div className="bg-[var(--bg-light)] p-6 rounded-xl border-l-4 border-[var(--accent-gold)]">
-                    <h3 className="text-xl font-bold text-[var(--primary-dark)] mb-3 flex items-center gap-2">
-                      <ArrowRight className="text-[var(--accent-gold)]" /> Misi Kami
+                  <div className="bg-[var(--bg-light)] p-5 sm:p-6 rounded-xl border-l-4 border-[var(--accent-gold)]">
+                    <h3 className="text-lg sm:text-xl font-bold text-[var(--primary-dark)] mb-2 sm:mb-3 flex items-center gap-2">
+                      <ArrowRight className="text-[var(--accent-gold)] w-5 h-5" /> {t.aboutPage.missionTitle}
                     </h3>
-                    <div className="text-gray-700 whitespace-pre-line leading-relaxed">
+                    <div className="text-gray-700 whitespace-pre-line leading-relaxed text-sm sm:text-base">
                       {aboutData.mission}
                     </div>
                   </div>
@@ -109,14 +111,16 @@ export default function About() {
       </section>
 
       {/* Core Values */}
-      <section className="py-20 bg-[var(--bg-light)]">
+      <section className="py-12 sm:py-20 bg-[var(--bg-light)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-[var(--primary-dark)] mb-4">Nilai-Nilai Perusahaan</h2>
-            <div className="w-24 h-1 bg-[var(--accent-blue)] mx-auto rounded-full"></div>
+          <div className="text-center mb-10 sm:mb-16">
+            <span className="text-[var(--accent-blue)] font-semibold tracking-wider uppercase text-xs sm:text-sm">{t.aboutPage.valuesBadge}</span>
+            <h2 className="text-2xl sm:text-3xl font-bold text-[var(--primary-dark)] mt-2 mb-3 sm:mb-4">{t.aboutPage.valuesTitle}</h2>
+            <p className="text-[var(--text-muted)] text-sm sm:text-base max-w-2xl mx-auto mb-4">{t.aboutPage.valuesSubtitle}</p>
+            <div className="w-20 sm:w-24 h-1 bg-[var(--accent-blue)] mx-auto rounded-full"></div>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
             {values.map((val, idx) => {
               const Icon = val.icon;
               return (

@@ -1,10 +1,13 @@
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState, useMemo } from 'react';
 import { ref, onValue } from 'firebase/database';
 import { db } from '../firebase/config';
+import { useLanguage } from './LanguageContext';
+import { translateContent } from '../services/translator';
 
 const DataContext = createContext();
 
 const defaultData = {
+
   home: {
     heroTitle: "Solusi Cerdas untuk Infrastruktur & Industri Anda",
     heroSubtitle: "PT. Ziotech Global Inovasi hadir sebagai mitra strategis dengan komitmen pada kualitas, efisiensi, dan inovasi berkelanjutan khususnya di spesialisasi Mechanical, Eletrical & Plumbing (MEP).",
@@ -23,6 +26,14 @@ const defaultData = {
     ],
     heroInterval: 5000,
     aboutPreviewImageUrl: "https://images.unsplash.com/photo-1503387762-592deb58ef4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
+    clientPartnersTitle: "Dipercaya Oleh Berbagai Perusahaan Terkemuka",
+    clientPartners: [
+      { id: 1, name: "PERTAMINA", logo: "" },
+      { id: 2, name: "PLN", logo: "" },
+      { id: 3, name: "WIKA", logo: "" },
+      { id: 4, name: "ANTAM", logo: "" },
+      { id: 5, name: "Adhi", logo: "" }
+    ],
   },
   about: {
     title: "Tentang PT Ziotech Global Inovasi",
@@ -116,7 +127,14 @@ const defaultData = {
     address: "Jl. Contoh Alamat No. 123, Jakarta, Indonesia",
     phone: "(021) 12345678",
     email: "info@ziotech.co.id",
-    logoPath: ""
+    workingHours: "Senin - Jumat: 08:00 - 17:00",
+    googleMapsEmbedUrl: "",
+    logoPath: "",
+    socials: [
+      { id: 1, platform: 'linkedin', url: 'https://linkedin.com' },
+      { id: 2, platform: 'instagram', url: 'https://instagram.com' },
+      { id: 3, platform: 'facebook', url: 'https://facebook.com' }
+    ]
   },
   projects: [
     { id: 1, title: 'Instalasi MEP Gedung Perkantoran 20 Lantai', category: 'MEP', location: 'Jakarta Pusat', year: '2025', client: 'PT Maju Bersama', description: 'Pengerjaan sistem mekanikal, elektrikal, dan plumbing komprehensif untuk gedung perkantoran Grade A.', image: 'https://images.unsplash.com/photo-1541888086425-d81bb19240f5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80' },
@@ -129,8 +147,10 @@ const defaultData = {
 };
 
 export function DataProvider({ children }) {
-  const [data, setData] = useState(defaultData);
+  const [rawData, setRawData] = useState(defaultData);
+  const [translatedData, setTranslatedData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const { lang } = useLanguage();
 
   useEffect(() => {
     // Pastikan app id firebase valid sebelum fetching (mencegah error jika .env kosong)
@@ -189,15 +209,27 @@ export function DataProvider({ children }) {
           }
 
           // Merge home: pastikan field lama tetap dapat nilai default
-          const home = { ...defaultData.home, ...(dbData.home || {}) };
+          const home = { 
+            ...defaultData.home, 
+            ...(dbData.home || {}),
+            clientPartners: safeArray(dbData.home?.clientPartners, defaultData.home.clientPartners)
+          };
 
-          setData(prev => ({
+          // Merge company: pastikan socials selalu berbentuk array aman
+          const company = {
+            ...defaultData.company,
+            ...(dbData.company || {}),
+            socials: safeArray(dbData.company?.socials, defaultData.company.socials)
+          };
+
+          setRawData(prev => ({
             ...prev,
             ...dbData,
             home,
             pageHeaders,
             services,
-            projects
+            projects,
+            company
           }));
         }
         setLoading(false);
@@ -213,8 +245,33 @@ export function DataProvider({ children }) {
     }
   }, []);
 
+  // When language switches to 'en', dynamically translate Indonesian RTDB content
+  useEffect(() => {
+    let cancelled = false;
+
+    if (lang === 'en' && rawData) {
+      translateContent(rawData, 'en')
+        .then((translated) => {
+          if (!cancelled) {
+            setTranslatedData(translated);
+          }
+        })
+        .catch((err) => {
+          console.warn('Translation error:', err);
+        });
+    } else {
+      setTranslatedData(null);
+    }
+
+    return () => {
+      cancelled = true;
+    };
+  }, [lang, rawData]);
+
+  const activeData = lang === 'en' && translatedData ? translatedData : rawData;
+
   return (
-    <DataContext.Provider value={{ data, loading }}>
+    <DataContext.Provider value={{ data: activeData, rawData, loading }}>
       {children}
     </DataContext.Provider>
   );

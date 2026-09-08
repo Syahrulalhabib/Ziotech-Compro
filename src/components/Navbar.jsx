@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useData } from '../context/DataContext';
+import { useLanguage } from '../context/LanguageContext';
+import LanguageToggle from './LanguageToggle';
 import { Menu, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import logo from '../assets/ziotech.png';
@@ -9,16 +11,17 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const { data } = useData();
+  const { t } = useLanguage();
   const location = useLocation();
 
   const company = data?.company || { name: 'Ziotech' };
 
   const navLinks = [
-    { name: 'Beranda', path: '/' },
-    { name: 'Tentang Kami', path: '/about' },
-    { name: 'Layanan', path: '/service' },
-    { name: 'Proyek', path: '/project' },
-    { name: 'Kontak', path: '/contact' },
+    { name: t.nav.home, path: '/' },
+    { name: t.nav.about, path: '/about' },
+    { name: t.nav.service, path: '/service' },
+    { name: t.nav.project, path: '/project' },
+    { name: t.nav.contact, path: '/contact' },
   ];
 
   useEffect(() => {
@@ -56,15 +59,15 @@ export default function Navbar() {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center gap-8">
+          <nav className="hidden lg:flex items-center gap-7">
             {navLinks.map((link) => {
               const isActive = location.pathname === link.path;
               return (
                 <Link 
                   key={link.name} 
                   to={link.path}
-                  className={`font-medium transition-colors hover:text-white relative ${
-                    isActive ? 'text-white' : 'text-gray-200'
+                  className={`font-medium transition-colors hover:text-white relative text-sm xl:text-base ${
+                    isActive ? 'text-white font-semibold' : 'text-gray-200'
                   }`}
                 >
                   {link.name}
@@ -79,16 +82,24 @@ export default function Navbar() {
                 </Link>
               );
             })}
+            
+            {/* Translate Button Desktop */}
+            <div className="pl-2 border-l border-white/20">
+              <LanguageToggle />
+            </div>
           </nav>
 
-          {/* Mobile Menu Button */}
-          <button 
-            className="lg:hidden text-white hover:text-[var(--accent-gold)] transition-colors p-1"
-            onClick={() => setIsOpen(!isOpen)}
-            aria-label="Buka menu"
-          >
-            {isOpen ? <X size={28} /> : <Menu size={28} />}
-          </button>
+          {/* Mobile Right Controls (Toggle + Menu Button) */}
+          <div className="flex items-center gap-3 lg:hidden">
+            <LanguageToggle />
+            <button 
+              className="text-white hover:text-[var(--accent-gold)] transition-colors p-1"
+              onClick={() => setIsOpen(!isOpen)}
+              aria-label="Buka menu"
+            >
+              {isOpen ? <X size={26} /> : <Menu size={26} />}
+            </button>
+          </div>
         </div>
       </div>
 

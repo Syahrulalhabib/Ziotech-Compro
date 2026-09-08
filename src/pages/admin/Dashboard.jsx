@@ -1,10 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
-import { ref, set } from 'firebase/database';
+import { ref, set, onValue, remove, update } from 'firebase/database';
 import { auth, db } from '../../firebase/config';
 import { useData } from '../../context/DataContext';
-import { LogOut, Save, Home, Info, LayoutDashboard, Image as ImageIcon, Type, Menu, X, CheckCircle2, AlertCircle, Briefcase, Wrench, Phone, Plus, Trash2, Star, CalendarClock } from 'lucide-react';
+import { LogOut, Save, Home, Info, LayoutDashboard, Image as ImageIcon, Type, Menu, X, CheckCircle2, AlertCircle, Briefcase, Wrench, Phone, Plus, Trash2, Star, CalendarClock, Building2, Share2, Globe, MapPin, Inbox, Mail, User, Clock, ExternalLink, Copy, Check } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const defaultCompany = {
@@ -12,7 +12,8 @@ const defaultCompany = {
   address: 'Jl. Contoh Alamat No. 123, Jakarta, Indonesia',
   phone: '+62 812 3456 7890',
   email: 'info@ziotech.co.id',
-  workingHours: 'Senin - Jumat: 08:00 - 17:00'
+  workingHours: 'Senin - Jumat: 08:00 - 17:00',
+  googleMapsEmbedUrl: ''
 };
 
 const defaultPageHeaders = {
@@ -142,7 +143,7 @@ const InputField = ({ label, icon: Icon, type = "text", value, onChange, placeho
   </div>
 );
 
-const ImageUploadBox = ({ value, onChange, label, onImageUpload }) => {
+const ImageUploadBox = ({ value, onChange, label, onImageUpload, aspect }) => {
   const [previewError, setPreviewError] = useState(false);
 
   // Reset status error setiap kali nilai gambar berubah
@@ -158,38 +159,63 @@ const ImageUploadBox = ({ value, onChange, label, onImageUpload }) => {
           {label}
         </label>
       )}
-      <div className="p-4 border-2 border-dashed border-slate-200 rounded-2xl bg-slate-50 hover:bg-slate-100/50 transition-colors group">
-        <div className="flex flex-col gap-4">
-          <input
-            type="text"
-            value={value || ''}
-            onChange={(e) => onChange(e.target.value)}
-            placeholder="Masukkan URL Gambar..."
-            className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all outline-none text-sm text-slate-700"
-          />
-          <div className="flex items-center gap-4">
-            <div className="h-px bg-slate-200 flex-1"></div>
-            <span className="text-xs text-slate-400 font-bold uppercase tracking-wider">Atau Upload</span>
-            <div className="h-px bg-slate-200 flex-1"></div>
+      <div className="p-5 border border-slate-200 rounded-2xl bg-white shadow-sm hover:shadow-md transition-shadow group">
+        <div className="flex flex-col md:flex-row gap-6">
+          <div className="flex-1 space-y-4">
+            <div>
+               <label className="block text-xs font-medium text-slate-500 mb-1.5">URL Gambar (Opsional)</label>
+              <input
+                type="text"
+                value={value || ''}
+                onChange={(e) => onChange(e.target.value)}
+                placeholder="https://..."
+                className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:bg-white transition-all outline-none text-sm text-slate-700"
+              />
+            </div>
+            
+            <div className="flex items-center gap-4">
+              <div className="h-px bg-slate-100 flex-1"></div>
+              <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Atau Upload</span>
+              <div className="h-px bg-slate-100 flex-1"></div>
+            </div>
+            
+            <div>
+              <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-slate-200 rounded-xl bg-slate-50 hover:bg-blue-50/50 hover:border-blue-300 transition-colors cursor-pointer relative overflow-hidden group/upload">
+                <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                   <div className="p-3 bg-white rounded-full shadow-sm mb-3 group-hover/upload:scale-110 transition-transform">
+                      <ImageIcon className="w-5 h-5 text-blue-500" />
+                   </div>
+                  <p className="text-sm font-semibold text-slate-700 mb-1">Klik untuk upload</p>
+                  <p className="text-xs text-slate-500">Maks. 5MB</p>
+                </div>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => onImageUpload(e, onChange, aspect)}
+                  className="hidden"
+                />
+              </label>
+            </div>
           </div>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={(e) => onImageUpload(e, onChange)}
-            className="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 file:cursor-pointer cursor-pointer bg-white border border-slate-200 rounded-full"
-          />
-          {value && !previewError && (
-            <div className="w-full aspect-[4/3] rounded-xl overflow-hidden border border-slate-200 bg-white relative mt-2">
-              <img src={value} alt="Preview" className="w-full h-full object-cover" onError={() => setPreviewError(true)} />
+
+          <div className="w-full md:w-48 shrink-0 flex flex-col justify-start">
+             <label className="block text-xs font-medium text-slate-500 mb-1.5">Preview</label>
+            <div className="w-full aspect-video rounded-xl overflow-hidden border border-slate-200 bg-slate-50 relative flex items-center justify-center">
+              {value && !previewError ? (
+                <img src={value} alt="Preview" className="w-full h-full object-contain" onError={() => setPreviewError(true)} />
+              ) : value && previewError ? (
+                <div className="flex flex-col items-center justify-center gap-2 p-3 text-center">
+                  <AlertCircle className="w-5 h-5 text-red-400" />
+                  <p className="text-[10px] text-red-500">Gagal dimuat</p>
+                </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center text-slate-300">
+                    <ImageIcon className="w-6 h-6 mb-1 opacity-50" />
+                    <span className="text-[10px] font-medium">Belum ada gambar</span>
+                </div>
+              )}
             </div>
-          )}
-          {value && previewError && (
-            <div className="w-full aspect-[4/3] rounded-xl overflow-hidden border border-red-200 bg-red-50 mt-2 flex flex-col items-center justify-center gap-2 p-4 text-center">
-              <AlertCircle className="w-8 h-8 text-red-400" />
-              <p className="text-sm font-semibold text-red-600">Gambar gagal dimuat</p>
-              <p className="text-xs text-red-500">Format mungkin tidak didukung browser (mis. HEIC) atau URL salah. Gunakan file JPG/PNG/WebP atau URL yang valid.</p>
-            </div>
-          )}
+          </div>
         </div>
       </div>
     </div>
@@ -209,10 +235,10 @@ const PageHeaderEditor = ({ page, label, formData, onChange, onImageUpload }) =>
     </div>
     <div className="grid lg:grid-cols-2 gap-6 items-start">
       <div className="space-y-6">
-        <InputField icon={Type} label="Judul Halaman" value={formData.pageHeaders?.[page]?.title} onChange={(e) => onChange(page, 'title', e.target.value)} />
-        <InputField icon={Type} label="Subjudul" value={formData.pageHeaders?.[page]?.subtitle} onChange={(e) => onChange(page, 'subtitle', e.target.value)} isTextarea />
+        <InputField icon={Type} label="Judul Halaman" value={formData?.pageHeaders?.[page]?.title || ''} onChange={(e) => onChange(page, 'title', e.target.value)} />
+        <InputField icon={Type} label="Subjudul" value={formData?.pageHeaders?.[page]?.subtitle || ''} onChange={(e) => onChange(page, 'subtitle', e.target.value)} isTextarea />
       </div>
-      <ImageUploadBox label="Gambar Background Header" value={formData.pageHeaders?.[page]?.image} onChange={(val) => onChange(page, 'image', val)} onImageUpload={onImageUpload} />
+      <ImageUploadBox label="Gambar Background Header" value={formData?.pageHeaders?.[page]?.image || ''} onChange={(val) => onChange(page, 'image', val)} onImageUpload={onImageUpload} />
     </div>
   </div>
 );
@@ -221,15 +247,23 @@ export default function Dashboard() {
   const [user, setUser] = useState(null);
   const [loadingAuth, setLoadingAuth] = useState(true);
   const navigate = useNavigate();
-  const { data, loading: dataLoading } = useData();
+  const { data, rawData, loading: dataLoading } = useData();
   const [formData, setFormData] = useState(null);
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState({ show: false, type: '', text: '' });
   const [activeTab, setActiveTab] = useState('home');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [messages, setMessages] = useState([]);
+  const [selectedMessage, setSelectedMessage] = useState(null);
 
   useEffect(() => {
+    // Safety fallback: if Firebase auth hangs or responds slowly, don't leave screen blank forever
+    const timer = setTimeout(() => {
+      setLoadingAuth(false);
+    }, 4000);
+
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      clearTimeout(timer);
       if (currentUser) {
         setUser(currentUser);
       } else {
@@ -237,21 +271,76 @@ export default function Dashboard() {
       }
       setLoadingAuth(false);
     });
-    return () => unsubscribe();
+    return () => {
+      clearTimeout(timer);
+      unsubscribe();
+    };
   }, [navigate]);
 
   useEffect(() => {
-    if (data && !formData) {
-      const parsedData = JSON.parse(JSON.stringify(data));
+    // Listen real-time pesan masuk di Firebase
+    if (!user) return;
+    const messagesRef = ref(db, 'messages');
+    const unsubscribeMessages = onValue(
+      messagesRef,
+      (snapshot) => {
+        const val = snapshot.val();
+        if (!val) {
+          setMessages([]);
+          return;
+        }
+        const list = Object.entries(val).map(([id, msg]) => ({
+          id,
+          ...msg
+        }));
+        // Sort newest first
+        list.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+        setMessages(list);
+      },
+      (error) => {
+        console.warn('Unable to read messages:', error?.message);
+        setMessages([]);
+      }
+    );
+
+    return () => unsubscribeMessages();
+  }, [user]);
+
+  useEffect(() => {
+    const sourceData = rawData || data;
+    if (sourceData && !formData) {
+      const parsedData = JSON.parse(JSON.stringify(sourceData));
+      
+      const cleanArray = (arr, fallback) => {
+        if (!arr) return fallback;
+        const list = Array.isArray(arr) ? arr : Object.values(arr);
+        return list.filter(Boolean);
+      };
+
+      const services = cleanArray(parsedData.services, defaultServices);
+      const projects = cleanArray(parsedData.projects, defaultProjects);
+
       setFormData({
         ...parsedData,
-        company: parsedData.company || defaultCompany,
-        services: parsedData.services || defaultServices,
-        projects: parsedData.projects || defaultProjects,
-        pageHeaders: parsedData.pageHeaders || defaultPageHeaders,
+        company: { ...defaultCompany, ...(parsedData.company || {}) },
+        services: services.length > 0 ? services : defaultServices,
+        projects: projects.length > 0 ? projects : defaultProjects,
+        pageHeaders: {
+          about: { ...defaultPageHeaders.about, ...(parsedData.pageHeaders?.about || {}) },
+          service: { ...defaultPageHeaders.service, ...(parsedData.pageHeaders?.service || {}) },
+          project: { ...defaultPageHeaders.project, ...(parsedData.pageHeaders?.project || {}) },
+          contact: { ...defaultPageHeaders.contact, ...(parsedData.pageHeaders?.contact || {}) }
+        },
+        home: {
+          heroTitles: [],
+          heroImages: [],
+          clientPartners: [],
+          ...parsedData.home,
+          clientPartners: cleanArray(parsedData.home?.clientPartners, [])
+        }
       });
     }
-  }, [data, formData]);
+  }, [rawData, data, formData]);
 
   const handleLogout = async () => {
     try {
@@ -278,6 +367,33 @@ export default function Dashboard() {
     }
     setSaving(false);
   };
+
+  const handleDeleteMessage = async (id) => {
+    if (!window.confirm('Hapus pesan ini dari database?')) return;
+    try {
+      await remove(ref(db, `messages/${id}`));
+      if (selectedMessage?.id === id) {
+        setSelectedMessage(null);
+      }
+      showToast('success', 'Pesan berhasil dihapus.');
+    } catch (err) {
+      console.error('Delete message error:', err);
+      showToast('error', 'Gagal menghapus pesan.');
+    }
+  };
+
+  const handleMarkMessageStatus = async (id, status) => {
+    try {
+      await update(ref(db, `messages/${id}`), { status });
+      if (selectedMessage?.id === id) {
+        setSelectedMessage((prev) => (prev ? { ...prev, status } : null));
+      }
+    } catch (err) {
+      console.error('Status update error:', err);
+    }
+  };
+
+  const unreadCount = messages.filter((m) => m.status !== 'read').length;
 
   const handleChange = (section, field, value) => {
     setFormData((prev) => ({
@@ -319,6 +435,88 @@ export default function Dashboard() {
       const newArray = [...prev[section]];
       newArray.splice(index, 1);
       return { ...prev, [section]: newArray };
+    });
+  };
+
+  const handleHomePartnerChange = (index, field, value) => {
+    setFormData((prev) => {
+      const partners = [...(prev.home?.clientPartners || [])];
+      partners[index] = { ...partners[index], [field]: value };
+      return {
+        ...prev,
+        home: {
+          ...prev.home,
+          clientPartners: partners
+        }
+      };
+    });
+  };
+
+  const addHomePartner = () => {
+    setFormData((prev) => ({
+      ...prev,
+      home: {
+        ...prev.home,
+        clientPartners: [
+          ...(prev.home?.clientPartners || []),
+          { id: Date.now(), name: 'Nama Mitra', logo: '' }
+        ]
+      }
+    }));
+  };
+
+  const removeHomePartner = (index) => {
+    setFormData((prev) => {
+      const partners = [...(prev.home?.clientPartners || [])];
+      partners.splice(index, 1);
+      return {
+        ...prev,
+        home: {
+          ...prev.home,
+          clientPartners: partners
+        }
+      };
+    });
+  };
+
+  const handleCompanySocialChange = (index, field, value) => {
+    setFormData((prev) => {
+      const socials = [...(prev.company?.socials || [])];
+      socials[index] = { ...socials[index], [field]: value };
+      return {
+        ...prev,
+        company: {
+          ...prev.company,
+          socials
+        }
+      };
+    });
+  };
+
+  const addCompanySocial = () => {
+    setFormData((prev) => ({
+      ...prev,
+      company: {
+        ...prev.company,
+        socials: [
+          ...(prev.company?.socials || []),
+          { id: Date.now(), platform: 'instagram', url: 'https://' }
+        ]
+      }
+    }));
+  };
+
+  const removeCompanySocial = (index) => {
+    setFormData((prev) => {
+      const socials = [...(prev.company?.socials || [])];
+      socials.splice(index, 1);
+      return {
+        ...prev,
+        company: {
+          ...prev.company,
+          socials
+        }
+      };
     });
   };
 
@@ -446,6 +644,24 @@ export default function Dashboard() {
           <button onClick={() => { setActiveTab('contact'); setIsMobileMenuOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${activeTab === 'contact' ? 'bg-blue-600 text-white shadow-md shadow-blue-900/20' : 'hover:bg-slate-800 hover:text-white'}`}>
             <Phone className="w-5 h-5" /> <span className="font-medium">Kontak & Perusahaan</span>
           </button>
+
+          <div className="pt-4 mt-4 border-t border-slate-800/80">
+            <p className="px-4 text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Interaksi</p>
+            <button 
+              onClick={() => { setActiveTab('inbox'); setIsMobileMenuOpen(false); }} 
+              className={`w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all ${activeTab === 'inbox' ? 'bg-blue-600 text-white shadow-md shadow-blue-900/20' : 'hover:bg-slate-800 hover:text-white'}`}
+            >
+              <div className="flex items-center gap-3">
+                <Inbox className="w-5 h-5" />
+                <span className="font-medium">Pesan Masuk</span>
+              </div>
+              {unreadCount > 0 && (
+                <span className="px-2 py-0.5 text-xs font-bold bg-red-500 text-white rounded-full">
+                  {unreadCount}
+                </span>
+              )}
+            </button>
+          </div>
         </div>
 
         <div className="p-4 border-t border-slate-800 shrink-0">
@@ -481,14 +697,22 @@ export default function Dashboard() {
               {activeTab === 'services' && 'Edit Layanan'}
               {activeTab === 'projects' && 'Edit Proyek'}
               {activeTab === 'contact' && 'Edit Kontak & Info Perusahaan'}
+              {activeTab === 'inbox' && 'Pesan Masuk (Inbox)'}
             </h2>
           </div>
           
-          <button onClick={handleSave} disabled={saving} className="flex items-center gap-2 bg-blue-600 text-white px-5 lg:px-6 py-2.5 lg:py-3 rounded-xl font-semibold hover:bg-blue-700 transition-all shadow-md shadow-blue-600/20 active:scale-95 disabled:opacity-70 disabled:active:scale-100 disabled:cursor-not-allowed">
-            {saving ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin shrink-0" /> : <Save className="w-5 h-5 shrink-0" />}
-            <span className="hidden sm:inline">{saving ? 'Menyimpan...' : 'Simpan Perubahan'}</span>
-            <span className="sm:hidden">{saving ? '...' : 'Simpan'}</span>
-          </button>
+          {activeTab !== 'inbox' ? (
+            <button onClick={handleSave} disabled={saving} className="flex items-center gap-2 bg-blue-600 text-white px-5 lg:px-6 py-2.5 lg:py-3 rounded-xl font-semibold hover:bg-blue-700 transition-all shadow-md shadow-blue-600/20 active:scale-95 disabled:opacity-70 disabled:active:scale-100 disabled:cursor-not-allowed">
+              {saving ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin shrink-0" /> : <Save className="w-5 h-5 shrink-0" />}
+              <span className="hidden sm:inline">{saving ? 'Menyimpan...' : 'Simpan Perubahan'}</span>
+              <span className="sm:hidden">{saving ? '...' : 'Simpan'}</span>
+            </button>
+          ) : (
+            <div className="flex items-center gap-2 text-xs font-semibold text-slate-500 bg-slate-100 px-3 py-1.5 rounded-lg">
+              <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+              Realtime Sync
+            </div>
+          )}
         </header>
 
         {/* Scrollable Content */}
@@ -520,14 +744,17 @@ export default function Dashboard() {
                       />
                       
                       <div className="space-y-4 pt-2">
-                        <div className="flex justify-between items-center">
-                          <label className="block text-sm font-semibold text-slate-700">Gambar Background Hero (Slider)</label>
+                        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                          <div className="flex-1">
+                            <label className="block text-sm font-semibold text-slate-700">Gambar Background Hero (Slider)</label>
+                            <p className="text-xs text-slate-500 mt-1 mb-0">Panduan: Upload gambar dengan rasio lanskap/lebar (direkomendasikan 1920x1080 pixel). Anda dapat menggunakan fitur crop dari website penyedia gambar atau meng-edit gambar sebelum diupload agar gambar pas di layar utama.</p>
+                          </div>
                           <button
                             onClick={() => {
                               const currentImages = formData.home?.heroImages || [];
                               handleChange('home', 'heroImages', [...currentImages, '']);
                             }}
-                            className="text-sm flex items-center gap-1 text-[var(--primary-blue)] hover:text-blue-700 font-medium bg-blue-50 px-3 py-1.5 rounded-lg transition-colors"
+                            className="shrink-0 text-sm flex items-center gap-1 text-[var(--primary-blue)] hover:text-blue-700 font-medium bg-blue-50 px-3 py-1.5 rounded-lg transition-colors"
                           >
                             <Plus className="w-4 h-4" /> Tambah Gambar
                           </button>
@@ -546,7 +773,8 @@ export default function Dashboard() {
                             >
                               <Trash2 className="w-4 h-4" />
                             </button>
-                            <ImageUploadBox 
+                            <ImageUploadBox
+                              aspect={16/9}
                               label={`Gambar Slide ${idx + 1}`} 
                               value={img} 
                               onChange={(val) => {
@@ -576,6 +804,67 @@ export default function Dashboard() {
                       </div>
                     </div>
                     <ImageUploadBox label="Gambar Preview About" value={formData.home?.aboutPreviewImageUrl} onChange={(val) => handleChange('home', 'aboutPreviewImageUrl', val)} onImageUpload={handleImageUpload} />
+                  </div>
+
+                  {/* Mitra / Client Logos Section */}
+                  <div className="bg-white rounded-3xl p-6 lg:p-8 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100">
+                    <div className="flex items-center justify-between pb-5 border-b border-slate-100 mb-6">
+                      <div className="flex items-center gap-4">
+                        <div className="p-3 bg-blue-50 text-blue-600 rounded-xl"><Building2 className="w-6 h-6" /></div>
+                        <div>
+                          <h3 className="text-xl font-bold text-slate-800">Mitra & Klien Terpercaya</h3>
+                          <p className="text-sm text-slate-500 mt-1">Kelola daftar perusahaan klien yang ditampilkan di Beranda.</p>
+                        </div>
+                      </div>
+                      <button
+                        onClick={addHomePartner}
+                        className="text-sm flex items-center gap-1 text-[var(--primary-blue)] hover:text-blue-700 font-medium bg-blue-50 px-3 py-1.5 rounded-lg transition-colors"
+                      >
+                        <Plus className="w-4 h-4" /> Tambah Mitra
+                      </button>
+                    </div>
+
+                    <div className="space-y-6">
+                      <InputField 
+                        icon={Type} 
+                        label="Judul Bagian Mitra" 
+                        value={formData.home?.clientPartnersTitle || "Dipercaya Oleh Berbagai Perusahaan Terkemuka"} 
+                        onChange={(e) => handleChange('home', 'clientPartnersTitle', e.target.value)} 
+                      />
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {(formData.home?.clientPartners || []).map((partner, idx) => (
+                          <div key={partner.id || idx} className="p-4 border border-slate-200 rounded-xl bg-slate-50 relative group flex flex-col justify-between">
+                            <button
+                              onClick={() => removeHomePartner(idx)}
+                              className="absolute top-2 right-2 p-1.5 bg-red-100 text-red-600 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity z-10 hover:bg-red-200"
+                              title="Hapus Mitra"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                            <div className="space-y-3">
+                              <InputField 
+                                label={`Nama Perusahaan ${idx + 1}`} 
+                                value={partner.name || ''} 
+                                onChange={(e) => handleHomePartnerChange(idx, 'name', e.target.value)} 
+                              />
+                              <ImageUploadBox 
+                                label="Logo Perusahaan (Opsional, jika kosong teks nama ditampilkan)" 
+                                value={partner.logo || ''} 
+                                onChange={(val) => handleHomePartnerChange(idx, 'logo', val)} 
+                                onImageUpload={handleImageUpload} 
+                              />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+
+                      {(!formData.home?.clientPartners || formData.home?.clientPartners.length === 0) && (
+                        <div className="text-center p-8 border-2 border-dashed border-slate-200 rounded-xl bg-slate-50 text-slate-500 text-sm">
+                          Belum ada daftar mitra. Klik 'Tambah Mitra' untuk menambahkan.
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </motion.div>
               )}
@@ -762,10 +1051,187 @@ export default function Dashboard() {
                         <InputField icon={Type} label="Email Perusahaan" value={formData.company?.email} onChange={(e) => handleChange('company', 'email', e.target.value)} />
                       </div>
                       <InputField icon={Type} label="Jam Operasional" value={formData.company?.workingHours} onChange={(e) => handleChange('company', 'workingHours', e.target.value)} />
+                      <div className="space-y-1.5">
+                        <InputField 
+                          icon={MapPin} 
+                          label="Embed Link / URL Google Maps" 
+                          value={formData.company?.googleMapsEmbedUrl} 
+                          onChange={(e) => handleChange('company', 'googleMapsEmbedUrl', e.target.value)} 
+                          placeholder="Contoh: https://maps.google.com/maps?q=PT+Ziotech... atau kode <iframe src='...'>"
+                        />
+                        <div className="text-xs text-slate-500 space-y-1 bg-slate-50 p-3 rounded-xl border border-slate-200">
+                          <p className="font-semibold text-slate-700">Cara menyematkan lokasi tepat:</p>
+                          <p>1. Buka titik lokasi di <b>Google Maps</b> di browser.</p>
+                          <p>2. Klik <b>Bagikan (Share)</b> &rarr; pilih tab <b>Sematkan peta (Embed a map)</b> &rarr; klik <b>Salin HTML (Copy HTML)</b>, lalu tempel di sini.</p>
+                          <p>3. Atau Anda juga bisa langsung menempelkan URL alamat / koordinat (<code className="bg-white px-1 rounded border border-slate-200">-6.2088, 106.8456</code>).</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Social Media Section */}
+                  <div className="bg-white rounded-3xl p-6 lg:p-8 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100">
+                    <div className="flex items-center justify-between pb-5 border-b border-slate-100 mb-6">
+                      <div className="flex items-center gap-4">
+                        <div className="p-3 bg-pink-50 text-pink-600 rounded-xl"><Share2 className="w-6 h-6" /></div>
+                        <div>
+                          <h3 className="text-xl font-bold text-slate-800">Media Sosial Footer</h3>
+                          <p className="text-sm text-slate-500 mt-1">Kelola link sosial media yang ditampilkan di footer website.</p>
+                        </div>
+                      </div>
+                      <button
+                        onClick={addCompanySocial}
+                        className="text-sm flex items-center gap-1 text-[var(--primary-blue)] hover:text-blue-700 font-medium bg-blue-50 px-3 py-1.5 rounded-lg transition-colors"
+                      >
+                        <Plus className="w-4 h-4" /> Tambah Sosmed
+                      </button>
+                    </div>
+
+                    <div className="space-y-4">
+                      {(formData.company?.socials || []).map((item, idx) => (
+                        <div key={item.id || idx} className="p-4 border border-slate-200 rounded-xl bg-slate-50 relative group flex flex-col md:flex-row gap-4 items-start md:items-center">
+                          <button
+                            onClick={() => removeCompanySocial(idx)}
+                            className="absolute top-2 right-2 md:static md:order-last p-2 bg-red-50 text-red-600 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-100"
+                            title="Hapus Sosmed"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                          
+                          <div className="w-full md:w-48 shrink-0">
+                            <label className="block text-xs font-semibold text-slate-600 mb-1">Platform</label>
+                            <select
+                              value={item.platform || 'instagram'}
+                              onChange={(e) => handleCompanySocialChange(idx, 'platform', e.target.value)}
+                              className="w-full px-3 py-2 text-sm bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 font-medium text-slate-700"
+                            >
+                              <option value="linkedin">LinkedIn</option>
+                              <option value="instagram">Instagram</option>
+                              <option value="facebook">Facebook</option>
+                              <option value="twitter">X / Twitter</option>
+                              <option value="youtube">YouTube</option>
+                              <option value="tiktok">TikTok</option>
+                              <option value="other">Lainnya (Web/Icon)</option>
+                            </select>
+                          </div>
+
+                          <div className="flex-1 w-full">
+                            <label className="block text-xs font-semibold text-slate-600 mb-1">URL / Tautan Lengkap</label>
+                            <input
+                              type="text"
+                              value={item.url || ''}
+                              placeholder="https://..."
+                              onChange={(e) => handleCompanySocialChange(idx, 'url', e.target.value)}
+                              className="w-full px-3 py-2 text-sm bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 font-medium text-slate-700"
+                            />
+                          </div>
+                        </div>
+                      ))}
+
+                      {(!formData.company?.socials || formData.company?.socials.length === 0) && (
+                        <div className="text-center p-8 border-2 border-dashed border-slate-200 rounded-xl bg-slate-50 text-slate-500 text-sm">
+                          Belum ada sosial media. Klik 'Tambah Sosmed' untuk menambahkan tautan.
+                        </div>
+                      )}
                     </div>
                   </div>
                 </motion.div>
               )}
+              {/* INBOX TAB */}
+              {activeTab === 'inbox' && (
+                <motion.div key="inbox" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.2 }} className="space-y-6">
+                  <div className="bg-white rounded-3xl p-6 lg:p-8 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-5 border-b border-slate-100">
+                      <div className="flex items-center gap-4">
+                        <div className="p-3 bg-blue-50 text-blue-600 rounded-xl"><Inbox className="w-6 h-6" /></div>
+                        <div>
+                          <h3 className="text-xl font-bold text-slate-800">Daftar Pesan Masuk</h3>
+                          <p className="text-sm text-slate-500 mt-1">Pesan formulir kontak dari pengunjung website.</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600">Total: {messages.length}</span>
+                        {unreadCount > 0 && (
+                          <span className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-red-50 text-red-600 border border-red-100">{unreadCount} baru</span>
+                        )}
+                      </div>
+                    </div>
+
+                    {messages.length === 0 ? (
+                      <div className="text-center py-16 text-slate-400">
+                        <Inbox className="w-12 h-12 mx-auto mb-3 stroke-1 text-slate-300" />
+                        <p className="font-medium text-slate-600">Belum ada pesan masuk</p>
+                        <p className="text-xs text-slate-400 mt-1">Setiap pesan baru akan masuk ke sini secara realtime.</p>
+                      </div>
+                    ) : (
+                      <div className="mt-6 space-y-4">
+                        {messages.map((msg) => {
+                          const isUnread = msg.status !== 'read';
+                          return (
+                            <div key={msg.id} className={`p-5 rounded-2xl border transition-all ${isUnread ? 'bg-blue-50/40 border-blue-200 shadow-sm' : 'bg-white border-slate-200'}`}>
+                              <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-3">
+                                <div className="flex items-center gap-2">
+                                  {isUnread && <span className="w-2.5 h-2.5 rounded-full bg-blue-600 shrink-0" />}
+                                  <span className="font-bold text-slate-800">{msg.name || 'Tanpa Nama'}</span>
+                                  <span className="text-xs px-2 py-0.5 rounded bg-slate-100 text-slate-600">{msg.subject || 'Pesan Baru'}</span>
+                                </div>
+                                <span className="text-xs text-slate-400 flex items-center gap-1">
+                                  <Clock className="w-3.5 h-3.5" />
+                                  {msg.createdAt ? new Date(msg.createdAt).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' }) : '-'}
+                                </span>
+                              </div>
+                              <div className="grid sm:grid-cols-2 gap-2 text-xs text-slate-500 mb-3 bg-slate-50 p-2.5 rounded-xl">
+                                <div className="flex items-center gap-2 truncate"><Mail className="w-3.5 h-3.5 text-slate-400 shrink-0" /><span className="truncate">{msg.email || '-'}</span></div>
+                                <div className="flex items-center gap-2 truncate"><Phone className="w-3.5 h-3.5 text-slate-400 shrink-0" /><span className="truncate">{msg.phone || '-'}</span></div>
+                              </div>
+                              <div className="p-3.5 bg-white rounded-xl border border-slate-100 text-sm text-slate-700 whitespace-pre-wrap leading-relaxed">{msg.message}</div>
+                              <div className="flex items-center justify-between mt-4 pt-3 border-t border-slate-100 text-xs">
+                                <div className="flex items-center gap-2">
+                                  <button onClick={() => handleMarkMessageStatus(msg.id, isUnread ? 'read' : 'unread')} className={`px-3 py-1.5 rounded-lg font-medium transition-colors ${isUnread ? 'bg-blue-100 text-blue-700 hover:bg-blue-200' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}>
+                                    {isUnread ? 'Tandai Dibaca' : 'Tandai Belum Dibaca'}
+                                  </button>
+                                  {msg.email && (
+                                    <a href={`mailto:${msg.email}?subject=Re: ${encodeURIComponent(msg.subject || 'Pesan Website')}`} className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-green-50 text-green-700 hover:bg-green-100 font-medium">
+                                      <Mail className="w-3.5 h-3.5" /> Balas Email
+                                    </a>
+                                  )}
+                                  {msg.email && (
+                                    <a
+                                      href={`https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(msg.email)}&su=${encodeURIComponent(`Re: ${msg.subject || 'Pesan Website'}`)}`}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 font-medium"
+                                      title="Buka langsung di Gmail Browser"
+                                    >
+                                      <ExternalLink className="w-3.5 h-3.5" /> Buka Gmail
+                                    </a>
+                                  )}
+                                  {msg.phone && msg.phone !== '-' && (
+                                    <a
+                                      href={`https://wa.me/${msg.phone.replace(/[^0-9]/g, '').replace(/^0/, '62')}`}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100 font-medium"
+                                      title="Balas via WhatsApp"
+                                    >
+                                      <Phone className="w-3.5 h-3.5" /> WhatsApp
+                                    </a>
+                                  )}
+
+                                </div>
+                                <button onClick={() => handleDeleteMessage(msg.id)} className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg" title="Hapus Pesan">
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                </motion.div>
+              )}
+
 
             </AnimatePresence>
 
@@ -775,3 +1241,7 @@ export default function Dashboard() {
     </div>
   );
 }
+
+
+
+

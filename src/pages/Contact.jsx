@@ -1,10 +1,14 @@
 import { useState } from 'react';
 import { useData } from '../context/DataContext';
+import { useLanguage } from '../context/LanguageContext';
+import { db } from '../firebase/config';
+import { ref, push } from 'firebase/database';
 import { MapPin, Phone, Mail, Clock, Send, CheckCircle2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Contact() {
   const { data, loading } = useData();
+  const { t } = useLanguage();
   const [formState, setFormState] = useState({
     name: '',
     email: '',
@@ -26,8 +30,63 @@ export default function Contact() {
     address: 'Jl. Contoh Alamat No. 123, Jakarta, Indonesia',
     phone: '+62 812 3456 7890',
     email: 'info@ziotech.co.id',
-    workingHours: 'Senin - Jumat: 08:00 - 17:00'
+    workingHours: 'Senin - Jumat: 08:00 - 17:00',
+    googleMapsEmbedUrl: ''
   };
+
+  // Helper to extract clean embed URL if user inputs full iframe or raw link
+  const getMapEmbedSrc = (input) => {
+    if (!input || typeof input !== 'string') return '';
+    const trimmed = input.trim();
+    if (!trimmed) return '';
+
+    // 1. If user pasted full <iframe ... src="..." ...>
+    const iframeSrcMatch = trimmed.match(/src=["']([^"']+)["']/i);
+    if (iframeSrcMatch && iframeSrcMatch[1]) {
+      return iframeSrcMatch[1];
+    }
+
+    // 2. If already google maps embed url
+    if (trimmed.includes('/maps/embed')) {
+      return trimmed;
+    }
+
+    // 3. Google My Maps (viewer/edit/embed)
+    const myMapsMatch = trimmed.match(/google\.[a-z.]+\/maps\/d\/(?:viewer|edit|embed|u\/\d+\/(?:viewer|edit|embed))\?[^"'\s]*mid=([a-zA-Z0-9_-]+)/i);
+    if (myMapsMatch && myMapsMatch[1]) {
+      return `https://www.google.com/maps/d/embed?mid=${myMapsMatch[1]}`;
+    }
+
+    // 4. Coordinates in standard Google Maps URL (@lat,lng)
+    const coordsInUrl = trimmed.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
+    if (coordsInUrl) {
+      return `https://maps.google.com/maps?q=${coordsInUrl[1]},${coordsInUrl[2]}&t=&z=16&ie=UTF8&iwloc=&output=embed`;
+    }
+
+    // 5. Query parameter (?q=lat,lng or ?q=place+name)
+    const queryParamMatch = trimmed.match(/[?&](?:q|query)=([^&]+)/);
+    if (queryParamMatch && queryParamMatch[1]) {
+      return `https://maps.google.com/maps?q=${queryParamMatch[1]}&t=&z=16&ie=UTF8&iwloc=&output=embed`;
+    }
+
+    // 6. Google Maps place URL (/maps/place/Nama+Tempat)
+    const placeMatch = trimmed.match(/\/maps\/place\/([^/@?]+)/);
+    if (placeMatch && placeMatch[1]) {
+      const place = decodeURIComponent(placeMatch[1].replace(/\+/g, ' '));
+      return `https://maps.google.com/maps?q=${encodeURIComponent(place)}&t=&z=16&ie=UTF8&iwloc=&output=embed`;
+    }
+
+    // 7. Raw coordinates string (lat, lng)
+    const rawCoordsMatch = trimmed.match(/^(-?\d+\.\d+)\s*,\s*(-?\d+\.\d+)$/);
+    if (rawCoordsMatch) {
+      return `https://maps.google.com/maps?q=${rawCoordsMatch[1]},${rawCoordsMatch[2]}&t=&z=16&ie=UTF8&iwloc=&output=embed`;
+    }
+
+    // 8. Fallback: if it's plain text address
+    return `https://maps.google.com/maps?q=${encodeURIComponent(trimmed)}&t=&z=16&ie=UTF8&iwloc=&output=embed`;
+  };
+
+  const mapSrc = getMapEmbedSrc(company.googleMapsEmbedUrl || company.address);
 
   const handleChange = (e) => {
     setFormState({
@@ -36,33 +95,62 @@ export default function Contact() {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Simulate API call
-    setTimeout(() => {
-      setIsSubmitting(false);
-      setIsSuccess(true);
-      setFormState({ name: '', email: '', phone: '', subject: '', message: '' });
+    const payload = {
+      name: formState.name.trim(),
+      email: formState.email.trim(),
+      phone: formState.phone?.trim() || '-',
+      subject: formState.subject || 'Pesan Baru',
+      message: formState.message.trim(),
+      createdAt: new Date().toISOString(),
+      timestamp: Date.now(),
+      status: 'unread'
+    };
 
-      setTimeout(() => setIsSuccess(false), 5000);
-    }, 1500);
+    // 1. Simpan ke Firebase Database path 'messages'
+    try {
+      await push(ref(db, 'messages'), payload);
+    } catch (err) {
+      console.warn('Gagal menyimpan pesan ke Firebase database:', err);
+    }
+
+    // 2. Trigger mailto client sebagai fallback/notifikasi instan ke company.email
+    const targetEmail = company.email || 'info@ziotech.co.id';
+    const mailSubject = encodeURIComponent(`[Website] ${payload.subject} - ${payload.name}`);
+    const mailBody = encodeURIComponent(
+      `Nama: ${payload.name}\n` +
+      `Email Pengirim: ${payload.email}\n` +
+      `No. Telepon: ${payload.phone}\n` +
+      `Subjek: ${payload.subject}\n\n` +
+      `Pesan:\n${payload.message}\n`
+    );
+
+    // Buka aplikasi email otomatis
+    window.location.href = `mailto:${targetEmail}?subject=${mailSubject}&body=${mailBody}`;
+
+    setIsSubmitting(false);
+    setIsSuccess(true);
+    setFormState({ name: '', email: '', phone: '', subject: '', message: '' });
+
+    setTimeout(() => setIsSuccess(false), 5000);
   };
 
   const contactInfo = [
-    { icon: MapPin, title: 'Alamat Kantor', detail: company.address, color: 'text-blue-500', bg: 'bg-blue-50' },
-    { icon: Phone, title: 'Telepon', detail: company.phone, color: 'text-green-500', bg: 'bg-green-50' },
-    { icon: Mail, title: 'Email', detail: company.email, color: 'text-red-500', bg: 'bg-red-50' },
-    { icon: Clock, title: 'Jam Operasional', detail: company.workingHours, color: 'text-orange-500', bg: 'bg-orange-50' }
+    { icon: MapPin, title: t.contactPage.addressTitle, detail: company.address, color: 'text-blue-500', bg: 'bg-blue-50' },
+    { icon: Phone, title: t.contactPage.phoneTitle, detail: company.phone, color: 'text-green-500', bg: 'bg-green-50' },
+    { icon: Mail, title: t.contactPage.emailTitle, detail: company.email, color: 'text-red-500', bg: 'bg-red-50' },
+    { icon: Clock, title: t.contactPage.hoursTitle, detail: company.workingHours, color: 'text-orange-500', bg: 'bg-orange-50' }
   ];
 
   const header = data?.pageHeaders?.contact || {};
 
   return (
-    <div className="pt-24 md:pt-32">
+    <div className="pt-20 md:pt-32 overflow-hidden">
       {/* Header */}
-      <section className="bg-[var(--primary-dark)] text-white py-28 mt-[-6rem] md:mt-[-8rem] relative overflow-hidden">
+      <section className="bg-[var(--primary-dark)] text-white py-16 md:py-28 mt-[-5rem] md:mt-[-8rem] relative overflow-hidden">
         {header.image && (
           <>
             <div className="absolute inset-0 z-0">
@@ -71,24 +159,24 @@ export default function Contact() {
             <div className="absolute inset-0 bg-[var(--primary-dark)]/20 z-10" />
           </>
         )}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20 pt-20 flex justify-start">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20 pt-16 sm:pt-20 flex justify-start">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             className="text-left max-w-3xl"
           >
-            <h1 className="text-4xl md:text-5xl font-bold mb-6 drop-shadow-md text-white">{header.title || 'Hubungi Kami'}</h1>
-            <p className="text-xl text-white font-medium drop-shadow-sm">
-              {header.subtitle || 'Tim profesional kami siap membantu dan mendiskusikan kebutuhan proyek Anda.'}
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-6 drop-shadow-md text-white">{header.title || t.contactPage.defaultHeaderTitle}</h1>
+            <p className="text-base sm:text-xl text-white font-medium drop-shadow-sm">
+              {header.subtitle || t.contactPage.defaultHeaderSubtitle}
             </p>
           </motion.div>
         </div>
       </section>
 
-      <section className="py-20 bg-[var(--bg-light)]">
+      <section className="py-12 sm:py-20 bg-[var(--bg-light)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-3 gap-12">
+          <div className="grid lg:grid-cols-3 gap-8 lg:gap-12">
 
             {/* Contact Information */}
             <div className="lg:col-span-1 space-y-8">
@@ -97,22 +185,22 @@ export default function Contact() {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6 }}
               >
-                <h2 className="text-2xl font-bold text-[var(--primary-dark)] mb-6">Informasi Kontak</h2>
-                <p className="text-[var(--text-muted)] font-medium mb-8">
-                  Jangan ragu untuk menghubungi kami melalui informasi di bawah ini atau kunjungi kantor kami langsung.
+                <h2 className="text-xl sm:text-2xl font-bold text-[var(--primary-dark)] mb-4 sm:mb-6">{t.contactPage.title}</h2>
+                <p className="text-[var(--text-muted)] font-medium mb-6 sm:mb-8 text-sm sm:text-base">
+                  {t.contactPage.subtitle}
                 </p>
 
-                <div className="space-y-6">
+                <div className="space-y-4 sm:space-y-6">
                   {contactInfo.map((info, idx) => {
                     const Icon = info.icon;
                     return (
                       <div key={idx} className="flex items-start gap-4">
-                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 bg-[var(--primary-blue)]/10`}>
-                          <Icon className={`w-6 h-6 text-[var(--primary-blue)]`} />
+                        <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center shrink-0 bg-[var(--primary-blue)]/10`}>
+                          <Icon className={`w-5 h-5 sm:w-6 sm:h-6 text-[var(--primary-blue)]`} />
                         </div>
-                        <div>
-                          <h3 className="font-semibold text-[var(--primary-dark)]">{info.title}</h3>
-                          <p className="text-[var(--text-muted)] font-medium mt-1">{info.detail}</p>
+                        <div className="min-w-0 flex-1">
+                          <h3 className="font-semibold text-sm sm:text-base text-[var(--primary-dark)]">{info.title}</h3>
+                          <p className="text-[var(--text-muted)] font-medium mt-0.5 sm:mt-1 text-sm break-words">{info.detail}</p>
                         </div>
                       </div>
                     );
@@ -127,9 +215,9 @@ export default function Contact() {
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6, delay: 0.2 }}
-                className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100"
+                className="bg-white rounded-2xl shadow-xl p-5 sm:p-8 border border-gray-100"
               >
-                <h2 className="text-2xl font-bold text-[var(--primary-dark)] mb-6">Kirim Pesan</h2>
+                <h2 className="text-xl sm:text-2xl font-bold text-[var(--primary-dark)] mb-6">{t.contactPage.formTitle}</h2>
 
                 <AnimatePresence>
                   {isSuccess && (
@@ -140,7 +228,7 @@ export default function Contact() {
                       className="mb-6 p-4 bg-green-50 text-green-700 rounded-lg flex items-center gap-3 border border-green-100"
                     >
                       <CheckCircle2 className="w-5 h-5 text-green-500" />
-                      Pesan Anda telah berhasil terkirim! Tim kami akan segera menghubungi Anda.
+                      {t.contactPage.successDesc}
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -148,7 +236,7 @@ export default function Contact() {
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="grid md:grid-cols-2 gap-6">
                     <div>
-                      <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">Nama Lengkap *</label>
+                      <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">{t.contactPage.nameLabel} *</label>
                       <input
                         type="text"
                         id="name"
@@ -157,11 +245,11 @@ export default function Contact() {
                         onChange={handleChange}
                         required
                         className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[var(--accent-blue)] focus:border-[var(--accent-blue)] outline-none transition-shadow"
-                        placeholder="Masukkan nama lengkap Anda"
+                        placeholder={t.contactPage.namePlaceholder}
                       />
                     </div>
                     <div>
-                      <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">Email *</label>
+                      <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">{t.contactPage.emailLabel} *</label>
                       <input
                         type="email"
                         id="email"
@@ -170,14 +258,14 @@ export default function Contact() {
                         onChange={handleChange}
                         required
                         className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[var(--accent-blue)] focus:border-[var(--accent-blue)] outline-none transition-shadow"
-                        placeholder="contoh@email.com"
+                        placeholder={t.contactPage.emailPlaceholder}
                       />
                     </div>
                   </div>
 
                   <div className="grid md:grid-cols-2 gap-6">
                     <div>
-                      <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">Nomor Telepon</label>
+                      <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">{t.contactPage.phoneLabel}</label>
                       <input
                         type="tel"
                         id="phone"
@@ -185,11 +273,11 @@ export default function Contact() {
                         value={formState.phone}
                         onChange={handleChange}
                         className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[var(--accent-blue)] focus:border-[var(--accent-blue)] outline-none transition-shadow"
-                        placeholder="Contoh: 081234567890"
+                        placeholder={t.contactPage.phonePlaceholder}
                       />
                     </div>
                     <div>
-                      <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-2">Subjek *</label>
+                      <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-2">{t.contactPage.subjectLabel} *</label>
                       <select
                         id="subject"
                         name="subject"
@@ -198,17 +286,17 @@ export default function Contact() {
                         required
                         className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[var(--accent-blue)] focus:border-[var(--accent-blue)] outline-none transition-shadow"
                       >
-                        <option value="">Pilih Subjek</option>
-                        <option value="Tanya Layanan MEP">Pertanyaan Layanan MEP</option>
-                        <option value="Tanya Konstruksi">Pertanyaan Konstruksi & Infrastruktur</option>
-                        <option value="Kerja Sama">Proposal Kerja Sama</option>
-                        <option value="Lainnya">Lainnya</option>
+                        <option value="">{t.contactPage.subjectPlaceholder}</option>
+                        <option value="Pertanyaan Layanan MEP">{t.contactPage.optMep}</option>
+                        <option value="Konstruksi & Infrastruktur">{t.contactPage.optConstruction}</option>
+                        <option value="Kerja Sama">{t.contactPage.optPartnership}</option>
+                        <option value="Lainnya">{t.contactPage.optOther}</option>
                       </select>
                     </div>
                   </div>
 
                   <div>
-                    <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">Pesan *</label>
+                    <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">{t.contactPage.messageLabel} *</label>
                     <textarea
                       id="message"
                       name="message"
@@ -217,7 +305,7 @@ export default function Contact() {
                       required
                       rows="5"
                       className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[var(--accent-blue)] focus:border-[var(--accent-blue)] outline-none transition-shadow resize-none"
-                      placeholder="Tuliskan pesan atau detail kebutuhan Anda di sini..."
+                      placeholder={t.contactPage.messagePlaceholder}
                     ></textarea>
                   </div>
 
@@ -230,7 +318,7 @@ export default function Contact() {
                       <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                     ) : (
                       <>
-                        Kirim Pesan Sekarang
+                        {t.contactPage.sendButton}
                         <Send className="w-5 h-5" />
                       </>
                     )}
@@ -243,11 +331,28 @@ export default function Contact() {
       </section>
 
       {/* Map Section */}
-      <section className="h-[400px] w-full bg-gray-200 relative">
-        {/* Placeholder for Google Maps iframe */}
-        <div className="absolute inset-0 flex items-center justify-center text-gray-500 flex-col">
-          <MapPin className="w-12 h-12 mb-4 text-gray-400" />
-          <p>Integrasi Google Maps Peta Lokasi Kantor</p>
+      <section className="py-12 bg-[var(--bg-light)]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="bg-white p-3 md:p-4 rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+            <div className="relative w-full h-[320px] md:h-[400px] rounded-xl overflow-hidden bg-slate-100">
+              {mapSrc ? (
+                <iframe
+                  title="Google Maps Lokasi Kantor PT Ziotech Global Inovasi"
+                  src={mapSrc}
+                  className="w-full h-full border-0"
+                  allowFullScreen=""
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                ></iframe>
+              ) : (
+                <div className="absolute inset-0 flex items-center justify-center text-gray-500 flex-col p-4 text-center">
+                  <MapPin className="w-10 h-10 mb-3 text-gray-400" />
+                  <p className="font-medium text-slate-700">{t.common.mapsFallbackTitle}</p>
+                  <p className="text-sm text-slate-400 mt-1">{t.common.mapsFallbackDesc}</p>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </section>
     </div>
