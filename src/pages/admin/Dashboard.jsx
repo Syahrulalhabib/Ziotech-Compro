@@ -646,7 +646,7 @@ export default function Dashboard() {
           </button>
         </div>
         
-        <div className="flex-1 overflow-y-auto py-8 px-4 space-y-2">
+        <div className="flex-1 overflow-y-auto py-8 px-4 space-y-2 dark-scroll">
           <p className="px-4 text-xs font-bold text-slate-500 uppercase tracking-wider mb-4">Manajemen Halaman</p>
           
           <button onClick={() => { setActiveTab('home'); setIsMobileMenuOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${activeTab === 'home' ? 'bg-blue-600 text-white shadow-md shadow-blue-900/20' : 'hover:bg-slate-800 hover:text-white'}`}>
