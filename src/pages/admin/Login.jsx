@@ -34,7 +34,7 @@ export default function Login() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
+      <div className="bg-white p-6 sm:p-8 rounded-lg shadow-md w-full max-w-md mx-4 sm:mx-auto">
         <h2 className="text-2xl font-bold text-center mb-6 text-[var(--primary-blue)]">Admin Login</h2>
         {error && <p className="text-red-500 text-sm mb-4 text-center">{error}</p>}
         <form onSubmit={handleLogin} className="space-y-4">

@@ -28,6 +28,12 @@
     height: auto;
   }
 
+  /* Placeholder saat gambar belum load — cegah blank putih */
+  /* Exclude: img di dalam button/a (logo), img yang punya class object-contain */
+  img:not(button img):not(a img):not(.no-placeholder) {
+    background-color: #e2e8f0;
+  }
+
   h1, h2, h3, h4, h5, h6 {
     color: var(--primary-dark);
     font-weight: 700;

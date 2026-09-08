@@ -812,7 +812,7 @@ export default function Dashboard() {
             <button onClick={() => setIsMobileMenuOpen(true)} className="lg:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-lg transition-colors">
               <Menu className="w-6 h-6" />
             </button>
-            <h2 className="text-xl lg:text-2xl font-bold text-slate-800">
+            <h2 className="text-base sm:text-xl lg:text-2xl font-bold text-slate-800 truncate max-w-[160px] sm:max-w-none">
               {activeTab === 'home' && 'Edit Beranda'}
               {activeTab === 'about' && 'Edit Tentang Kami'}
               {activeTab === 'services' && 'Edit Layanan'}
@@ -837,7 +837,7 @@ export default function Dashboard() {
         </header>
 
         {/* Scrollable Content */}
-        <div ref={scrollContainerRef} className="flex-1 overflow-y-auto p-4 lg:p-8 scroll-smooth">
+        <div ref={scrollContainerRef} className="flex-1 overflow-y-auto overflow-x-hidden p-4 lg:p-8 scroll-smooth">
           <div className="max-w-4xl mx-auto pb-20">
             
             <AnimatePresence mode="wait">
@@ -1269,11 +1269,11 @@ export default function Dashboard() {
                       <div className="grid md:grid-cols-2 gap-8">
                         <div className="space-y-4">
                           <InputField label="Nama Proyek" value={project.title} onChange={(e) => handleArrayChange('projects', index, 'title', e.target.value)} />
-                          <div className="grid grid-cols-2 gap-4">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <InputField label="Kategori (Misal: MEP, Konstruksi)" value={project.category} onChange={(e) => handleArrayChange('projects', index, 'category', e.target.value)} />
                             <InputField label="Tahun" value={project.year} onChange={(e) => handleArrayChange('projects', index, 'year', e.target.value)} />
                           </div>
-                          <div className="grid grid-cols-2 gap-4">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <InputField label="Klien" value={project.client} onChange={(e) => handleArrayChange('projects', index, 'client', e.target.value)} />
                             <InputField label="Lokasi" value={project.location} onChange={(e) => handleArrayChange('projects', index, 'location', e.target.value)} />
                           </div>

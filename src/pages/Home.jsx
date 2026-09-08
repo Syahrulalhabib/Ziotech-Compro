@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useData } from '../context/DataContext';
 import { useLanguage } from '../context/LanguageContext';
+import { useCountUp } from '../hooks/useCountUp';
 import { 
   ArrowRight, 
   ArrowUpRight, 
@@ -21,6 +22,23 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { getServiceIcon } from '../data/serviceIcons';
+
+/** Parses "10+", "99%", "30+" → { num: 10, suffix: '+' } */
+function parseStat(value) {
+  const match = String(value).match(/^(\d+)([+%]?)$/);
+  if (!match) return { num: 0, suffix: '' };
+  return { num: parseInt(match[1], 10), suffix: match[2] };
+}
+
+function StatCounter({ value, className }) {
+  const { num, suffix } = parseStat(value);
+  const { count, ref } = useCountUp(num);
+  return (
+    <div ref={ref} className={className}>
+      {count}{suffix}
+    </div>
+  );
+}
 
 export default function Home() {
   const { data, loading } = useData();
@@ -43,6 +61,17 @@ export default function Home() {
 
   const images = heroData.heroImages || [];
   const interval = heroData.heroInterval || 5000;
+
+  // Preload semua hero images segera saat URL tersedia
+  useEffect(() => {
+    images.forEach((src, i) => {
+      const link = document.createElement('link');
+      link.rel = i === 0 ? 'preload' : 'prefetch';
+      link.as = 'image';
+      link.href = src;
+      document.head.appendChild(link);
+    });
+  }, [images.join(',')]);
 
   // Set up hero auto-slide effect
   useEffect(() => {
@@ -120,14 +149,16 @@ export default function Home() {
   return (
     <div className="bg-white text-[#0f172a] selection:bg-[#0284c7] selection:text-white">
       {/* 1. HERO SECTION (Pertamina Style: Cinematic visual, bottom progress line bar) */}
-      <section className="relative min-h-[90vh] md:min-h-screen flex flex-col justify-between pt-28 sm:pt-32 pb-4 sm:pb-6">
+      <section className="relative min-h-[90vh] md:min-h-screen flex flex-col justify-between pt-28 sm:pt-32 pb-4 sm:pb-6 bg-[#0b1329]">
         {/* Background Slider */}
-        <div className="absolute inset-0 z-0">
+        <div className="absolute inset-0 z-0 bg-[#0b1329]">
           {images.map((img, index) => (
-            <img 
+            <img
               key={index}
-              src={img} 
-              alt={`Hero Background ${index + 1}`} 
+              src={img}
+              alt={`Hero Background ${index + 1}`}
+              loading={index === 0 ? 'eager' : 'lazy'}
+              fetchpriority={index === 0 ? 'high' : 'low'}
               className={`absolute inset-0 w-full h-full object-cover object-center transition-opacity duration-1000 ease-in-out ${index === currentHeroIndex ? 'opacity-100' : 'opacity-0'}`}
             />
           ))}
@@ -161,7 +192,18 @@ export default function Home() {
         {/* Hero Slider Horizontal Bar (Pertamina signature bottom bar) */}
         <div className="relative z-20 w-full">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex flex-wrap justify-center items-center gap-4 sm:gap-6 border-t border-white/20 pt-3 pb-1">
+            {/* Mobile: dot indicators */}
+            <div className="flex sm:hidden justify-center items-center gap-2 border-t border-white/20 pt-3 pb-1">
+              {images.slice(0, 5).map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentHeroIndex(index)}
+                  className={`w-2 h-2 rounded-full transition-all duration-300 ${index === currentHeroIndex ? 'bg-[#0284c7] w-5' : 'bg-white/40'}`}
+                />
+              ))}
+            </div>
+            {/* Desktop: full bar */}
+            <div className="hidden sm:flex flex-wrap justify-center items-center gap-4 sm:gap-6 border-t border-white/20 pt-3 pb-1">
               {images.slice(0, 5).map((_, index) => {
                 const isActive = index === currentHeroIndex;
                 const title = heroTitles[index % heroTitles.length];
@@ -200,11 +242,34 @@ export default function Home() {
 
 
       {/* 2. EDITORIAL INTRO SECTION (Pertamina "Energizing You" Style) */}
-      <section className="py-20 sm:py-28 bg-white border-b border-slate-100">
+      <section className="py-14 sm:py-28 bg-white border-b border-slate-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-12 gap-12 lg:gap-16 items-center">
-            {/* Visual Branding Graphic (Modern Clean Corporate) */}
-            <div className="lg:col-span-5 flex justify-center">
+          <div className="grid lg:grid-cols-12 gap-8 lg:gap-16 items-center">
+            {/* Editorial Content — first on mobile */}
+            <div className="lg:col-span-7 order-1">
+              <span className="text-[11px] font-bold tracking-widest text-[#0284c7] uppercase mb-3 block">
+                {homeData?.introBadge || t.home?.badge || 'INOVASI & KUALITAS'}
+              </span>
+              <h2 className="text-2xl sm:text-4xl font-extrabold text-[#0f172a] leading-tight tracking-tight mb-6">
+                {homeData?.introTitle || 'Menghadirkan Solusi Teknik dan Konstruksi Terbaik untuk Negeri'}
+              </h2>
+              <p className="text-slate-600 text-base sm:text-lg leading-relaxed mb-6 font-normal">
+                {homeData?.introDescription || homeData?.heroSubtitle || 'PT. Ziotech Global Inovasi hadir sebagai mitra strategis dengan komitmen pada kualitas, efisiensi, dan inovasi berkelanjutan khususnya di spesialisasi Mechanical, Electrical & Plumbing (MEP).'}
+              </p>
+              <p className="text-slate-500 text-sm sm:text-base leading-relaxed mb-8">
+                {homeData?.introDescription2 || t.home?.aboutDesc2 || 'Dengan tim profesional bersertifikasi, dedikasi tinggi, dan standar mutu ketat, kami siap memberikan solusi engineering terbaik yang efisien, tepat waktu, dan berorientasi jangka panjang.'}
+              </p>
+
+              <Link
+                to="/about"
+                className="pertamina-btn-pill"
+              >
+                {t.home?.seeMore || 'Selengkapnya'} <ArrowRight className="w-4 h-4 text-[#0284c7]" />
+              </Link>
+            </div>
+
+            {/* Visual Branding Graphic — second on mobile */}
+            <div className="lg:col-span-5 flex justify-center order-2">
               <div className="relative w-full max-w-md aspect-square rounded-3xl bg-gradient-to-tr from-slate-50 via-sky-50/50 to-blue-50 p-8 flex items-center justify-center border border-slate-100 shadow-sm overflow-hidden group">
                 <div className="absolute -top-10 -right-10 w-44 h-44 rounded-full bg-[#0284c7]/10 blur-2xl pointer-events-none" />
                 <div className="absolute -bottom-10 -left-10 w-44 h-44 rounded-full bg-[#1e3a8a]/10 blur-2xl pointer-events-none" />
@@ -245,29 +310,6 @@ export default function Home() {
                   </>
                 )}
               </div>
-            </div>
-
-            {/* Editorial Content */}
-            <div className="lg:col-span-7">
-              <span className="text-[11px] font-bold tracking-widest text-[#0284c7] uppercase mb-3 block">
-                {homeData?.introBadge || t.home?.badge || 'INOVASI & KUALITAS'}
-              </span>
-              <h2 className="text-2xl sm:text-4xl font-extrabold text-[#0f172a] leading-tight tracking-tight mb-6">
-                {homeData?.introTitle || 'Menghadirkan Solusi Teknik dan Konstruksi Terbaik untuk Negeri'}
-              </h2>
-              <p className="text-slate-600 text-base sm:text-lg leading-relaxed mb-6 font-normal">
-                {homeData?.introDescription || homeData?.heroSubtitle || 'PT. Ziotech Global Inovasi hadir sebagai mitra strategis dengan komitmen pada kualitas, efisiensi, dan inovasi berkelanjutan khususnya di spesialisasi Mechanical, Electrical & Plumbing (MEP).'}
-              </p>
-              <p className="text-slate-500 text-sm sm:text-base leading-relaxed mb-8">
-                {homeData?.introDescription2 || t.home?.aboutDesc2 || 'Dengan tim profesional bersertifikasi, dedikasi tinggi, dan standar mutu ketat, kami siap memberikan solusi engineering terbaik yang efisien, tepat waktu, dan berorientasi jangka panjang.'}
-              </p>
-
-              <Link 
-                to="/about"
-                className="pertamina-btn-pill"
-              >
-                {t.home?.seeMore || 'Selengkapnya'} <ArrowRight className="w-4 h-4 text-[#0284c7]" />
-              </Link>
             </div>
           </div>
         </div>
@@ -372,9 +414,10 @@ export default function Home() {
                 <div className="text-[10px] sm:text-xs font-bold text-slate-400 tracking-wider uppercase mb-1">
                   {stat.category}
                 </div>
-                <div className="text-3xl sm:text-5xl font-black text-[#0f172a] tracking-tight">
-                  {stat.value}
-                </div>
+                <StatCounter
+                  value={stat.value}
+                  className="text-3xl sm:text-5xl font-black text-[#0f172a] tracking-tight"
+                />
                 <div className="text-sm font-semibold text-[#0284c7] mt-1 mb-2">
                   {stat.unit}
                 </div>

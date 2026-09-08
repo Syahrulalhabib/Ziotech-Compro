@@ -82,7 +82,7 @@ export default function Service() {
       {/* 1. Header (Pertamina corporate style) */}
       <section className="relative bg-[#0b1329] text-white pt-36 pb-20 md:pt-44 md:pb-28 overflow-hidden">
         {header.image ? (
-          <div className="absolute inset-0 z-0">
+          <div className="absolute inset-0 z-0 bg-[#1e293b]">
             <img src={header.image} alt="Background" className="w-full h-full object-cover" />
             <div className="absolute inset-0 bg-black/50" />
           </div>
@@ -128,7 +128,7 @@ export default function Service() {
               >
                 {/* Image Side */}
                 <div className="w-full lg:w-1/2">
-                  <div className="relative rounded-2xl overflow-hidden aspect-[16/11] border border-slate-100 group">
+                  <div className="relative rounded-2xl overflow-hidden aspect-[16/11] border border-slate-100 group bg-slate-200">
                     <img 
                       src={service.image} 
                       alt={service.title} 

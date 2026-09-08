@@ -31,7 +31,7 @@ export default function Project() {
       {/* 1. Header (Pertamina corporate style) */}
       <section className="relative bg-[#0b1329] text-white pt-36 pb-20 md:pt-44 md:pb-28 overflow-hidden">
         {header.image ? (
-          <div className="absolute inset-0 z-0">
+          <div className="absolute inset-0 z-0 bg-[#1e293b]">
             <img src={header.image} alt="Background" className="w-full h-full object-cover" />
             <div className="absolute inset-0 bg-black/50" />
           </div>

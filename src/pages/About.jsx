@@ -34,7 +34,7 @@ export default function About() {
       {/* 1. Page Header (Pertamina corporate style) */}
       <section className="relative bg-[#0b1329] text-white pt-36 pb-20 md:pt-44 md:pb-28 overflow-hidden">
         {header.image ? (
-          <div className="absolute inset-0 z-0">
+          <div className="absolute inset-0 z-0 bg-[#1e293b]">
             <img src={header.image} alt="Background" className="w-full h-full object-cover" />
             <div className="absolute inset-0 bg-black/50" />
           </div>
@@ -63,7 +63,7 @@ export default function About() {
       </section>
 
       {/* 2. Main About Section */}
-      <section className="py-20 sm:py-28 bg-white border-b border-slate-100">
+      <section className="py-14 sm:py-28 bg-white border-b border-slate-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-12 gap-12 lg:gap-16 items-center">
             {/* Image side */}
@@ -71,9 +71,9 @@ export default function About() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="lg:col-span-5 relative"
+              className="lg:col-span-5 relative mb-8 lg:mb-0"
             >
-              <div className="relative rounded-2xl overflow-hidden border border-slate-100 shadow-sm">
+              <div className="relative rounded-2xl overflow-hidden border border-slate-100 shadow-sm bg-slate-200">
                 <img 
                   src={aboutData.image || "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"} 
                   alt="Tentang Ziotech" 
@@ -81,7 +81,7 @@ export default function About() {
                 />
               </div>
               
-              <div className="absolute -bottom-6 -right-2 sm:-right-6 bg-white p-5 sm:p-6 rounded-2xl shadow-xl border border-slate-100 max-w-[220px]">
+              <div className="absolute -bottom-5 right-2 sm:-bottom-6 sm:-right-6 bg-white p-4 sm:p-6 rounded-2xl shadow-xl border border-slate-100 max-w-[200px] sm:max-w-[220px]">
                 <div className="flex items-center gap-3 mb-1">
                   <Award className="w-6 h-6 text-[#0284c7]" />
                   <span className="text-3xl font-extrabold text-[#0f172a]">10+</span>
