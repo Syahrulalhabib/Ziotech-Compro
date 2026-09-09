@@ -198,8 +198,8 @@ export default function Home() {
                 />
               ))}
             </div>
-            {/* Desktop: full bar */}
-            <div className="hidden sm:flex flex-wrap justify-center items-center gap-4 sm:gap-6 border-t border-white/20 pt-3 pb-1">
+            {/* Desktop: continuous segmented bar */}
+            <div className="hidden sm:flex w-full justify-between gap-1.5 pb-6">
               {images.slice(0, 5).map((_, index) => {
                 const isActive = index === currentHeroIndex;
                 const title = heroTitles[index % heroTitles.length];
@@ -207,19 +207,19 @@ export default function Home() {
                   <button
                     key={index}
                     onClick={() => setCurrentHeroIndex(index)}
-                    className="flex-1 min-w-[140px] max-w-[220px] text-left group cursor-pointer focus:outline-none"
+                    className="flex-1 group cursor-pointer focus:outline-none flex flex-col"
                   >
-                    <div className="flex items-center justify-start gap-1.5 mb-2">
-                      {isActive && <span className="inline-block w-2 h-2 rounded-full bg-[#0284c7] shrink-0"></span>}
-                      <span className={`text-xs sm:text-sm font-semibold transition-colors duration-300 truncate drop-shadow-[0_1px_4px_rgba(0,0,0,0.9)] ${isActive ? 'text-white' : 'text-white/80 group-hover:text-white'}`}>
+                    <div className="flex items-center gap-2 mb-3 px-1">
+                      <span className={`inline-block w-2 h-2 rounded-full shrink-0 transition-colors duration-300 ${isActive ? 'bg-[#0284c7]' : 'bg-white/20 group-hover:bg-white/40'}`}></span>
+                      <span className={`text-xs sm:text-sm font-medium transition-colors duration-300 truncate drop-shadow-md ${isActive ? 'text-white' : 'text-white/60 group-hover:text-white/80'}`}>
                         {title}
                       </span>
                     </div>
                     {/* Linear line indicator */}
-                    <div className="w-full h-1 bg-white/30 backdrop-blur-sm overflow-hidden relative rounded-full">
+                    <div className="w-full h-[2px] bg-white/20 overflow-hidden relative">
                       {isActive && (
                         <motion.div 
-                          className="absolute inset-y-0 left-0 bg-[#0284c7] rounded-full"
+                          className="absolute inset-y-0 left-0 bg-[#0284c7]"
                           initial={{ width: "0%" }}
                           animate={{ width: "100%" }}
                           transition={{ duration: interval / 1000, ease: "linear" }}
