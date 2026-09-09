@@ -175,10 +175,6 @@ export default function Home() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
             >
-              <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-slate-900/60 backdrop-blur-md border border-white/20 text-white text-xs font-semibold uppercase tracking-wider mb-4 shadow-sm">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#38bdf8] animate-pulse"></span>
-                {t.home?.badge || 'INOVASI & KUALITAS'}
-              </div>
               <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-[1.15] tracking-tight mb-4 drop-shadow-[0_2px_10px_rgba(0,0,0,0.85)]">
                 {heroData.heroTitle}
               </h1>
