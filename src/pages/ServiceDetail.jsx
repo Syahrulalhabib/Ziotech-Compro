@@ -8,7 +8,7 @@ import { getServiceIcon } from '../data/serviceIcons';
 export default function ServiceDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { data, loading } = useData();
+  const { data } = useData();
   const { t } = useLanguage();
   const [service, setService] = useState(null);
 
@@ -19,15 +19,9 @@ export default function ServiceDetail() {
     }
   }, [data, id]);
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-red-600"></div>
-      </div>
-    );
-  }
+  
 
-  if (!service && !loading) {
+  if (!service) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center pt-20">
         <h2 className="text-2xl font-bold text-gray-800 mb-4">{t.common.serviceNotFound}</h2>

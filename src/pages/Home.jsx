@@ -41,19 +41,26 @@ function StatCounter({ value, className }) {
 }
 
 export default function Home() {
-  const { data, loading } = useData();
+  const { data } = useData();
   const { t } = useLanguage();
   const [currentHeroIndex, setCurrentHeroIndex] = useState(0);
   const [activeTabCategory, setActiveTabCategory] = useState('ALL');
 
   const heroData = data?.home || {
-    heroTitle: 'Mitra Strategis Solusi Industri & Infrastruktur',
-    heroSubtitle: 'PT Ziotech Global Inovasi memberikan komitmen pada kualitas, efisiensi, dan inovasi berkelanjutan khususnya di spesialisasi Mechanical, Electrical & Plumbing (MEP).',
+    heroTitle: 'Keunggulan Rekayasa & Keandalan Infrastruktur Industri',
+    heroSubtitle: 'PT. Ziotech Global Inovasi hadir sebagai mitra strategis dengan komitmen pada presisi teknik, efisiensi operasional, dan kepatuhan standar K3LH tinggi.',
     heroImages: [
       'https://images.unsplash.com/photo-1541888086425-d81bb19240f5?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80',
       'https://images.unsplash.com/photo-1503387762-592deb58ef4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80',
       'https://images.unsplash.com/photo-1581094794329-c8112a89af12?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80',
       'https://images.unsplash.com/photo-1508450859948-4e04fabaa4ea?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80'
+    ],
+    heroTitles: [
+      'Rekayasa Sistem MEP',
+      'Konstruksi Sipil & Bangunan',
+      'Rantai Pasok Industri & Tambang',
+      'Digitalisasi & Otomasi Gedung',
+      'Keandalan Operasional'
     ],
     heroInterval: 5000
   };
@@ -82,11 +89,6 @@ export default function Home() {
     return () => clearInterval(timer);
   }, [images.length, interval]);
 
-  if (loading) return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-red-600"></div>
-    </div>
-  );
   const services = (() => {
     const rawList = Array.isArray(data?.services) ? data.services : [];
     return rawList
@@ -115,36 +117,26 @@ export default function Home() {
     ? featuredProjects
     : featuredProjects.filter(p => (p.category || '').toUpperCase().includes(activeTabCategory));
 
-  const focusPillars = [
-    {
-      label: t.home?.fp1Label || 'LAYANAN UTAMA',
-      title: t.home?.fp1Title || 'Mechanical, Electrical & Plumbing (MEP)',
-      desc: t.home?.fp1Desc || 'Instalasi sistem engineering presisi tinggi gedung & fasilitas industri.',
-      link: '/service/1',
-      image: 'https://images.unsplash.com/photo-1581092921461-eab62e97a780?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
-    },
-    {
-      label: t.home?.fp2Label || 'INFRASTRUKTUR',
-      title: t.home?.fp2Title || 'Konstruksi Sipil & Bangunan Komersial',
-      desc: t.home?.fp2Desc || 'Pengerjaan struktur kokoh dengan standar keamanan dan K3 terdepan.',
-      link: '/service/2',
-      image: 'https://images.unsplash.com/photo-1541888086425-d81bb19240f5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
-    },
-    {
-      label: t.home?.fp3Label || 'INDUSTRI & TAMBANG',
-      title: t.home?.fp3Title || 'Suplai & Penunjang Pertambangan',
-      desc: t.home?.fp3Desc || 'Pengadaan komponen teknis dan perawatan fasilitas operasional tambang.',
-      link: '/service/3',
-      image: 'https://images.unsplash.com/photo-1578328819058-b69f3a3b0f6b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
-    },
-    {
-      label: t.home?.fp4Label || 'TRANSFORMASI',
-      title: t.home?.fp4Title || 'Solusi Digitalisasi & Otomasi Gedung',
-      desc: t.home?.fp4Desc || 'Sistem Building Automation & pemantauan energi pintar terintegrasi.',
-      link: '/service/4',
-      image: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
-    }
+  // Focus Pillars dinamis dari CMS — ikut layanan yang ada di database
+  const FP_FALLBACK_IMAGES = [
+    'https://images.unsplash.com/photo-1581092921461-eab62e97a780?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    'https://images.unsplash.com/photo-1541888086425-d81bb19240f5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    'https://images.unsplash.com/photo-1578328819058-b69f3a3b0f6b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    'https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
   ];
+  const allServicesRaw = Array.isArray(data?.services) ? data.services : [];
+  const focusPillars = (allServicesRaw.length > 0 ? allServicesRaw : [
+    { id: 1, title: 'Mechanical, Electrical & Plumbing (MEP)', description: 'Instalasi sistem engineering presisi tinggi gedung & fasilitas industri.', image: '' },
+    { id: 2, title: 'Konstruksi Sipil & Bangunan Komersial', description: 'Pengerjaan struktur kokoh dengan standar keamanan dan K3 terdepan.', image: '' },
+    { id: 3, title: 'Suplai & Penunjang Pertambangan', description: 'Pengadaan komponen teknis dan perawatan fasilitas operasional tambang.', image: '' },
+    { id: 4, title: 'Solusi Digitalisasi & Otomasi Gedung', description: 'Sistem Building Automation & pemantauan energi pintar terintegrasi.', image: '' },
+  ]).slice(0, 4).map((s, idx) => ({
+    label: s.category || (idx === 0 ? 'LAYANAN UTAMA' : idx === 1 ? 'INFRASTRUKTUR' : idx === 2 ? 'INDUSTRI & TAMBANG' : 'TRANSFORMASI'),
+    title: s.title,
+    desc: s.description,
+    link: `/service/${s.id}`,
+    image: s.image || FP_FALLBACK_IMAGES[idx] || FP_FALLBACK_IMAGES[0],
+  }));
 
   return (
     <div className="bg-white text-[#0f172a] selection:bg-[#0284c7] selection:text-white">
@@ -705,35 +697,49 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 10. CALL TO ACTION - Clean & Direct */}
-      <section className="py-20 sm:py-24 bg-[#0f172a] text-white relative overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none opacity-20">
-          <div className="absolute top-0 right-1/4 w-96 h-96 rounded-full bg-[#0284c7] blur-3xl" />
-        </div>
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center relative z-10">
-          <span className="text-[11px] font-bold tracking-widest text-[#38bdf8] uppercase mb-4 block">
-            {t.home?.ctaBadge || 'KOLABORASI & KONSULTASI'}
-          </span>
-          <h2 className="text-2xl sm:text-4xl md:text-5xl font-extrabold text-white mb-6 leading-tight">
-            {t.common?.readyToCollaborate || 'Siap Berkolaborasi Bersama Kami?'}
-          </h2>
-          <p className="text-slate-300 text-sm sm:text-lg mb-10 max-w-2xl mx-auto font-light leading-relaxed">
-            {t.common?.ctaDesc || 'Diskusikan spesifikasi kebutuhan MEP, konstruksi, atau pengadaan fasilitas industri Anda bersama tim teknisi kami.'}
-          </p>
+      {/* 10. CALL TO ACTION - Elevated Floating Card (Pertamina Corporate Style) */}
+      <section className="py-16 sm:py-24 bg-[#f8fafc]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="relative rounded-3xl overflow-hidden bg-slate-900 shadow-2xl shadow-slate-900/15 border border-slate-800">
+            {/* Background Image & Gradient */}
+            <div className="absolute inset-0 z-0">
+              <img 
+                src={data?.home?.ctaBgImageUrl || "https://images.unsplash.com/photo-1503387762-592deb58ef4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80"} 
+                alt="Kolaborasi Ziotech" 
+                className="w-full h-full object-cover opacity-30"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/85 to-slate-900/60 sm:bg-gradient-to-l sm:from-slate-950/95 sm:via-slate-900/80 sm:to-transparent" />
+            </div>
 
-          <div className="flex flex-wrap justify-center items-center gap-4">
-            <Link 
-              to="/contact"
-              className="pertamina-btn-pill-dark !bg-white !text-[#0f172a] !border-white hover:!bg-slate-100 hover:!text-[#0284c7]"
-            >
-              {t.common?.contactNow || 'Hubungi Kami'} <ArrowRight className="w-4 h-4" />
-            </Link>
-            <Link 
-              to="/service"
-              className="pertamina-btn-pill-dark"
-            >
-              {t.common?.viewServices || 'Jelajahi Layanan'} <ArrowUpRight className="w-4 h-4" />
-            </Link>
+            {/* Content Container - Right Aligned */}
+            <div className="relative z-10 px-8 py-16 sm:px-14 sm:py-20 flex justify-end">
+              <div className="max-w-2xl text-white text-left">
+                <span className="text-[11px] font-bold tracking-widest text-[#38bdf8] uppercase mb-3 block">
+                  {t.home?.ctaBadge || 'KOLABORASI & KONSULTASI'}
+                </span>
+                <h2 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold text-white mb-5 leading-tight tracking-tight">
+                  {t.common?.readyToCollaborate || 'Siap Berkolaborasi Bersama Kami?'}
+                </h2>
+                <p className="text-slate-300 text-sm sm:text-base leading-relaxed mb-8 font-normal">
+                  {t.common?.ctaDesc || 'Konsultasikan kebutuhan proyek konstruksi, MEP, atau pengadaan industri Anda dengan tim ahli kami.'}
+                </p>
+
+                <div className="flex flex-wrap items-center gap-3.5">
+                  <Link 
+                    to="/contact"
+                    className="pertamina-btn-pill-dark"
+                  >
+                    {t.common?.contactNow || 'Hubungi Sekarang'} <ArrowUpRight className="w-4 h-4" />
+                  </Link>
+                  <Link 
+                    to="/service"
+                    className="pertamina-btn-pill-dark"
+                  >
+                    {t.common?.viewServices || 'Lihat Layanan'} <ArrowUpRight className="w-4 h-4" />
+                  </Link>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>

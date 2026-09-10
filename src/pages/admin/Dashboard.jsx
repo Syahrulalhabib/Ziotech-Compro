@@ -1,122 +1,18 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { ref, set, onValue, remove, update } from 'firebase/database';
 import { auth, db } from '../../firebase/config';
-import { useData } from '../../context/DataContext';
-import { LogOut, Save, Home, Info, LayoutDashboard, Image as ImageIcon, Type, Menu, X, CheckCircle2, AlertCircle, Briefcase, Wrench, Phone, Plus, Trash2, Star, CalendarClock, Building2, Share2, Globe, MapPin, Inbox, Mail, User, Clock, ExternalLink, Copy, Check, Sparkles } from 'lucide-react';
+import { useData, defaultData } from '../../context/DataContext';
+import { LogOut, Save, Home, Info, LayoutDashboard, Image as ImageIcon, Type, Menu, X, CheckCircle2, AlertCircle, Briefcase, Wrench, Phone, Plus, Trash2, Star, CalendarClock, Building2, Share2, Globe, MapPin, Inbox, Mail, User, Clock, ExternalLink, Copy, Check, Sparkles, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { SERVICE_ICONS, getServiceIcon } from '../../data/serviceIcons';
 
-const defaultCompany = {
-  name: 'PT Ziotech Global Inovasi',
-  address: 'Jl. Contoh Alamat No. 123, Jakarta, Indonesia',
-  phone: '+62 812 3456 7890',
-  email: 'info@ziotech.co.id',
-  workingHours: 'Senin - Jumat: 08:00 - 17:00',
-  googleMapsEmbedUrl: ''
-};
-
-const defaultPageHeaders = {
-  about: {
-    title: 'Tentang Kami',
-    subtitle: 'Mengenal lebih dekat PT Ziotech Global Inovasi, visi, misi, dan nilai-nilai perusahaan.',
-    image: 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80'
-  },
-  service: {
-    title: 'Layanan Kami',
-    subtitle: 'Solusi komprehensif yang disesuaikan dengan kebutuhan spesifik industri dan bisnis Anda.',
-    image: 'https://images.unsplash.com/photo-1581092921461-eab62e97a780?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80'
-  },
-  project: {
-    title: 'Portofolio Proyek',
-    subtitle: 'Bukti nyata komitmen kami dalam memberikan hasil karya terbaik di berbagai sektor industri.',
-    image: 'https://images.unsplash.com/photo-1541888086425-d81bb19240f5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80'
-  },
-  contact: {
-    title: 'Hubungi Kami',
-    subtitle: 'Tim profesional kami siap membantu dan mendiskusikan kebutuhan proyek Anda.',
-    image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80'
-  }
-};
-
-const defaultServices = [
-  {
-    id: 'mep',
-    title: 'Mechanical, Electrical & Plumbing (MEP)',
-    icon: 'Wrench',
-    description: 'Solusi terpadu untuk kebutuhan mekanikal, elektrikal, dan pemipaan pada berbagai skala proyek.',
-    features: [
-      'Desain dan Instalasi Sistem HVAC',
-      'Pemasangan Sistem Kelistrikan Industri & Gedung',
-      'Instalasi Pipa Air Bersih dan Air Kotor'
-    ],
-    image: 'https://images.unsplash.com/photo-1581092921461-eab62e97a780?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
-  }
-];
-
-const defaultProjects = [
-  {
-    id: 1,
-    title: 'Instalasi MEP Gedung Perkantoran 20 Lantai',
-    category: 'MEP',
-    location: 'Jakarta Pusat',
-    year: '2025',
-    client: 'PT Maju Bersama',
-    description: 'Pengerjaan sistem mekanikal, elektrikal, dan plumbing komprehensif untuk gedung perkantoran Grade A.',
-    image: 'https://images.unsplash.com/photo-1541888086425-d81bb19240f5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
-  },
-  {
-    id: 2,
-    title: 'Konstruksi Pabrik Manufaktur',
-    category: 'Konstruksi',
-    location: 'Cikarang, Bekasi',
-    year: '2024',
-    client: 'PT Industri Global',
-    description: 'Pembangunan struktur utama dan fasilitas penunjang pabrik seluas 2 hektar.',
-    image: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
-  },
-  {
-    id: 3,
-    title: 'Suplai Infrastruktur Tambang Nikel',
-    category: 'Pertambangan',
-    location: 'Morowali, Sulawesi Tengah',
-    year: '2025',
-    client: 'PT Tambang Sejahtera',
-    description: 'Penyediaan dan instalasi sistem perpipaan industri dan kelistrikan area tambang.',
-    image: 'https://images.unsplash.com/photo-1578328819058-b69f3a3b0f6b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
-  },
-  {
-    id: 4,
-    title: 'Implementasi Building Management System (BMS)',
-    category: 'Digitalisasi',
-    location: 'Surabaya',
-    year: '2024',
-    client: 'Hotel Bintang 5',
-    description: 'Modernisasi sistem kontrol gedung untuk efisiensi energi dan kenyamanan tamu.',
-    image: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
-  },
-  {
-    id: 5,
-    title: 'Sistem Proteksi Kebakaran Gudang Logistik',
-    category: 'MEP',
-    location: 'Tangerang',
-    year: '2026',
-    client: 'Logistik Nusantara',
-    description: 'Instalasi hydrant, sprinkler, dan fire alarm system terintegrasi.',
-    image: 'https://images.unsplash.com/photo-1581092921461-eab62e97a780?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
-  },
-  {
-    id: 6,
-    title: 'Infrastruktur Jalan Tambang Batubara',
-    category: 'Konstruksi',
-    location: 'Kalimantan Timur',
-    year: '2025',
-    client: 'PT Energi Bumi',
-    description: 'Pembangunan dan perkuatan jalan angkut (hauling road) sepanjang 15 KM.',
-    image: 'https://images.unsplash.com/photo-1517524008697-84bbe3c3fd98?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
-  }
-];
+const defaultCompany = defaultData?.company || {};
+const defaultPageHeaders = defaultData?.pageHeaders || {};
+const defaultServices = defaultData?.services || [];
+const defaultProjects = defaultData?.projects || [];
 
 // --- COMPONENTS MOVED OUTSIDE to prevent focus loss on every keystroke ---
 const InputField = ({ label, icon: Icon, type = "text", value, onChange, onBlur, placeholder, isTextarea, helperText, min, max, step }) => (
@@ -353,6 +249,11 @@ export default function Dashboard() {
   }, [navigate]);
 
   useEffect(() => {
+    document.body.style.overflow = isMobileMenuOpen ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
+  }, [isMobileMenuOpen]);
+
+  useEffect(() => {
     // Listen real-time pesan masuk di Firebase
     if (!user) return;
     const messagesRef = ref(db, 'messages');
@@ -404,7 +305,13 @@ export default function Dashboard() {
 
       setFormData({
         ...parsedData,
-        company: { ...defaultCompany, ...(parsedData.company || {}) },
+        company: { 
+          ...defaultCompany, 
+          ...(parsedData.company || {}),
+          socials: cleanArray(parsedData.company?.socials, defaultCompany.socials || []),
+          footerServices: cleanArray(parsedData.company?.footerServices, defaultCompany.footerServices || [])
+        },
+        about: { ...defaultData.about, ...(parsedData.about || {}) },
         services: services.length > 0 ? services : defaultServices,
         projects: projects.length > 0 ? projects : defaultProjects,
         pageHeaders: {
@@ -416,7 +323,6 @@ export default function Dashboard() {
         home: {
           heroTitles: [],
           heroImages: [],
-          clientPartners: [],
           ...parsedData.home,
           clientPartners: cleanArray(parsedData.home?.clientPartners, [])
         }
@@ -641,6 +547,47 @@ export default function Dashboard() {
     });
   };
 
+  const handleFooterServiceChange = (index, field, value) => {
+    setFormData((prev) => {
+      const footerServices = [...(prev.company?.footerServices || [])];
+      footerServices[index] = { ...footerServices[index], [field]: value };
+      return {
+        ...prev,
+        company: {
+          ...prev.company,
+          footerServices
+        }
+      };
+    });
+  };
+
+  const addFooterService = () => {
+    setFormData((prev) => ({
+      ...prev,
+      company: {
+        ...prev.company,
+        footerServices: [
+          ...(prev.company?.footerServices || []),
+          { id: Date.now(), title: 'Nama Layanan Baru', url: '/service/1' }
+        ]
+      }
+    }));
+  };
+
+  const removeFooterService = (index) => {
+    setFormData((prev) => {
+      const footerServices = [...(prev.company?.footerServices || [])];
+      footerServices.splice(index, 1);
+      return {
+        ...prev,
+        company: {
+          ...prev.company,
+          footerServices
+        }
+      };
+    });
+  };
+
   const handleFeaturesChange = (serviceIndex, featuresString) => {
     const featuresArray = featuresString.split('\n').filter(f => f.trim() !== '');
     handleArrayChange('services', serviceIndex, 'features', featuresArray);
@@ -730,7 +677,7 @@ export default function Dashboard() {
       </AnimatePresence>
 
       {/* Sidebar */}
-      <aside className={`fixed inset-y-0 left-0 z-50 w-72 bg-slate-900 text-slate-300 flex-col transition-transform duration-300 ease-in-out lg:static lg:translate-x-0 ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} flex`}>
+      <aside className={`hidden lg:flex inset-y-0 left-0 z-50 w-72 bg-slate-900 text-slate-300 flex-col transition-transform duration-300 ease-in-out`}>
         <div className="h-20 flex items-center justify-between px-6 bg-slate-950 border-b border-slate-800 shrink-0">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-900/50">
@@ -799,9 +746,112 @@ export default function Dashboard() {
         </div>
       </aside>
 
-      {/* Mobile Overlay */}
-      {isMobileMenuOpen && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-40 lg:hidden" onClick={() => setIsMobileMenuOpen(false)} />
+      {/* Mobile Overlay (Full Screen Menu) */}
+      {createPortal(
+        <AnimatePresence>
+          {isMobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.22 }}
+              className="fixed inset-0 z-[9998] lg:hidden flex flex-col bg-black/80 backdrop-blur-md"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              {/* Header bar overlay */}
+              <div className="flex items-center justify-between px-5 py-4 shrink-0 border-b border-white/10 bg-transparent">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-900/50">
+                    <LayoutDashboard className="w-5 h-5 text-white" />
+                  </div>
+                  <span className="text-white text-xl font-bold tracking-tight">Ziotech CMS</span>
+                </div>
+                <button
+                  className="text-white hover:text-gray-300 transition-colors p-1"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  aria-label="Tutup menu"
+                >
+                  <X size={26} />
+                </button>
+              </div>
+
+              {/* Nav items */}
+              <motion.div
+                initial={{ opacity: 0, y: -16 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -12 }}
+                transition={{ duration: 0.22, delay: 0.05 }}
+                className="flex flex-col w-full h-full pt-4 overflow-y-auto pb-6"
+                onClick={(e) => e.stopPropagation()}
+              >
+                {[
+                  { id: 'home', label: 'Beranda (Home)', icon: Home },
+                  { id: 'about', label: 'Tentang Kami', icon: Info },
+                  { id: 'services', label: 'Layanan (Services)', icon: Wrench },
+                  { id: 'projects', label: 'Proyek (Projects)', icon: Briefcase },
+                  { id: 'contact', label: 'Kontak & Perusahaan', icon: Phone },
+                  { id: 'inbox', label: 'Pesan Masuk', icon: Inbox }
+                ].map((item, idx) => {
+                  const Icon = item.icon;
+                  const isActive = activeTab === item.id;
+                  return (
+                    <motion.button
+                      key={item.id}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.05 + idx * 0.05 }}
+                      onClick={() => {
+                        setActiveTab(item.id);
+                        setIsMobileMenuOpen(false);
+                      }}
+                      className={`w-full flex items-center justify-between px-6 py-5 text-left text-lg transition-colors border-b border-white/5 ${
+                        isActive
+                          ? 'text-white font-bold'
+                          : 'text-gray-400 hover:text-white font-medium'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <Icon size={22} className={isActive ? 'text-blue-500' : 'text-gray-500'} />
+                        {item.label}
+                      </div>
+                      <div className="flex items-center gap-3">
+                        {item.id === 'inbox' && unreadCount > 0 && (
+                          <span className="px-2 py-0.5 text-xs font-bold bg-red-500 text-white rounded-full">
+                            {unreadCount}
+                          </span>
+                        )}
+                        <ChevronRight size={20} className={isActive ? "text-white" : "text-gray-600"} />
+                      </div>
+                    </motion.button>
+                  );
+                })}
+
+                {/* User Info & Logout Button */}
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.05 + 6 * 0.05 }}
+                  className="mt-6 px-6"
+                >
+                  <div className="bg-white/5 rounded-xl p-4 mb-4 flex items-center gap-3 border border-white/10">
+                    <div className="w-10 h-10 rounded-full bg-slate-700 flex items-center justify-center text-white font-bold shrink-0">AD</div>
+                    <div className="overflow-hidden">
+                      <p className="text-sm font-semibold text-white truncate">Administrator</p>
+                      <p className="text-xs text-slate-400 truncate">{user?.email}</p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={handleLogout}
+                    className="w-full flex items-center justify-center gap-2 px-4 py-4 text-red-400 hover:text-white hover:bg-red-500/20 rounded-xl transition-all border border-red-500/20 font-medium"
+                  >
+                    <LogOut className="w-5 h-5" /> Keluar
+                  </button>
+                </motion.div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>,
+        document.body
       )}
 
       {/* Main Content */}
@@ -878,7 +928,7 @@ export default function Dashboard() {
                         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                           <div className="flex-1">
                             <label className="block text-sm font-semibold text-slate-700">Gambar Background Hero (Slider)</label>
-                            <p className="text-xs text-slate-500 mt-1 mb-0">Format lanskap (disarankan 16:9 atau 1920×1080 px) agar pas di layar.</p>
+                            <p className="text-xs text-slate-500 mt-1 mb-0">Format lanskap (disarankan 16:9 atau 1920Ã—1080 px) agar pas di layar.</p>
                           </div>
                           <button
                             onClick={() => {
@@ -955,13 +1005,6 @@ export default function Dashboard() {
                       <div className="pt-4 border-t border-slate-100 space-y-6">
                         <InputField 
                           icon={Type} 
-                          label="Badge Intro (Kategori Atas Judul)" 
-                          value={formData.home?.introBadge ?? 'INOVASI & KUALITAS'} 
-                          onChange={(e) => handleChange('home', 'introBadge', e.target.value)} 
-                          placeholder="INOVASI & KUALITAS"
-                        />
-                        <InputField 
-                          icon={Type} 
                           label="Judul Intro" 
                           value={formData.home?.introTitle ?? 'Menghadirkan Solusi Teknik dan Konstruksi Terbaik untuk Negeri'} 
                           onChange={(e) => handleChange('home', 'introTitle', e.target.value)} 
@@ -994,6 +1037,23 @@ export default function Dashboard() {
                       </div>
                     </div>
                     <ImageUploadBox label="Gambar Preview About" value={formData.home?.aboutPreviewImageUrl} onChange={(val) => handleChange('home', 'aboutPreviewImageUrl', val)} onImageUpload={handleImageUpload} />
+                  </div>
+
+                  {/* CTA Background Image */}
+                  <div className="bg-white rounded-3xl p-6 lg:p-8 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100">
+                    <div className="flex items-center gap-4 mb-6 pb-5 border-b border-slate-100">
+                      <div className="p-3 bg-slate-100 text-slate-600 rounded-xl"><ImageIcon className="w-6 h-6" /></div>
+                      <div>
+                        <h3 className="text-xl font-bold text-slate-800">Gambar Background CTA</h3>
+                        <p className="text-sm text-slate-500 mt-1">Foto latar belakang di bagian \"Siap Berkolaborasi?\" (akhir halaman).</p>
+                      </div>
+                    </div>
+                    <ImageUploadBox
+                      label="Gambar CTA (Landscape, 16:9)"
+                      value={formData.home?.ctaBgImageUrl || ''}
+                      onChange={(val) => handleChange('home', 'ctaBgImageUrl', val)}
+                      onImageUpload={handleImageUpload}
+                    />
                   </div>
 
                   {/* Mitra / Client Logos Section */}
@@ -1059,7 +1119,7 @@ export default function Dashboard() {
                 </motion.div>
               )}
 
-              {/* ABOUT TAB */}
+                            {/* ABOUT TAB */}
               {activeTab === 'about' && (
                 <motion.div key="about" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.2 }} className="space-y-8">
                   <PageHeaderEditor page="about" label="Tentang Kami" formData={formData} onChange={handlePageHeaderChange} onImageUpload={handleImageUpload} />
@@ -1389,6 +1449,73 @@ export default function Dashboard() {
                       {(!formData.company?.socials || formData.company?.socials.length === 0) && (
                         <div className="text-center p-8 border-2 border-dashed border-slate-200 rounded-xl bg-slate-50 text-slate-500 text-sm">
                           Belum ada sosial media. Klik 'Tambah Sosmed' untuk menambahkan tautan.
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Footer Services Links Section */}
+                  <div className="bg-white rounded-3xl p-6 lg:p-8 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-5 border-b border-slate-100 mb-6 gap-4">
+                      <div className="flex items-center gap-4">
+                        <div className="p-3 bg-blue-50 text-blue-600 rounded-xl"><Globe className="w-6 h-6" /></div>
+                        <div>
+                          <h3 className="text-xl font-bold text-slate-800">Tautan Layanan di Footer</h3>
+                          <p className="text-sm text-slate-500 mt-1">Atur nama layanan dan hyperlink yang muncul di kolom 'Layanan' pada footer website.</p>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={addFooterService}
+                        className="text-sm flex items-center justify-center gap-1.5 text-white font-semibold bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-xl transition-colors shrink-0"
+                      >
+                        <Plus className="w-4 h-4" /> Tambah Tautan Footer
+                      </button>
+                    </div>
+
+                    <div className="space-y-4">
+                      {(formData.company?.footerServices || []).map((item, idx) => (
+                        <div key={item.id || idx} className="p-4 sm:p-5 border border-slate-200 rounded-2xl bg-slate-50 relative group flex flex-col md:flex-row gap-4 items-start md:items-center transition-all hover:border-slate-300">
+                          <div className="flex-1 w-full">
+                            <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                              Judul / Label Teks yang Tampil
+                            </label>
+                            <input
+                              type="text"
+                              value={item.title || ''}
+                              placeholder="cth: Mechanical, Electrical & Plumbing"
+                              onChange={(e) => handleFooterServiceChange(idx, 'title', e.target.value)}
+                              className="w-full px-3.5 py-2.5 text-sm bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 font-medium text-slate-800"
+                            />
+                          </div>
+
+                          <div className="flex-1 w-full">
+                            <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                              Hyperlink / URL Tujuan (Internal <code className="text-blue-600 font-mono">/service/1</code> atau Eksternal <code className="text-blue-600 font-mono">https://...</code>)
+                            </label>
+                            <input
+                              type="text"
+                              value={item.url || ''}
+                              placeholder="cth: /service/1 atau https://..."
+                              onChange={(e) => handleFooterServiceChange(idx, 'url', e.target.value)}
+                              className="w-full px-3.5 py-2.5 text-sm bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 font-mono text-xs text-slate-800"
+                            />
+                          </div>
+
+                          <button
+                            type="button"
+                            onClick={() => removeFooterService(idx)}
+                            className="p-2.5 text-red-500 hover:bg-red-50 rounded-xl transition-colors border border-transparent hover:border-red-200 self-end md:self-center shrink-0 mt-1 md:mt-5"
+                            title="Hapus tautan ini"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      ))}
+
+                      {(!formData.company?.footerServices || formData.company?.footerServices.length === 0) && (
+                        <div className="text-center p-8 border-2 border-dashed border-slate-200 rounded-2xl bg-slate-50 text-slate-500 text-sm">
+                          Belum ada tautan layanan khusus yang dikonfigurasi. Footer otomatis menampilkan 5 layanan teratas dari database. Klik <b>'Tambah Tautan Footer'</b> untuk mengatur secara khusus.
                         </div>
                       )}
                     </div>

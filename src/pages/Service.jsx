@@ -1,4 +1,4 @@
-import { useData } from '../context/DataContext';
+import { useData, defaultData } from '../context/DataContext';
 import { useLanguage } from '../context/LanguageContext';
 import { Link } from 'react-router-dom';
 import { Wrench, Building2, Activity, Cpu, CheckCircle2, ArrowRight } from 'lucide-react';
@@ -6,75 +6,10 @@ import { motion } from 'framer-motion';
 import { getServiceIcon } from '../data/serviceIcons';
 
 export default function Service() {
-  const { data, loading } = useData();
+  const { data } = useData();
   const { t } = useLanguage();
 
-  if (loading) return (
-    <div className="min-h-screen flex items-center justify-center bg-white">
-      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#0284c7]"></div>
-    </div>
-  );
-
-  const defaultServices = [
-    {
-      id: 'mep',
-      title: 'Mechanical, Electrical & Plumbing (MEP)',
-      icon: Wrench,
-      description: 'Solusi terpadu untuk kebutuhan mekanikal, elektrikal, dan pemipaan pada berbagai skala proyek.',
-      features: [
-        'Desain dan Instalasi Sistem HVAC',
-        'Pemasangan Sistem Kelistrikan Industri & Gedung',
-        'Instalasi Pipa Air Bersih dan Air Kotor',
-        'Sistem Proteksi Kebakaran (Fire Fighting)',
-        'Pemeliharaan dan Perawatan Rutin'
-      ],
-      image: 'https://images.unsplash.com/photo-1581092921461-eab62e97a780?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
-    },
-    {
-      id: 'construction',
-      title: 'Konstruksi & Infrastruktur',
-      icon: Building2,
-      description: 'Layanan konstruksi komprehensif yang mengutamakan kualitas struktur dan keselamatan kerja.',
-      features: [
-        'Pembangunan Gedung Komersial',
-        'Konstruksi Fasilitas Industri',
-        'Pengembangan Infrastruktur Jalan',
-        'Renovasi dan Perbaikan Struktur',
-        'Manajemen Proyek Konstruksi'
-      ],
-      image: 'https://images.unsplash.com/photo-1541888086425-d81bb19240f5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
-    },
-    {
-      id: 'mining',
-      title: 'Solusi Pertambangan',
-      icon: Activity,
-      description: 'Penyediaan barang consumable dan dukungan infrastruktur untuk kelancaran operasional tambang.',
-      features: [
-        'Suplai Sparepart Alat Berat',
-        'Penyediaan Consumable Barang Tambang',
-        'Pembangunan Fasilitas Penunjang Tambang',
-        'Sistem Kelistrikan Area Tambang',
-        'Instalasi Pemipaan Industri Tambang'
-      ],
-      image: 'https://images.unsplash.com/photo-1578328819058-b69f3a3b0f6b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
-    },
-    {
-      id: 'digital',
-      title: 'Solusi Digitalisasi',
-      icon: Cpu,
-      description: 'Transformasi digital untuk meningkatkan efisiensi operasional dan manajemen aset.',
-      features: [
-        'Sistem Otomasi Gedung (BMS)',
-        'Pemantauan Energi Cerdas',
-        'Digitalisasi Manajemen Aset',
-        'Sistem Keamanan Terintegrasi',
-        'IoT untuk Industri'
-      ],
-      image: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
-    }
-  ];
-
-  const services = data?.services || defaultServices;
+  const services = data?.services || defaultData.services;
   const header = data?.pageHeaders?.service || {};
 
   return (

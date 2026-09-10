@@ -8,28 +8,22 @@ import { motion } from 'framer-motion';
 export default function ProjectDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { data, loading } = useData();
+  const { data } = useData();
   const { t } = useLanguage();
   const [project, setProject] = useState(null);
 
   useEffect(() => {
     if (data?.projects && id) {
-      const found = data.projects.find(p => p.id === parseInt(id));
+      const found = data.projects.find(p => String(p.id) === String(id));
       if (found) {
         setProject(found);
       }
     }
   }, [data, id]);
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-red-600"></div>
-      </div>
-    );
-  }
+  
 
-  if (!project && !loading) {
+  if (!project) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center pt-20">
         <h2 className="text-2xl font-bold text-gray-800 mb-4">{t.common.projectNotFound}</h2>

@@ -72,7 +72,6 @@ export const DICTIONARY = {
   // Categories
   'MEP': 'MEP',
   'Konstruksi': 'Construction',
-  'Pertambangan': 'Mining',
   'Digitalisasi': 'Digitalization',
 
   // Home & About

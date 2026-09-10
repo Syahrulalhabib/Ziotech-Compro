@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useData } from '../context/DataContext';
 import { useLanguage } from '../context/LanguageContext';
-import LanguageToggle from './LanguageToggle';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import logo from '../assets/ziotech.png';
 
@@ -113,7 +112,7 @@ export default function Navbar() {
       </div>
       </header>
 
-      {/* Mobile overlay — portal ke document.body, tidak terpengaruh scroll/offset parent fixed */}
+      {/* Mobile overlay */}
       {createPortal(
         <AnimatePresence>
           {isOpen && (
@@ -122,15 +121,14 @@ export default function Navbar() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.22 }}
-              className="fixed inset-0 z-[9998] lg:hidden flex flex-col"
-              style={{ background: 'rgba(11, 19, 41, 0.92)', backdropFilter: 'blur(6px)' }}
+              className="fixed inset-0 z-[9998] lg:hidden flex flex-col bg-black/80 backdrop-blur-md"
               onClick={() => setIsOpen(false)}
             >
               {/* Header bar overlay */}
-              <div className="flex items-center justify-between px-5 py-4 shrink-0">
+              <div className="flex items-center justify-between px-5 py-4 shrink-0 border-b border-white/10 bg-transparent">
                 <img src={logo} alt={company.name} className="h-12 no-placeholder" />
                 <button
-                  className="text-white hover:text-[var(--accent-gold)] transition-colors p-1"
+                  className="text-white hover:text-gray-300 transition-colors p-1"
                   onClick={() => setIsOpen(false)}
                   aria-label="Tutup menu"
                 >
@@ -144,7 +142,7 @@ export default function Navbar() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -12 }}
                 transition={{ duration: 0.22, delay: 0.05 }}
-                className="flex flex-col items-start gap-1 w-full px-4 pt-4"
+                className="flex flex-col w-full h-full pt-4 overflow-y-auto"
                 onClick={(e) => e.stopPropagation()}
               >
                 {navLinks.map((link, idx) => {
@@ -152,17 +150,18 @@ export default function Navbar() {
                   return (
                     <motion.button
                       key={link.name}
-                      initial={{ opacity: 0, y: -12 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.07 + idx * 0.06 }}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.05 + idx * 0.05 }}
                       onClick={() => handleNavClick(link.path)}
-                      className={`w-full text-left px-4 py-4 rounded-xl text-xl font-semibold transition-colors ${
+                      className={`w-full flex items-center justify-between px-6 py-5 text-left text-lg transition-colors border-b border-white/5 ${
                         isActive
-                          ? 'bg-[var(--accent-gold)]/20 text-[var(--accent-gold)] border border-[var(--accent-gold)]/40'
-                          : 'text-white hover:bg-white/10'
+                          ? 'text-white font-bold'
+                          : 'text-gray-400 hover:text-white font-medium'
                       }`}
                     >
                       {link.name}
+                      <ChevronRight size={20} className={isActive ? "text-white" : "text-gray-600"} />
                     </motion.button>
                   );
                 })}

@@ -7,7 +7,7 @@ import { MapPin, Phone, Mail, Clock, Send, CheckCircle2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Contact() {
-  const { data, loading } = useData();
+  const { data } = useData();
   const { t } = useLanguage();
   const [formState, setFormState] = useState({
     name: '',
@@ -19,11 +19,7 @@ export default function Contact() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
-  if (loading) return (
-    <div className="min-h-screen flex items-center justify-center bg-white">
-      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#0284c7]"></div>
-    </div>
-  );
+  
 
   const company = data?.company || {
     name: 'PT Ziotech Global Inovasi',

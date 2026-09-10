@@ -6,15 +6,11 @@ import { MapPin, Calendar, Building2, ChevronRight, Filter } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Project() {
-  const { data, loading } = useData();
+  const { data } = useData();
   const { t } = useLanguage();
   const [activeCategory, setActiveCategory] = useState('Semua');
 
-  if (loading) return (
-    <div className="min-h-screen flex items-center justify-center bg-white">
-      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#0284c7]"></div>
-    </div>
-  );
+  
 
   const projects = Array.isArray(data?.projects) ? data.projects : [];
 

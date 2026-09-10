@@ -4,14 +4,10 @@ import { Target, Lightbulb, Shield, Users, ArrowRight, Award, Compass, CheckCirc
 import { motion } from 'framer-motion';
 
 export default function About() {
-  const { data, loading } = useData();
+  const { data } = useData();
   const { t } = useLanguage();
 
-  if (loading) return (
-    <div className="min-h-screen flex items-center justify-center bg-white">
-      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#0284c7]"></div>
-    </div>
-  );
+  
 
   const aboutData = data?.about || {
     description: t.aboutPage.defaultDesc,
