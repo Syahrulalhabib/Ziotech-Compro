@@ -32,14 +32,10 @@ const defaultData = {
     introDescription: "PT. Ziotech Global Inovasi adalah penyedia solusi terpadu di bidang Mechanical, Electrical, & Plumbing (MEP), Konstruksi Bangunan Industri, serta Pengadaan Peralatan Teknis Terpercaya.",
     introDescription2: "Didukung tim insinyur berlisensi, manajemen proyek modern, dan pengawasan mutu berlapis, kami memberikan hasil kerja terstandarisasi yang tepat waktu dan efisien.",
     aboutPreviewImageUrl: "https://images.unsplash.com/photo-1503387762-592deb58ef4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
-    clientPartnersTitle: "Dipercaya Oleh Berbagai Perusahaan Terkemuka",
-    clientPartners: [
-      { id: 1, name: "PERTAMINA", logo: "" },
-      { id: 2, name: "PLN", logo: "" },
-      { id: 3, name: "WIKA", logo: "" },
-      { id: 4, name: "ANTAM", logo: "" },
-      { id: 5, name: "Adhi", logo: "" }
-    ],
+    aboutSectionBadge: "TENTANG PERUSAHAAN",
+    aboutSectionTitle: "Mitra Rekayasa Teknik & Solusi Industri Terpercaya",
+    aboutSectionDescription: "PT. Ziotech Global Inovasi adalah penyedia solusi terpadu di bidang Mechanical, Electrical, & Plumbing (MEP), Konstruksi Bangunan Industri, serta Pengadaan Peralatan Teknis Terpercaya.",
+    aboutSectionDescription2: "Didukung tim insinyur berlisensi, manajemen proyek modern, dan pengawasan mutu berlapis, kami memberikan hasil kerja terstandarisasi yang tepat waktu dan efisien.",
     quickFactsBadge: "KREDIBILITAS & PERFORMA",
     quickFactsTitle: "Kinerja Terpercaya untuk Kebutuhan Industri",
     quickFactsSubtitle: "Kapasitas teknis yang teruji melalui ragam proyek strategis dan kemitraan berkelanjutan bersama para klien industri terkemuka.",
@@ -73,35 +69,98 @@ const defaultData = {
         label: "Tim rekayasa dan teknisi berlisensi keahlian resmi di bidangnya"
       }
     ],
+    ourFocusBadge: "PILAR UTAMA",
+    ourFocusTitle: "Spesialisasi dan Ruang Lingkup Kerja",
+    serviceBadge: "KOMPETENSI UTAMA",
+    serviceTitle: "Solusi Rekayasa Terpadu untuk Kebutuhan Industri",
+    serviceSubtitle: "Spektrum layanan komprehensif mulai dari rancang bangun, instalasi mekanikal-elektrikal, hingga suplai suku cadang industri berstandar internasional.",
+    portfolioBadge: "REKAM JEJAK",
+    portfolioTitle: "Portofolio Proyek Unggulan",
+    portfolioSubtitle: "Dokumentasi hasil pengerjaan proyek strategis di berbagai fasilitas komersial, pabrik industri, dan infrastruktur penunjang.",
+    clientPartnersBadge: "KEMITRAAN STRATEGIS",
+    clientPartnersTitle: "Dipercaya Oleh Berbagai Perusahaan Terkemuka",
+    clientPartners: [
+      { id: 1, name: "PERTAMINA", logo: "" },
+      { id: 2, name: "PLN", logo: "" },
+      { id: 3, name: "WIKA", logo: "" },
+      { id: 4, name: "ANTAM", logo: "" },
+      { id: 5, name: "Adhi", logo: "" }
+    ],
+    ctaBadge: "KONSULTASI PROYEK",
+    ctaTitle: "Siap Berkolaborasi untuk Mewujudkan Efisiensi Fasilitas Industri Anda?",
+    ctaSubtitle: "Konsultasikan rancangan teknis, pengadaan suku cadang, maupun eksekusi konstruksi bersama tim spesialis kami.",
+    ctaButton: "Hubungi Sekarang",
+    ctaBgImageUrl: "",
   },
   about: {
+    heroBadge: "PROFIL KORPORASI",
+    badge: "SIAPA KAMI",
+    mainTitle: "Dedikasi Menghadirkan Rekayasa Teknik Berstandar Tinggi",
     title: "Tentang PT Ziotech Global Inovasi",
     description: "Didirikan dengan komitmen profesionalisme dan integritas, PT Ziotech Global Inovasi berfokus pada penyediaan solusi engineering, konstruksi terpadu, dan pengadaan komponen industri yang mendukung efisiensi operasional para mitra kerja.",
+    experienceYears: "10+",
+    experienceLabel: "Tahun Pengalaman Kerja",
+    visionTitle: "Visi Perusahaan",
     vision: "Menjadi mitra rekayasa teknik dan kontraktor pilihan utama di Indonesia yang diakui atas keunggulan mutu, kepatuhan keselamatan kerja, dan integritas kemitraan.",
+    missionTitle: "Misi Perusahaan",
     mission: "Memberikan layanan engineering berkualitas tinggi sesuai standar teknis, mengedepankan inovasi berkesinambungan, dan menjunjung tinggi aspek K3LH serta tata kelola profesional.",
+    valuesBadge: "NILAI INTI KAMI",
+    valuesTitle: "Prinsip Kerja & Integritas Profesional",
+    valuesSubtitle: "Landasan fundamental yang memandu setiap rekayasa teknis, pengambilan keputusan, dan komitmen kemitraan kami.",
+    values: [
+      {
+        id: 1,
+        title: "Integritas & Akuntabilitas",
+        desc: "Menjaga transparansi, keterbukaan informasi, dan tanggung jawab penuh dalam setiap amanah proyek yang dipercayakan."
+      },
+      {
+        id: 2,
+        title: "Kualitas Tanpa Kompromi",
+        desc: "Menerapkan kendali mutu (quality control) berlapis sejak tahap perencanaan, pengadaan material, hingga komisioning akhir."
+      },
+      {
+        id: 3,
+        title: "Inovasi & Efisiensi",
+        desc: "Mengadopsi metode rekayasa modern dan efisiensi rantai pasok guna menghasilkan solusi terbaik dan berdaya saing tinggi."
+      },
+      {
+        id: 4,
+        title: "Kemitraan Berkelanjutan",
+        desc: "Membangun relasi jangka panjang berbasis saling percaya, sinergi konstruktif, dan pencapaian tujuan bersama."
+      }
+    ],
     image: "https://images.unsplash.com/photo-1503387762-592deb58ef4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1080&q=80"
   },
   pageHeaders: {
     about: {
+      badge: "PROFIL KORPORASI",
       title: "Tentang Kami",
       subtitle: "Membangun kapabilitas teknik dan pengadaan industri dengan standar keandalan tinggi dan tata kelola berintegritas.",
       image: "https://images.unsplash.com/photo-1503387762-592deb58ef4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80"
     },
     service: {
+      badge: "KOMPETENSI & LAYANAN",
       title: "Layanan Kami",
       subtitle: "Solusi rekayasa komprehensif yang disesuaikan dengan kebutuhan fasilitas, efisiensi operasional, dan keandalan sistem Anda.",
       image: "https://images.unsplash.com/photo-1581092921461-eab62e97a780?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80"
     },
     project: {
+      badge: "REKAM JEJAK & EKSEKUSI",
       title: "Portofolio Proyek",
       subtitle: "Arsip rekam jejak pekerjaan strategis yang mencerminkan ketepatan eksekusi teknis dan keselamatan kerja.",
       image: "https://images.unsplash.com/photo-1541888086425-d81bb19240f5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80"
     },
     contact: {
+      badge: "KOMUNIKASI KORPORASI",
       title: "Hubungi Kami",
       subtitle: "Tim representatif dan insinyur kami siap mendiskusikan kebutuhan teknis maupun skema kerja sama proyek Anda.",
       image: "https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80"
     }
+  },
+  contactSettings: {
+    badge: "HUBUNGI KAMI",
+    title: "Diskusikan Kebutuhan Proyek Anda",
+    subtitle: "Tim kami siap berdiskusi dan memberikan solusi rekayasa terbaik untuk kelancaran operasional fasilitas Anda.",
   },
   services: [
     {
@@ -345,7 +404,13 @@ export function DataProvider({ children }) {
           // Merge about: pastikan nilai default tidak hilang
           const about = {
             ...defaultData.about,
-            ...(dbData.about || {})
+            ...(dbData.about || {}),
+            values: safeArray(dbData.about?.values, defaultData.about.values)
+          };
+
+          const contactSettings = {
+            ...defaultData.contactSettings,
+            ...(dbData.contactSettings || {})
           };
 
           setRawData(prev => ({
@@ -356,7 +421,8 @@ export function DataProvider({ children }) {
             pageHeaders,
             services,
             projects,
-            company
+            company,
+            contactSettings
           }));
         } else {
           // Firebase connected tapi node 'content' kosong — pakai defaultData, stop loading

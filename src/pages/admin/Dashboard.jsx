@@ -5,7 +5,7 @@ import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { ref, set, onValue, remove, update } from 'firebase/database';
 import { auth, db } from '../../firebase/config';
 import { useData, defaultData } from '../../context/DataContext';
-import { LogOut, Save, Home, Info, LayoutDashboard, Image as ImageIcon, Type, Menu, X, CheckCircle2, AlertCircle, Briefcase, Wrench, Phone, Plus, Trash2, Star, CalendarClock, Building2, Share2, Globe, MapPin, Inbox, Mail, User, Clock, ExternalLink, Copy, Check, Sparkles, ChevronRight, TrendingUp } from 'lucide-react';
+import { LogOut, Save, Home, Info, LayoutDashboard, Image as ImageIcon, Type, Menu, X, CheckCircle2, AlertCircle, Briefcase, Wrench, Phone, Plus, Trash2, Star, CalendarClock, Building2, Share2, Globe, MapPin, Inbox, Mail, User, Clock, ExternalLink, Copy, Check, Sparkles, ChevronRight, TrendingUp, Layers } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { SERVICE_ICONS, getServiceIcon } from '../../data/serviceIcons';
 
@@ -134,11 +134,12 @@ const PageHeaderEditor = ({ page, label, formData, onChange, onImageUpload }) =>
       <div className="p-3 bg-blue-50 text-blue-600 rounded-xl"><ImageIcon className="w-6 h-6" /></div>
       <div>
         <h3 className="text-xl font-bold text-slate-800">Header Halaman {label}</h3>
-        <p className="text-sm text-slate-500 mt-1">Atur judul, subjudul, dan gambar background bagian atas halaman {label}.</p>
+        <p className="text-sm text-slate-500 mt-1">Atur label badge, judul, subjudul, dan gambar background bagian atas halaman {label}.</p>
       </div>
     </div>
     <div className="grid lg:grid-cols-2 gap-6 items-start">
       <div className="space-y-6">
+        <InputField icon={Type} label="Badge Atas (Label Kecil)" value={formData?.pageHeaders?.[page]?.badge || ''} onChange={(e) => onChange(page, 'badge', e.target.value)} placeholder="cth: PROFIL KORPORASI" />
         <InputField icon={Type} label="Judul Halaman" value={formData?.pageHeaders?.[page]?.title || ''} onChange={(e) => onChange(page, 'title', e.target.value)} />
         <InputField icon={Type} label="Subjudul" value={formData?.pageHeaders?.[page]?.subtitle || ''} onChange={(e) => onChange(page, 'subtitle', e.target.value)} isTextarea />
       </div>
@@ -311,7 +312,11 @@ export default function Dashboard() {
           socials: cleanArray(parsedData.company?.socials, defaultCompany.socials || []),
           footerServices: cleanArray(parsedData.company?.footerServices, defaultCompany.footerServices || [])
         },
-        about: { ...defaultData.about, ...(parsedData.about || {}) },
+        about: { 
+          ...defaultData.about, 
+          ...(parsedData.about || {}),
+          values: cleanArray(parsedData.about?.values, defaultData?.about?.values || [])
+        },
         services: services.length > 0 ? services : defaultServices,
         projects: projects.length > 0 ? projects : defaultProjects,
         pageHeaders: {
@@ -320,7 +325,12 @@ export default function Dashboard() {
           project: { ...defaultPageHeaders.project, ...(parsedData.pageHeaders?.project || {}) },
           contact: { ...defaultPageHeaders.contact, ...(parsedData.pageHeaders?.contact || {}) }
         },
+        contactSettings: {
+          ...defaultData.contactSettings,
+          ...(parsedData.contactSettings || {})
+        },
         home: {
+          ...defaultData.home,
           heroTitles: [],
           heroImages: [],
           ...parsedData.home,
@@ -543,6 +553,47 @@ export default function Dashboard() {
         home: {
           ...prev.home,
           stats
+        }
+      };
+    });
+  };
+
+  const handleAboutValueChange = (index, field, value) => {
+    setFormData((prev) => {
+      const values = [...(prev.about?.values || defaultData?.about?.values || [])];
+      values[index] = { ...values[index], [field]: value };
+      return {
+        ...prev,
+        about: {
+          ...prev.about,
+          values
+        }
+      };
+    });
+  };
+
+  const addAboutValue = () => {
+    setFormData((prev) => ({
+      ...prev,
+      about: {
+        ...prev.about,
+        values: [
+          ...(prev.about?.values || defaultData?.about?.values || []),
+          { id: Date.now(), title: '', desc: '' }
+        ]
+      }
+    }));
+  };
+
+  const removeAboutValue = (index) => {
+    setFormData((prev) => {
+      const values = [...(prev.about?.values || defaultData?.about?.values || [])];
+      values.splice(index, 1);
+      return {
+        ...prev,
+        about: {
+          ...prev.about,
+          values
         }
       };
     });
@@ -1029,6 +1080,13 @@ export default function Dashboard() {
                     <div className="space-y-6">
                       <InputField 
                         icon={Type} 
+                        label="Label Badge Kategori Intro" 
+                        value={formData.home?.introBadge ?? 'KOMPETENSI & TATA KELOLA'} 
+                        onChange={(e) => handleChange('home', 'introBadge', e.target.value)} 
+                        placeholder="cth: KOMPETENSI & TATA KELOLA"
+                      />
+                      <InputField 
+                        icon={Type} 
                         label="Label Tag Foto (Overlay Bawah Foto)" 
                         value={formData.home?.introTag ?? 'INNOVATION & INTEGRITY'} 
                         onChange={(e) => handleChange('home', 'introTag', e.target.value)} 
@@ -1074,11 +1132,35 @@ export default function Dashboard() {
                     <div className="flex items-center gap-4 mb-8 pb-5 border-b border-slate-100">
                       <div className="p-3 bg-indigo-50 text-indigo-600 rounded-xl"><Info className="w-6 h-6" /></div>
                       <div>
-                        <h3 className="text-xl font-bold text-slate-800">Preview Tentang Kami</h3>
-                        <p className="text-sm text-slate-500 mt-1">Gambar yang muncul di bagian 'Tentang Ziotech' di halaman Home.</p>
+                        <h3 className="text-xl font-bold text-slate-800">Sekilas Perusahaan (Tentang Ziotech di Beranda)</h3>
+                        <p className="text-sm text-slate-500 mt-1">Atur teks narasi dan gambar banner bagian 'Tentang Ziotech' di halaman Beranda.</p>
                       </div>
                     </div>
-                    <ImageUploadBox label="Gambar Preview About" value={formData.home?.aboutPreviewImageUrl} onChange={(val) => handleChange('home', 'aboutPreviewImageUrl', val)} onImageUpload={handleImageUpload} />
+                    <div className="space-y-6">
+                      <InputField 
+                        icon={Type} 
+                        label="Label Badge Sekilas Perusahaan" 
+                        value={formData.home?.aboutSectionBadge || 'SEKILAS PERUSAHAAN'} 
+                        onChange={(e) => handleChange('home', 'aboutSectionBadge', e.target.value)} 
+                        placeholder="cth: SEKILAS PERUSAHAAN"
+                      />
+                      <InputField 
+                        icon={Type} 
+                        label="Judul Bagian" 
+                        value={formData.home?.aboutSectionTitle || 'Tentang Kami'} 
+                        onChange={(e) => handleChange('home', 'aboutSectionTitle', e.target.value)} 
+                        placeholder="cth: Tentang Kami"
+                      />
+                      <InputField 
+                        icon={Type} 
+                        label="Deskripsi / Paragraf Ringkasan" 
+                        value={formData.home?.aboutSectionDescription || ''} 
+                        onChange={(e) => handleChange('home', 'aboutSectionDescription', e.target.value)} 
+                        placeholder="Didirikan dengan semangat profesionalisme..." 
+                        isTextarea
+                      />
+                      <ImageUploadBox label="Gambar Preview / Background Sekilas About" value={formData.home?.aboutPreviewImageUrl} onChange={(val) => handleChange('home', 'aboutPreviewImageUrl', val)} onImageUpload={handleImageUpload} />
+                    </div>
                   </div>
 
                   {/* Statistik & Angka Kinerja (Quick Facts) */}
@@ -1175,21 +1257,101 @@ export default function Dashboard() {
                   </div>
 
 
-                  {/* CTA Background Image */}
+                  {/* Bagian Pilar Utama (Focus Pillars) */}
                   <div className="bg-white rounded-3xl p-6 lg:p-8 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100">
                     <div className="flex items-center gap-4 mb-6 pb-5 border-b border-slate-100">
-                      <div className="p-3 bg-slate-100 text-slate-600 rounded-xl"><ImageIcon className="w-6 h-6" /></div>
+                      <div className="p-3 bg-amber-50 text-amber-600 rounded-xl"><Layers className="w-6 h-6" /></div>
                       <div>
-                        <h3 className="text-xl font-bold text-slate-800">Gambar Background CTA</h3>
-                        <p className="text-sm text-slate-500 mt-1">Foto latar belakang di bagian \"Siap Berkolaborasi?\" (akhir halaman).</p>
+                        <h3 className="text-xl font-bold text-slate-800">Bagian Pilar Utama (4 Editorial Focus)</h3>
+                        <p className="text-sm text-slate-500 mt-1">Atur label badge dan judul bagian 4 kartu pilar utama di Beranda.</p>
                       </div>
                     </div>
-                    <ImageUploadBox
-                      label="Gambar CTA (Landscape, 16:9)"
-                      value={formData.home?.ctaBgImageUrl || ''}
-                      onChange={(val) => handleChange('home', 'ctaBgImageUrl', val)}
-                      onImageUpload={handleImageUpload}
-                    />
+                    <div className="space-y-6">
+                      <InputField 
+                        icon={Type} 
+                        label="Label Badge Pilar Utama" 
+                        value={formData.home?.ourFocusBadge || 'PILAR UTAMA'} 
+                        onChange={(e) => handleChange('home', 'ourFocusBadge', e.target.value)} 
+                        placeholder="cth: PILAR UTAMA"
+                      />
+                      <InputField 
+                        icon={Type} 
+                        label="Judul Bagian Pilar Utama" 
+                        value={formData.home?.ourFocusTitle || 'Spesialisasi dan Ruang Lingkup Kerja'} 
+                        onChange={(e) => handleChange('home', 'ourFocusTitle', e.target.value)} 
+                        placeholder="cth: Spesialisasi dan Ruang Lingkup Kerja"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Bagian Layanan Unggulan (Services Showcase) */}
+                  <div className="bg-white rounded-3xl p-6 lg:p-8 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100">
+                    <div className="flex items-center gap-4 mb-6 pb-5 border-b border-slate-100">
+                      <div className="p-3 bg-blue-50 text-blue-600 rounded-xl"><Wrench className="w-6 h-6" /></div>
+                      <div>
+                        <h3 className="text-xl font-bold text-slate-800">Bagian Layanan Unggulan (Services)</h3>
+                        <p className="text-sm text-slate-500 mt-1">Atur judul, badge, dan pengantar bagian Layanan Unggulan di Beranda.</p>
+                      </div>
+                    </div>
+                    <div className="space-y-6">
+                      <InputField 
+                        icon={Type} 
+                        label="Label Badge Layanan Unggulan" 
+                        value={formData.home?.serviceBadge || 'KOMPETENSI UTAMA'} 
+                        onChange={(e) => handleChange('home', 'serviceBadge', e.target.value)} 
+                        placeholder="cth: KOMPETENSI UTAMA"
+                      />
+                      <InputField 
+                        icon={Type} 
+                        label="Judul Bagian Layanan Unggulan" 
+                        value={formData.home?.serviceTitle || 'Solusi Rekayasa Terpadu untuk Kebutuhan Industri'} 
+                        onChange={(e) => handleChange('home', 'serviceTitle', e.target.value)} 
+                        placeholder="cth: Solusi Rekayasa Terpadu untuk Kebutuhan Industri"
+                      />
+                      <InputField 
+                        icon={Type} 
+                        label="Deskripsi / Subjudul Layanan Unggulan" 
+                        value={formData.home?.serviceSubtitle || ''} 
+                        onChange={(e) => handleChange('home', 'serviceSubtitle', e.target.value)} 
+                        placeholder="cth: Spektrum layanan komprehensif mulai dari rancang bangun, instalasi mekanikal-elektrikal..." 
+                        isTextarea
+                      />
+                    </div>
+                  </div>
+
+                  {/* Bagian Portofolio & Rekam Jejak (Projects Showcase) */}
+                  <div className="bg-white rounded-3xl p-6 lg:p-8 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100">
+                    <div className="flex items-center gap-4 mb-6 pb-5 border-b border-slate-100">
+                      <div className="p-3 bg-violet-50 text-violet-600 rounded-xl"><Briefcase className="w-6 h-6" /></div>
+                      <div>
+                        <h3 className="text-xl font-bold text-slate-800">Bagian Portofolio Proyek (Projects Showcase)</h3>
+                        <p className="text-sm text-slate-500 mt-1">Atur judul, badge, dan pengantar showcase proyek di Beranda.</p>
+                      </div>
+                    </div>
+                    <div className="space-y-6">
+                      <InputField 
+                        icon={Type} 
+                        label="Label Badge Portofolio Proyek" 
+                        value={formData.home?.portfolioBadge || 'PORTOFOLIO & REKAM JEJAK'} 
+                        onChange={(e) => handleChange('home', 'portfolioBadge', e.target.value)} 
+                        placeholder="cth: PORTOFOLIO & REKAM JEJAK"
+                      />
+                      <InputField 
+                        icon={Type} 
+                        label="Judul Bagian Portofolio Proyek" 
+                        value={formData.home?.portfolioTitle || 'Proyek Unggulan Terkini'} 
+                        onChange={(e) => handleChange('home', 'portfolioTitle', e.target.value)} 
+                        placeholder="cth: Proyek Unggulan Terkini"
+                      />
+                      <InputField 
+                        icon={Type} 
+                        label="Deskripsi / Subjudul Portofolio Proyek" 
+                        value={formData.home?.portfolioSubtitle || ''} 
+                        onChange={(e) => handleChange('home', 'portfolioSubtitle', e.target.value)} 
+                        placeholder="cth: Dokumentasi keberhasilan penyelesaian proyek konstruksi dan engineering..." 
+                        isTextarea
+                      />
+                    </div>
                   </div>
 
                   {/* Mitra / Client Logos Section */}
@@ -1211,6 +1373,13 @@ export default function Dashboard() {
                     </div>
 
                     <div className="space-y-6">
+                      <InputField 
+                        icon={Type} 
+                        label="Label Badge Kemitraan" 
+                        value={formData.home?.clientPartnersBadge || "KEMITRAAN STRATEGIS"} 
+                        onChange={(e) => handleChange('home', 'clientPartnersBadge', e.target.value)} 
+                        placeholder="cth: KEMITRAAN STRATEGIS"
+                      />
                       <InputField 
                         icon={Type} 
                         label="Judul Bagian Mitra" 
@@ -1252,6 +1421,56 @@ export default function Dashboard() {
                       )}
                     </div>
                   </div>
+
+                  {/* Call to Action (CTA) Section Editor */}
+                  <div className="bg-white rounded-3xl p-6 lg:p-8 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100">
+                    <div className="flex items-center gap-4 mb-6 pb-5 border-b border-slate-100">
+                      <div className="p-3 bg-blue-50 text-[#0284c7] rounded-xl"><Sparkles className="w-6 h-6" /></div>
+                      <div>
+                        <h3 className="text-xl font-bold text-slate-800">Bagian Call To Action (Kolaborasi)</h3>
+                        <p className="text-sm text-slate-500 mt-1">Atur teks ajakan, tombol, dan gambar background di bagian paling bawah Beranda.</p>
+                      </div>
+                    </div>
+                    <div className="space-y-6">
+                      <div className="grid md:grid-cols-2 gap-6">
+                        <InputField 
+                          icon={Type} 
+                          label="Badge CTA" 
+                          value={formData.home?.ctaBadge || 'KONSULTASI PROYEK'} 
+                          onChange={(e) => handleChange('home', 'ctaBadge', e.target.value)} 
+                          placeholder="cth: KONSULTASI PROYEK"
+                        />
+                        <InputField 
+                          icon={Type} 
+                          label="Teks Tombol Aksi" 
+                          value={formData.home?.ctaButton || 'Hubungi Sekarang'} 
+                          onChange={(e) => handleChange('home', 'ctaButton', e.target.value)} 
+                          placeholder="cth: Hubungi Sekarang"
+                        />
+                      </div>
+                      <InputField 
+                        icon={Type} 
+                        label="Judul Ajakan CTA" 
+                        value={formData.home?.ctaTitle || 'Siap Berkolaborasi untuk Mewujudkan Efisiensi Fasilitas Industri Anda?'} 
+                        onChange={(e) => handleChange('home', 'ctaTitle', e.target.value)} 
+                        placeholder="cth: Siap Berkolaborasi untuk Mewujudkan Efisiensi Fasilitas Industri Anda?"
+                      />
+                      <InputField 
+                        icon={Type} 
+                        label="Deskripsi / Paragraf Singkat" 
+                        value={formData.home?.ctaSubtitle || ''} 
+                        onChange={(e) => handleChange('home', 'ctaSubtitle', e.target.value)} 
+                        placeholder="cth: Konsultasikan rancangan teknis, pengadaan suku cadang..." 
+                        isTextarea
+                      />
+                      <ImageUploadBox
+                        label="Gambar Background CTA (Landscape, 16:9)"
+                        value={formData.home?.ctaBgImageUrl || ''}
+                        onChange={(val) => handleChange('home', 'ctaBgImageUrl', val)}
+                        onImageUpload={handleImageUpload}
+                      />
+                    </div>
+                  </div>
                 </motion.div>
               )}
 
@@ -1268,12 +1487,108 @@ export default function Dashboard() {
                       </div>
                     </div>
                     <div className="space-y-6">
+                      <div className="grid md:grid-cols-2 gap-6">
+                        <InputField icon={Type} label="Badge Bagian (Label Kecil)" value={formData.about?.badge || 'SIAPA KAMI'} onChange={(e) => handleChange('about', 'badge', e.target.value)} placeholder="cth: SIAPA KAMI" />
+                        <InputField icon={Type} label="Judul Utama Bagian" value={formData.about?.mainTitle || 'Dedikasi Menghadirkan Rekayasa Teknik Berstandar Tinggi'} onChange={(e) => handleChange('about', 'mainTitle', e.target.value)} placeholder="cth: Dedikasi Menghadirkan Rekayasa..." />
+                      </div>
                       <InputField icon={Type} label="Deskripsi Lengkap" value={formData.about?.description} onChange={(e) => handleChange('about', 'description', e.target.value)} isTextarea />
                       <div className="grid md:grid-cols-2 gap-6">
-                        <InputField icon={Type} label="Visi Perusahaan" value={formData.about?.vision} onChange={(e) => handleChange('about', 'vision', e.target.value)} isTextarea />
-                        <InputField icon={Type} label="Misi Perusahaan" value={formData.about?.mission} onChange={(e) => handleChange('about', 'mission', e.target.value)} isTextarea />
+                        <InputField 
+                          icon={Type} 
+                          label="Badge Pengalaman - Angka/Teks" 
+                          value={formData.about?.experienceYears || '10+'} 
+                          onChange={(e) => handleChange('about', 'experienceYears', e.target.value)} 
+                          placeholder="cth: 10+" 
+                        />
+                        <InputField 
+                          icon={Type} 
+                          label="Badge Pengalaman - Label Keterangan" 
+                          value={formData.about?.experienceLabel || 'Tahun Pengalaman Kerja'} 
+                          onChange={(e) => handleChange('about', 'experienceLabel', e.target.value)} 
+                          placeholder="cth: Tahun Pengalaman Kerja" 
+                        />
+                      </div>
+                      <div className="grid md:grid-cols-2 gap-6">
+                        <div className="space-y-4">
+                          <InputField icon={Type} label="Judul Visi" value={formData.about?.visionTitle || 'Visi Perusahaan'} onChange={(e) => handleChange('about', 'visionTitle', e.target.value)} />
+                          <InputField icon={Type} label="Isi Visi Perusahaan" value={formData.about?.vision} onChange={(e) => handleChange('about', 'vision', e.target.value)} isTextarea />
+                        </div>
+                        <div className="space-y-4">
+                          <InputField icon={Type} label="Judul Misi" value={formData.about?.missionTitle || 'Misi Perusahaan'} onChange={(e) => handleChange('about', 'missionTitle', e.target.value)} />
+                          <InputField icon={Type} label="Isi Misi Perusahaan" value={formData.about?.mission} onChange={(e) => handleChange('about', 'mission', e.target.value)} isTextarea />
+                        </div>
                       </div>
                       <ImageUploadBox label="Gambar Utama Halaman About" value={formData.about?.image} onChange={(val) => handleChange('about', 'image', val)} onImageUpload={handleImageUpload} />
+                    </div>
+                  </div>
+
+                  {/* Core Values Section Editor */}
+                  <div className="bg-white rounded-3xl p-6 lg:p-8 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100">
+                    <div className="flex items-center gap-4 mb-8 pb-5 border-b border-slate-100">
+                      <div className="p-3 bg-indigo-50 text-indigo-600 rounded-xl"><Sparkles className="w-6 h-6" /></div>
+                      <div>
+                        <h3 className="text-xl font-bold text-slate-800">Bagian Nilai-Nilai Utama (Core Values)</h3>
+                        <p className="text-sm text-slate-500 mt-1">Atur teks pengantar dan 4 kartu nilai inti perusahaan di halaman Tentang Kami.</p>
+                      </div>
+                    </div>
+                    <div className="space-y-6">
+                      <InputField icon={Type} label="Badge Nilai-Nilai" value={formData.about?.valuesBadge || 'NILAI INTI KAMI'} onChange={(e) => handleChange('about', 'valuesBadge', e.target.value)} placeholder="cth: NILAI INTI KAMI" />
+                      <InputField icon={Type} label="Judul Nilai-Nilai" value={formData.about?.valuesTitle || 'Prinsip Kerja & Integritas Profesional'} onChange={(e) => handleChange('about', 'valuesTitle', e.target.value)} />
+                      <InputField icon={Type} label="Deskripsi / Subjudul Nilai-Nilai" value={formData.about?.valuesSubtitle || 'Landasan fundamental yang memandu setiap rekayasa teknis, pengambilan keputusan, dan komitmen kemitraan kami.'} onChange={(e) => handleChange('about', 'valuesSubtitle', e.target.value)} isTextarea />
+                      
+                      <div className="pt-6 border-t border-slate-100">
+                        <div className="flex items-center justify-between mb-4">
+                          <div>
+                            <label className="text-sm font-semibold text-slate-700 block">
+                              Kartu Nilai-Nilai Perusahaan
+                            </label>
+                            <p className="text-xs text-slate-400">Sesuaikan judul dan penjelasan masing-masing nilai korporasi.</p>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={addAboutValue}
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors shrink-0"
+                          >
+                            <Plus className="w-3.5 h-3.5" /> Tambah Nilai
+                          </button>
+                        </div>
+                        <div className="grid md:grid-cols-2 gap-4">
+                          {(formData.about?.values || defaultData?.about?.values || []).map((val, idx) => (
+                            <div key={val.id || idx} className="relative p-5 rounded-2xl bg-slate-50 border border-slate-200/70 space-y-3">
+                              <div className="flex items-center justify-between">
+                                <span className="text-xs font-bold text-blue-600 uppercase tracking-wider">
+                                  Nilai #{idx + 1}
+                                </span>
+                                {(formData.about?.values || []).length > 1 && (
+                                  <button
+                                    type="button"
+                                    onClick={() => removeAboutValue(idx)}
+                                    className="text-slate-400 hover:text-red-500 p-1 rounded-md hover:bg-red-50 transition-colors"
+                                    title="Hapus nilai ini"
+                                  >
+                                    <Trash2 className="w-4 h-4" />
+                                  </button>
+                                )}
+                              </div>
+                              <InputField
+                                icon={Type}
+                                label="Judul Nilai"
+                                value={val.title || ''}
+                                onChange={(e) => handleAboutValueChange(idx, 'title', e.target.value)}
+                                placeholder="cth: Integritas & Akuntabilitas"
+                              />
+                              <InputField
+                                icon={Type}
+                                label="Deskripsi Nilai"
+                                value={val.desc || ''}
+                                onChange={(e) => handleAboutValueChange(idx, 'desc', e.target.value)}
+                                placeholder="cth: Menjaga transparansi..."
+                                isTextarea
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </motion.div>
@@ -1489,6 +1804,42 @@ export default function Dashboard() {
               {activeTab === 'contact' && (
                 <motion.div key="contact" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.2 }} className="space-y-8">
                   <PageHeaderEditor page="contact" label="Kontak" formData={formData} onChange={handlePageHeaderChange} onImageUpload={handleImageUpload} />
+                  
+                  {/* Teks Pengantar Halaman Kontak */}
+                  <div className="bg-white rounded-3xl p-6 lg:p-8 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100">
+                    <div className="flex items-center gap-4 mb-8 pb-5 border-b border-slate-100">
+                      <div className="p-3 bg-blue-50 text-[#0284c7] rounded-xl"><Sparkles className="w-6 h-6" /></div>
+                      <div>
+                        <h3 className="text-xl font-bold text-slate-800">Teks Pengantar Halaman Kontak</h3>
+                        <p className="text-sm text-slate-500 mt-1">Atur label badge, judul, dan subjudul bagian informasi kontak dan formulir.</p>
+                      </div>
+                    </div>
+                    <div className="space-y-6">
+                      <InputField 
+                        icon={Type} 
+                        label="Label Badge Pengantar" 
+                        value={formData.contactSettings?.badge || 'HUBUNGI KAMI'} 
+                        onChange={(e) => handleChange('contactSettings', 'badge', e.target.value)} 
+                        placeholder="cth: HUBUNGI KAMI" 
+                      />
+                      <InputField 
+                        icon={Type} 
+                        label="Judul Utama Pengantar" 
+                        value={formData.contactSettings?.title || 'Diskusikan Kebutuhan Proyek Anda'} 
+                        onChange={(e) => handleChange('contactSettings', 'title', e.target.value)} 
+                        placeholder="cth: Diskusikan Kebutuhan Proyek Anda" 
+                      />
+                      <InputField 
+                        icon={Type} 
+                        label="Subjudul / Keterangan Singkat" 
+                        value={formData.contactSettings?.subtitle || ''} 
+                        onChange={(e) => handleChange('contactSettings', 'subtitle', e.target.value)} 
+                        placeholder="cth: Tim kami siap berdiskusi dan memberikan solusi rekayasa terbaik..." 
+                        isTextarea 
+                      />
+                    </div>
+                  </div>
+
                   <div className="bg-white rounded-3xl p-6 lg:p-8 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100">
                     <div className="flex items-center gap-4 mb-8 pb-5 border-b border-slate-100">
                       <div className="p-3 bg-orange-50 text-orange-600 rounded-xl"><Phone className="w-6 h-6" /></div>

@@ -119,8 +119,7 @@ export default function Footer() {
             <ul className="space-y-3">
               {navLinks.map((link) => (
                 <li key={link.path}>
-                  <Link to={link.path} className="text-sm text-slate-400 hover:text-white transition-colors inline-flex items-center gap-2 group">
-                    <span className="w-1 h-1 rounded-full bg-slate-700 group-hover:bg-[#38bdf8] transition-colors shrink-0" />
+                  <Link to={link.path} className="text-sm text-slate-400 hover:text-white transition-colors">
                     {link.name}
                   </Link>
                 </li>
@@ -140,18 +139,16 @@ export default function Footer() {
                       href={link.path} 
                       target="_blank" 
                       rel="noopener noreferrer" 
-                      className="text-sm text-slate-400 hover:text-white transition-colors inline-flex items-center gap-2 group"
+                      className="text-sm text-slate-400 hover:text-white transition-colors"
                     >
-                      <span className="w-1 h-1 rounded-full bg-slate-700 group-hover:bg-[#38bdf8] transition-colors shrink-0" />
-                      <span>{link.name}</span>
+                      {link.name}
                     </a>
                   ) : (
                     <Link 
                       to={link.path} 
-                      className="text-sm text-slate-400 hover:text-white transition-colors inline-flex items-center gap-2 group"
+                      className="text-sm text-slate-400 hover:text-white transition-colors"
                     >
-                      <span className="w-1 h-1 rounded-full bg-slate-700 group-hover:bg-[#38bdf8] transition-colors shrink-0" />
-                      <span>{link.name}</span>
+                      {link.name}
                     </Link>
                   )}
                 </li>

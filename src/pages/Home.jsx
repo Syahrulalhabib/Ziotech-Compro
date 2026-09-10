@@ -322,13 +322,13 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="max-w-2xl text-white">
             <span className="text-[11px] font-bold tracking-widest text-[#38bdf8] uppercase mb-3 block">
-              {t.home?.aboutBadge || 'SEKILAS PERUSAHAAN'}
+              {data?.home?.aboutSectionBadge || t.home?.aboutBadge || 'SEKILAS PERUSAHAAN'}
             </span>
             <h2 className="text-3xl sm:text-5xl font-extrabold text-white mb-6 leading-tight tracking-tight">
-              {t.nav?.about || 'Tentang Kami'}
+              {data?.home?.aboutSectionTitle || t.nav?.about || 'Tentang Kami'}
             </h2>
             <p className="text-slate-200 text-base sm:text-lg leading-relaxed mb-8 font-light">
-              {data?.about?.description || 'Didirikan dengan semangat profesionalisme dan integritas tinggi, PT Ziotech Global Inovasi fokus menghadirkan layanan teknik MEP dan konstruksi yang berorientasi nilai tambah.'}
+              {data?.home?.aboutSectionDescription || data?.about?.description || 'Didirikan dengan semangat profesionalisme dan integritas tinggi, PT Ziotech Global Inovasi fokus menghadirkan layanan teknik MEP dan konstruksi yang berorientasi nilai tambah.'}
             </p>
 
             <div className="flex flex-wrap items-center gap-4">
@@ -431,10 +431,10 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mb-10 sm:mb-12">
             <span className="text-[11px] font-bold tracking-widest text-[#0284c7] uppercase mb-2 block">
-              {t.home?.ourFocusBadge || 'PILAR UTAMA'}
+              {data?.home?.ourFocusBadge || t.home?.ourFocusBadge || 'PILAR UTAMA'}
             </span>
             <h2 className="text-2xl sm:text-4xl font-extrabold text-[#0f172a]">
-              {t.home?.ourFocusTitle || 'Spesialisasi dan Ruang Lingkup Kerja'}
+              {data?.home?.ourFocusTitle || t.home?.ourFocusTitle || 'Spesialisasi dan Ruang Lingkup Kerja'}
             </h2>
           </div>
 
@@ -482,15 +482,15 @@ export default function Home() {
           <div className="grid lg:grid-cols-12 gap-6 items-end pb-12 mb-12 border-b border-slate-100">
             <div className="lg:col-span-6">
               <span className="text-[11px] font-bold tracking-widest text-[#0284c7] uppercase mb-2 block">
-                {t.home?.serviceBadge || 'LAYANAN UNGGULAN'}
+                {data?.home?.serviceBadge || t.home?.serviceBadge || 'KOMPETENSI UTAMA'}
               </span>
               <h2 className="text-2xl sm:text-4xl font-extrabold text-[#0f172a] leading-tight">
-                {t.home?.serviceTitle || 'Solusi Terintegrasi untuk Kebutuhan Industri'}
+                {data?.home?.serviceTitle || t.home?.serviceTitle || 'Solusi Rekayasa Terpadu untuk Kebutuhan Industri'}
               </h2>
             </div>
             <div className="lg:col-span-4">
               <p className="text-slate-500 text-sm sm:text-base leading-relaxed">
-                {t.home?.serviceSubtitle || 'Rangkaian layanan teknik komprehensif berstandar internasional demi kelancaran operasional dan investasi Anda.'}
+                {data?.home?.serviceSubtitle || t.home?.serviceSubtitle || 'Spektrum layanan komprehensif mulai dari rancang bangun, instalasi mekanikal-elektrikal, hingga suplai suku cadang industri berstandar internasional.'}
               </p>
             </div>
             <div className="lg:col-span-2 lg:text-right">
@@ -552,15 +552,15 @@ export default function Home() {
           <div className="grid lg:grid-cols-12 gap-6 items-end pb-8 mb-8 border-b border-slate-200/80">
             <div className="lg:col-span-6">
               <span className="text-[11px] font-bold tracking-widest text-[#0284c7] uppercase mb-2 block">
-                {t.home?.newsRoomBadge || 'PORTOFOLIO & REKAM JEJAK'}
+                {data?.home?.portfolioBadge || t.home?.newsRoomBadge || 'PORTOFOLIO & REKAM JEJAK'}
               </span>
               <h2 className="text-2xl sm:text-4xl font-extrabold text-[#0f172a] leading-tight">
-                {t.home?.portfolioTitle || 'Proyek Unggulan Terkini'}
+                {data?.home?.portfolioTitle || t.home?.portfolioTitle || 'Proyek Unggulan Terkini'}
               </h2>
             </div>
             <div className="lg:col-span-4">
               <p className="text-slate-500 text-sm sm:text-base leading-relaxed">
-                {t.home?.portfolioSubtitle || 'Dokumentasi keberhasilan penyelesaian proyek konstruksi dan engineering.'}
+                {data?.home?.portfolioSubtitle || t.home?.portfolioSubtitle || 'Dokumentasi keberhasilan penyelesaian proyek konstruksi dan engineering.'}
               </p>
             </div>
             <div className="lg:col-span-2 lg:text-right">
@@ -669,10 +669,10 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="pb-8 mb-10 border-b border-slate-200">
             <span className="text-[11px] font-bold tracking-widest text-[#0284c7] uppercase mb-2 block">
-              {t.home?.clientPartnersTitle || 'KEMITRAAN STRATEGIS'}
+              {data?.home?.clientPartnersBadge || 'KEMITRAAN STRATEGIS'}
             </span>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0f172a]">
-              {t.home?.partnersSectionTitle || 'Dipercaya oleh Ragam Institusi & Mitra Terkemuka'}
+              {data?.home?.clientPartnersTitle || t.home?.partnersSectionTitle || 'Dipercaya oleh Ragam Institusi & Mitra Terkemuka'}
             </h2>
           </div>
 
@@ -723,13 +723,13 @@ export default function Home() {
             <div className="relative z-10 px-8 py-16 sm:px-14 sm:py-20 flex justify-end">
               <div className="max-w-2xl text-white text-left">
                 <span className="text-[11px] font-bold tracking-widest text-[#38bdf8] uppercase mb-3 block">
-                  {t.home?.ctaBadge || 'KOLABORASI & KONSULTASI'}
+                  {data?.home?.ctaBadge || t.home?.ctaBadge || 'KOLABORASI & KONSULTASI'}
                 </span>
                 <h2 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold text-white mb-5 leading-tight tracking-tight">
-                  {t.common?.readyToCollaborate || 'Siap Berkolaborasi Bersama Kami?'}
+                  {data?.home?.ctaTitle || t.common?.readyToCollaborate || 'Siap Berkolaborasi Bersama Kami?'}
                 </h2>
                 <p className="text-slate-300 text-sm sm:text-base leading-relaxed mb-8 font-normal">
-                  {t.common?.ctaDesc || 'Konsultasikan kebutuhan proyek konstruksi, MEP, atau pengadaan industri Anda dengan tim ahli kami.'}
+                  {data?.home?.ctaSubtitle || t.common?.ctaDesc || 'Konsultasikan kebutuhan proyek konstruksi, MEP, atau pengadaan industri Anda dengan tim ahli kami.'}
                 </p>
 
                 <div className="flex flex-wrap items-center gap-3.5">
@@ -737,7 +737,7 @@ export default function Home() {
                     to="/contact"
                     className="pertamina-btn-pill-dark"
                   >
-                    {t.common?.contactNow || 'Hubungi Sekarang'} <ArrowUpRight className="w-4 h-4" />
+                    {data?.home?.ctaButton || t.common?.contactNow || 'Hubungi Sekarang'} <ArrowUpRight className="w-4 h-4" />
                   </Link>
                   <Link 
                     to="/service"

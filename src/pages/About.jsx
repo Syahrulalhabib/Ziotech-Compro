@@ -18,12 +18,21 @@ export default function About() {
 
   const header = data?.pageHeaders?.about || {};
 
-  const values = [
+  const defaultIcons = [Shield, Lightbulb, Target, Users];
+  const defaultValues = [
     { icon: Shield, title: t.aboutPage.val1Title, desc: t.aboutPage.val1Desc },
     { icon: Lightbulb, title: t.aboutPage.val2Title, desc: t.aboutPage.val2Desc },
     { icon: Target, title: t.aboutPage.val3Title, desc: t.aboutPage.val3Desc },
     { icon: Users, title: t.aboutPage.val4Title, desc: t.aboutPage.val4Desc }
   ];
+
+  const values = (aboutData.values && Array.isArray(aboutData.values) && aboutData.values.length > 0)
+    ? aboutData.values.map((val, idx) => ({
+        icon: defaultIcons[idx % defaultIcons.length],
+        title: val.title || defaultValues[idx]?.title || '',
+        desc: val.desc || defaultValues[idx]?.desc || ''
+      }))
+    : defaultValues;
 
   return (
     <div className="overflow-hidden bg-[#f8fafc]">
@@ -46,7 +55,7 @@ export default function About() {
             className="max-w-3xl"
           >
             <span className="text-[11px] font-bold tracking-widest text-[#38bdf8] uppercase block mb-3">
-              {t.aboutPage.heroBadge}
+              {header.badge || t.aboutPage.heroBadge}
             </span>
             <h1 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight mb-4 leading-tight">
               {header.title || t.aboutPage.defaultHeaderTitle}
@@ -80,10 +89,12 @@ export default function About() {
               <div className="absolute -bottom-5 right-2 sm:-bottom-6 sm:-right-6 bg-white p-4 sm:p-6 rounded-2xl shadow-xl border border-slate-100 max-w-[200px] sm:max-w-[220px]">
                 <div className="flex items-center gap-3 mb-1">
                   <Award className="w-6 h-6 text-[#0284c7]" />
-                  <span className="text-3xl font-extrabold text-[#0f172a]">10+</span>
+                  <span className="text-3xl font-extrabold text-[#0f172a]">
+                    {aboutData.experienceYears || '10+'}
+                  </span>
                 </div>
                 <div className="text-xs font-semibold text-slate-600 leading-snug">
-                  {t.aboutPage.statsYears}
+                  {aboutData.experienceLabel || t.aboutPage.statsYears || 'Tahun Pengalaman Kerja'}
                 </div>
               </div>
             </motion.div>
@@ -96,10 +107,10 @@ export default function About() {
               className="lg:col-span-7"
             >
               <span className="text-[11px] font-bold tracking-widest text-[#0284c7] uppercase mb-2 block">
-                SIAPA KAMI
+                {aboutData.badge || 'SIAPA KAMI'}
               </span>
               <h2 className="text-2xl sm:text-4xl font-extrabold text-[#0f172a] mb-6 leading-tight">
-                {t.aboutPage.mainTitle}
+                {aboutData.mainTitle || t.aboutPage.mainTitle}
               </h2>
               <p className="text-slate-600 text-sm sm:text-base leading-relaxed mb-10 whitespace-pre-line">
                 {aboutData.description}
@@ -112,7 +123,7 @@ export default function About() {
                     <Compass className="w-5 h-5" />
                   </div>
                   <h3 className="text-base font-bold text-[#0f172a] mb-2">
-                    {t.aboutPage.visionTitle}
+                    {aboutData.visionTitle || t.aboutPage.visionTitle}
                   </h3>
                   <p className="text-slate-600 text-xs sm:text-sm leading-relaxed">
                     {aboutData.vision}
@@ -124,7 +135,7 @@ export default function About() {
                     <Target className="w-5 h-5" />
                   </div>
                   <h3 className="text-base font-bold text-[#0f172a] mb-2">
-                    {t.aboutPage.missionTitle}
+                    {aboutData.missionTitle || t.aboutPage.missionTitle}
                   </h3>
                   <div className="text-slate-600 text-xs sm:text-sm leading-relaxed whitespace-pre-line">
                     {aboutData.mission}
@@ -141,13 +152,13 @@ export default function About() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-14 sm:mb-18">
             <span className="text-[11px] font-bold tracking-widest text-[#0284c7] uppercase mb-2 block">
-              {t.aboutPage.valuesBadge}
+              {aboutData.valuesBadge || t.aboutPage.valuesBadge}
             </span>
             <h2 className="text-2xl sm:text-4xl font-extrabold text-[#0f172a] tracking-tight mb-4">
-              {t.aboutPage.valuesTitle}
+              {aboutData.valuesTitle || t.aboutPage.valuesTitle}
             </h2>
             <p className="text-slate-500 text-sm sm:text-base leading-relaxed">
-              {t.aboutPage.valuesSubtitle}
+              {aboutData.valuesSubtitle || t.aboutPage.valuesSubtitle}
             </p>
           </div>
 

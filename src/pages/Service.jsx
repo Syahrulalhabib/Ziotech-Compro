@@ -33,7 +33,7 @@ export default function Service() {
             className="max-w-3xl"
           >
             <span className="text-[11px] font-bold tracking-widest text-[#38bdf8] uppercase block mb-3">
-              {t.servicePage.heroBadge}
+              {header.badge || t.servicePage.heroBadge}
             </span>
             <h1 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight mb-4 leading-tight">
               {header.title || t.servicePage.defaultHeaderTitle}

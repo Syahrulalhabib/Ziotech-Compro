@@ -164,7 +164,7 @@ export default function Contact() {
             className="max-w-3xl"
           >
             <span className="text-[11px] font-bold tracking-widest text-[#38bdf8] uppercase block mb-3">
-              {t.contactPage.heroBadge}
+              {header.badge || t.contactPage.heroBadge}
             </span>
             <h1 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight mb-4 leading-tight">
               {header.title || t.contactPage.defaultHeaderTitle}
@@ -188,11 +188,13 @@ export default function Contact() {
                 transition={{ duration: 0.5 }}
               >
                 <span className="text-[11px] font-bold tracking-widest text-[#0284c7] uppercase mb-2 block">
-                  HUBUNGI KAMI
+                  {data?.contactSettings?.badge || 'HUBUNGI KAMI'}
                 </span>
-                <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0f172a] mb-4">{t.contactPage.title}</h2>
+                <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0f172a] mb-4">
+                  {data?.contactSettings?.title || t.contactPage.title}
+                </h2>
                 <p className="text-slate-500 font-medium mb-8 text-sm sm:text-base leading-relaxed">
-                  {t.contactPage.subtitle}
+                  {data?.contactSettings?.subtitle || t.contactPage.subtitle}
                 </p>
 
                 <div className="space-y-4">
