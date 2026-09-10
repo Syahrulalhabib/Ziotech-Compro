@@ -5,7 +5,7 @@ import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { ref, set, onValue, remove, update } from 'firebase/database';
 import { auth, db } from '../../firebase/config';
 import { useData, defaultData } from '../../context/DataContext';
-import { LogOut, Save, Home, Info, LayoutDashboard, Image as ImageIcon, Type, Menu, X, CheckCircle2, AlertCircle, Briefcase, Wrench, Phone, Plus, Trash2, Star, CalendarClock, Building2, Share2, Globe, MapPin, Inbox, Mail, User, Clock, ExternalLink, Copy, Check, Sparkles, ChevronRight } from 'lucide-react';
+import { LogOut, Save, Home, Info, LayoutDashboard, Image as ImageIcon, Type, Menu, X, CheckCircle2, AlertCircle, Briefcase, Wrench, Phone, Plus, Trash2, Star, CalendarClock, Building2, Share2, Globe, MapPin, Inbox, Mail, User, Clock, ExternalLink, Copy, Check, Sparkles, ChevronRight, TrendingUp } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { SERVICE_ICONS, getServiceIcon } from '../../data/serviceIcons';
 
@@ -324,7 +324,8 @@ export default function Dashboard() {
           heroTitles: [],
           heroImages: [],
           ...parsedData.home,
-          clientPartners: cleanArray(parsedData.home?.clientPartners, [])
+          clientPartners: cleanArray(parsedData.home?.clientPartners, defaultData?.home?.clientPartners || []),
+          stats: cleanArray(parsedData.home?.stats, defaultData?.home?.stats || [])
         }
       });
     }
@@ -501,6 +502,47 @@ export default function Dashboard() {
         home: {
           ...prev.home,
           clientPartners: partners
+        }
+      };
+    });
+  };
+
+  const handleHomeStatChange = (index, field, value) => {
+    setFormData((prev) => {
+      const stats = [...(prev.home?.stats || defaultData?.home?.stats || [])];
+      stats[index] = { ...stats[index], [field]: value };
+      return {
+        ...prev,
+        home: {
+          ...prev.home,
+          stats
+        }
+      };
+    });
+  };
+
+  const addHomeStat = () => {
+    setFormData((prev) => ({
+      ...prev,
+      home: {
+        ...prev.home,
+        stats: [
+          ...(prev.home?.stats || defaultData?.home?.stats || []),
+          { id: Date.now(), category: 'KATEGORI BARU', value: '10+', unit: 'Satuan', label: 'Deskripsi singkat pencapaian' }
+        ]
+      }
+    }));
+  };
+
+  const removeHomeStat = (index) => {
+    setFormData((prev) => {
+      const stats = [...(prev.home?.stats || defaultData?.home?.stats || [])];
+      stats.splice(index, 1);
+      return {
+        ...prev,
+        home: {
+          ...prev.home,
+          stats
         }
       };
     });
@@ -1038,6 +1080,100 @@ export default function Dashboard() {
                     </div>
                     <ImageUploadBox label="Gambar Preview About" value={formData.home?.aboutPreviewImageUrl} onChange={(val) => handleChange('home', 'aboutPreviewImageUrl', val)} onImageUpload={handleImageUpload} />
                   </div>
+
+                  {/* Statistik & Angka Kinerja (Quick Facts) */}
+                  <div className="bg-white rounded-3xl p-6 lg:p-8 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100">
+                    <div className="flex items-center justify-between pb-5 border-b border-slate-100 mb-6">
+                      <div className="flex items-center gap-4">
+                        <div className="p-3 bg-blue-50 text-blue-600 rounded-xl"><TrendingUp className="w-6 h-6" /></div>
+                        <div>
+                          <h3 className="text-xl font-bold text-slate-800">Statistik & Kinerja Perusahaan</h3>
+                          <p className="text-sm text-slate-500 mt-1">Kelola angka-angka statistik di Beranda. Efek animasi angka bergulir tetap otomatis bekerja.</p>
+                        </div>
+                      </div>
+                      <button
+                        onClick={addHomeStat}
+                        className="text-sm flex items-center gap-1 text-[var(--primary-blue)] hover:text-blue-700 font-medium bg-blue-50 px-3 py-1.5 rounded-lg transition-colors"
+                      >
+                        <Plus className="w-4 h-4" /> Tambah Statistik
+                      </button>
+                    </div>
+
+                    <div className="space-y-6">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <InputField 
+                          icon={Type} 
+                          label="Badge Bagian Statistik" 
+                          value={formData.home?.quickFactsBadge ?? 'KREDIBILITAS & PERFORMA'} 
+                          onChange={(e) => handleChange('home', 'quickFactsBadge', e.target.value)} 
+                        />
+                        <InputField 
+                          icon={Type} 
+                          label="Judul Bagian Statistik" 
+                          value={formData.home?.quickFactsTitle ?? 'Kinerja Terpercaya untuk Kebutuhan Industri'} 
+                          onChange={(e) => handleChange('home', 'quickFactsTitle', e.target.value)} 
+                        />
+                      </div>
+                      <InputField 
+                        icon={Type} 
+                        label="Deskripsi Bagian Statistik" 
+                        value={formData.home?.quickFactsSubtitle ?? 'Kapasitas teknis yang teruji melalui ragam proyek strategis dan kemitraan berkelanjutan bersama para klien industri terkemuka.'} 
+                        onChange={(e) => handleChange('home', 'quickFactsSubtitle', e.target.value)} 
+                        isTextarea
+                      />
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-2">
+                        {(formData.home?.stats || defaultData?.home?.stats || []).map((stat, idx) => (
+                          <div key={stat.id || idx} className="p-5 border border-slate-200 rounded-2xl bg-slate-50/70 relative group space-y-4">
+                            <div className="flex items-center justify-between border-b border-slate-200/80 pb-3">
+                              <span className="text-xs font-bold text-blue-700 bg-blue-100/70 px-2.5 py-1 rounded-full uppercase tracking-wider">
+                                Kartu #{idx + 1}
+                              </span>
+                              <button
+                                onClick={() => removeHomeStat(idx)}
+                                className="p-1.5 bg-red-100 text-red-600 rounded-lg opacity-80 hover:opacity-100 transition-opacity hover:bg-red-200"
+                                title="Hapus Kartu Statistik"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </div>
+                            
+                            <InputField 
+                              label="Kategori / Label Atas" 
+                              value={stat.category || ''} 
+                              onChange={(e) => handleHomeStatChange(idx, 'category', e.target.value)} 
+                              placeholder="cth: PENGALAMAN LAPANGAN"
+                            />
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                              <InputField 
+                                label="Nilai / Angka" 
+                                value={stat.value || ''} 
+                                onChange={(e) => handleHomeStatChange(idx, 'value', e.target.value)} 
+                                placeholder="cth: 10+, 50+, 99%"
+                                helperText="Animasi bergulir otomatis (cth: 10+, 99%)."
+                              />
+                              <InputField 
+                                label="Satuan / Teks Bawah Angka" 
+                                value={stat.unit || ''} 
+                                onChange={(e) => handleHomeStatChange(idx, 'unit', e.target.value)} 
+                                placeholder="cth: Tahun, Proyek Selesai"
+                              />
+                            </div>
+
+                            <InputField 
+                              label="Keterangan / Deskripsi" 
+                              value={stat.label || ''} 
+                              onChange={(e) => handleHomeStatChange(idx, 'label', e.target.value)} 
+                              placeholder="cth: Dedikasi melayani sektor infrastruktur..."
+                              isTextarea
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
 
                   {/* CTA Background Image */}
                   <div className="bg-white rounded-3xl p-6 lg:p-8 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100">

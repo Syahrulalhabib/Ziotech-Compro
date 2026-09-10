@@ -23,19 +23,24 @@ import {
 import { motion } from 'framer-motion';
 import { getServiceIcon } from '../data/serviceIcons';
 
-/** Parses "10+", "99%", "30+" → { num: 10, suffix: '+' } */
+/** Parses "10+", "99%", ">50", "250+", "100" → { prefix, num, suffix } */
 function parseStat(value) {
-  const match = String(value).match(/^(\d+)([+%]?)$/);
-  if (!match) return { num: 0, suffix: '' };
-  return { num: parseInt(match[1], 10), suffix: match[2] };
+  const str = String(value ?? '').trim();
+  const match = str.match(/^([^\d]*)(\d+)(.*)$/);
+  if (!match) return { prefix: '', num: 0, suffix: str };
+  return {
+    prefix: match[1] || '',
+    num: parseInt(match[2], 10) || 0,
+    suffix: match[3] || ''
+  };
 }
 
 function StatCounter({ value, className }) {
-  const { num, suffix } = parseStat(value);
+  const { prefix, num, suffix } = parseStat(value);
   const { count, ref } = useCountUp(num);
   return (
     <div ref={ref} className={className}>
-      {count}{suffix}
+      {prefix}{count}{suffix}
     </div>
   );
 }
@@ -350,15 +355,15 @@ export default function Home() {
           <div className="grid lg:grid-cols-12 gap-6 items-end pb-12 mb-12 border-b border-slate-100">
             <div className="lg:col-span-6">
               <span className="text-[11px] font-bold tracking-widest text-[#0284c7] uppercase mb-2 block">
-                {t.home?.quickFactsBadge || 'KREDIBILITAS & PERFORMA'}
+                {data.home?.quickFactsBadge || t.home?.quickFactsBadge || 'KREDIBILITAS & PERFORMA'}
               </span>
               <h2 className="text-2xl sm:text-4xl font-extrabold text-[#0f172a] leading-tight">
-                {t.home?.quickFactsTitle || 'Kinerja Terpercaya untuk Kebutuhan Industri'}
+                {data.home?.quickFactsTitle || t.home?.quickFactsTitle || 'Kinerja Terpercaya untuk Kebutuhan Industri'}
               </h2>
             </div>
             <div className="lg:col-span-4">
               <p className="text-slate-500 text-sm sm:text-base leading-relaxed">
-                {t.home?.quickFactsSubtitle || 'Kapasitas teknis yang teruji melalui ragam proyek strategis dan kemitraan berkelanjutan bersama para klien industri terkemuka.'}
+                {data.home?.quickFactsSubtitle || t.home?.quickFactsSubtitle || 'Kapasitas teknis yang teruji melalui ragam proyek strategis dan kemitraan berkelanjutan bersama para klien industri terkemuka.'}
               </p>
             </div>
             <div className="lg:col-span-2 lg:text-right">
@@ -372,33 +377,36 @@ export default function Home() {
           </div>
 
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
-            {[
-              {
-                category: t.home?.stat1Category || 'PENGALAMAN INDUSTRI',
-                value: '10+',
-                unit: t.home?.stat1Unit || 'Tahun',
-                label: t.home?.stat1Label || 'Dedikasi melayani sektor infrastruktur & industri nasional'
-              },
-              {
-                category: t.home?.stat2Category || 'PORTOFOLIO PROYEK',
-                value: '50+',
-                unit: t.home?.stat2Unit || 'Proyek Selesai',
-                label: t.home?.stat2Label || 'Penyelesaian tepat mutu, tepat waktu, dan standar K3 tinggi'
-              },
-              {
-                category: t.home?.stat3Category || 'KEPUASAN KLIEN',
-                value: '99%',
-                unit: t.home?.stat3Unit || 'Tingkat Kepuasan',
-                label: t.home?.stat3Label || 'Retensi dan kepercayaan berkesinambungan dari mitra'
-              },
-              {
-                category: t.home?.stat4Category || 'TIM AHLI & TEKNIS',
-                value: '30+',
-                unit: t.home?.stat4Unit || 'Tenaga Profesional',
-                label: t.home?.stat4Label || 'Insinyur & staf teknis bersertifikasi lisensi resmi'
-              }
-            ].map((stat, idx) => (
-              <div key={idx} className="border-l-2 border-slate-200 pl-4 sm:pl-6">
+            {(data.home?.stats && data.home.stats.length > 0
+              ? data.home.stats
+              : [
+                  {
+                    category: t.home?.stat1Category || 'PENGALAMAN LAPANGAN',
+                    value: '10+',
+                    unit: t.home?.stat1Unit || 'Tahun',
+                    label: t.home?.stat1Label || 'Dedikasi melayani sektor infrastruktur dan industri nasional secara konsisten'
+                  },
+                  {
+                    category: t.home?.stat2Category || 'PORTOFOLIO PEKERJAAN',
+                    value: '50+',
+                    unit: t.home?.stat2Unit || 'Proyek Selesai',
+                    label: t.home?.stat2Label || 'Penyelesaian tepat waktu dengan pemenuhan standar mutu dan keselamatan kerja'
+                  },
+                  {
+                    category: t.home?.stat3Category || 'RETENSI KLIEN',
+                    value: '99%',
+                    unit: t.home?.stat3Unit || 'Kepuasan Klien',
+                    label: t.home?.stat3Label || 'Kemitraan berulang yang didasari pada kejelasan komunikasi dan keandalan hasil kerja'
+                  },
+                  {
+                    category: t.home?.stat4Category || 'KOMPETENSI TEKNIS',
+                    value: '30+',
+                    unit: t.home?.stat4Unit || 'Tenaga Profesional',
+                    label: t.home?.stat4Label || 'Tim rekayasa dan teknisi berlisensi keahlian resmi di bidangnya'
+                  }
+                ]
+            ).map((stat, idx) => (
+              <div key={stat.id || idx} className="border-l-2 border-slate-200 pl-4 sm:pl-6">
                 <div className="text-[10px] sm:text-xs font-bold text-slate-400 tracking-wider uppercase mb-1">
                   {stat.category}
                 </div>

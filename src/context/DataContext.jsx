@@ -40,6 +40,39 @@ const defaultData = {
       { id: 4, name: "ANTAM", logo: "" },
       { id: 5, name: "Adhi", logo: "" }
     ],
+    quickFactsBadge: "KREDIBILITAS & PERFORMA",
+    quickFactsTitle: "Kinerja Terpercaya untuk Kebutuhan Industri",
+    quickFactsSubtitle: "Kapasitas teknis yang teruji melalui ragam proyek strategis dan kemitraan berkelanjutan bersama para klien industri terkemuka.",
+    stats: [
+      {
+        id: 1,
+        category: "PENGALAMAN LAPANGAN",
+        value: "10+",
+        unit: "Tahun",
+        label: "Dedikasi melayani sektor infrastruktur dan industri nasional secara konsisten"
+      },
+      {
+        id: 2,
+        category: "PORTOFOLIO PEKERJAAN",
+        value: "50+",
+        unit: "Proyek Selesai",
+        label: "Penyelesaian tepat waktu dengan pemenuhan standar mutu dan keselamatan kerja"
+      },
+      {
+        id: 3,
+        category: "RETENSI KLIEN",
+        value: "99%",
+        unit: "Kepuasan Klien",
+        label: "Kemitraan berulang yang didasari pada kejelasan komunikasi dan keandalan hasil kerja"
+      },
+      {
+        id: 4,
+        category: "KOMPETENSI TEKNIS",
+        value: "30+",
+        unit: "Tenaga Profesional",
+        label: "Tim rekayasa dan teknisi berlisensi keahlian resmi di bidangnya"
+      }
+    ],
   },
   about: {
     title: "Tentang PT Ziotech Global Inovasi",
@@ -297,7 +330,8 @@ export function DataProvider({ children }) {
           const home = { 
             ...defaultData.home, 
             ...(dbData.home || {}),
-            clientPartners: safeArray(dbData.home?.clientPartners, defaultData.home.clientPartners)
+            clientPartners: safeArray(dbData.home?.clientPartners, defaultData.home.clientPartners),
+            stats: safeArray(dbData.home?.stats, defaultData.home.stats)
           };
 
           // Merge company: pastikan socials dan footerServices selalu berbentuk array aman
