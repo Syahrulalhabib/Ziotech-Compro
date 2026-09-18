@@ -39,3 +39,7 @@ desktop.ini
 .firebase
 firebase-debug.log*
 .firebaserc
+
+# Graphify
+graphify-out/
+.graphify*

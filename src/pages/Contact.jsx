@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { useData } from '../context/DataContext';
-import { useLanguage } from '../context/LanguageContext';
 import { db } from '../firebase/config';
 import { ref, push } from 'firebase/database';
 import { MapPin, Phone, Mail, Clock, Send, CheckCircle2 } from 'lucide-react';
@@ -8,7 +7,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Contact() {
   const { data } = useData();
-  const { t } = useLanguage();
   const [formState, setFormState] = useState({
     name: '',
     email: '',
@@ -135,10 +133,10 @@ export default function Contact() {
   };
 
   const contactInfo = [
-    { icon: MapPin, title: t.contactPage.addressTitle, detail: company.address, color: 'text-blue-500', bg: 'bg-blue-50' },
-    { icon: Phone, title: t.contactPage.phoneTitle, detail: company.phone, color: 'text-green-500', bg: 'bg-green-50' },
-    { icon: Mail, title: t.contactPage.emailTitle, detail: company.email, color: 'text-red-500', bg: 'bg-red-50' },
-    { icon: Clock, title: t.contactPage.hoursTitle, detail: company.workingHours, color: 'text-orange-500', bg: 'bg-orange-50' }
+    { icon: MapPin, title: 'Kantor Operasional', detail: company.address, color: 'text-blue-500', bg: 'bg-blue-50' },
+    { icon: Phone, title: 'Kontak Telepon', detail: company.phone, color: 'text-green-500', bg: 'bg-green-50' },
+    { icon: Mail, title: 'Surat Elektronik (Email)', detail: company.email, color: 'text-red-500', bg: 'bg-red-50' },
+    { icon: Clock, title: 'Waktu Operasional Kantor', detail: company.workingHours, color: 'text-orange-500', bg: 'bg-orange-50' }
   ];
 
   const header = data?.pageHeaders?.contact || {};
@@ -146,11 +144,15 @@ export default function Contact() {
   return (
     <div className="overflow-hidden bg-[#f8fafc]">
       {/* 1. Header (Pertamina corporate style) */}
-      <section className="relative bg-[#0b1329] text-white pt-36 pb-20 md:pt-44 md:pb-28 overflow-hidden">
+      <section className="relative bg-[#0b1329] text-white pt-28 pb-14 sm:pt-36 sm:pb-20 md:pt-44 md:pb-28 overflow-hidden">
         {header.image ? (
-          <div className="absolute inset-0 z-0 bg-[#1e293b]">
-            <img src={header.image} alt="Contact Background" className="w-full h-full object-cover" />
-            <div className="absolute inset-0 bg-black/50" />
+          <div className="absolute inset-0 z-0 bg-[#0b1329]">
+            <img 
+              src={header.image} 
+              alt="Contact Background" 
+              className="w-full h-full object-cover object-center sm:object-right opacity-45 sm:opacity-55" 
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0b1329] via-[#0b1329]/85 to-[#0b1329]/60 sm:bg-gradient-to-r sm:from-[#0b1329] sm:via-[#0b1329]/85 sm:to-[#0b1329]/35 pointer-events-none" />
           </div>
         ) : (
           <div className="absolute inset-0 z-0 opacity-20 bg-[radial-gradient(#0284c7_1px,transparent_1px)] [background-size:24px_24px]" />
@@ -163,14 +165,14 @@ export default function Contact() {
             transition={{ duration: 0.5 }}
             className="max-w-3xl"
           >
-            <span className="text-[11px] font-bold tracking-widest text-[#38bdf8] uppercase block mb-3">
-              {header.badge || t.contactPage.heroBadge}
+            <span className="text-[11px] sm:text-xs font-bold tracking-widest text-[#38bdf8] uppercase block mb-2 sm:mb-3">
+              {header.badge || 'KOMUNIKASI KORPORASI'}
             </span>
-            <h1 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight mb-4 leading-tight">
-              {header.title || t.contactPage.defaultHeaderTitle}
+            <h1 className="text-2xl sm:text-4xl md:text-5xl font-extrabold text-white tracking-tight mb-3 sm:mb-4 leading-tight">
+              {header.title || 'Hubungi Kami'}
             </h1>
-            <p className="text-sm sm:text-lg text-slate-300 font-light leading-relaxed">
-              {header.subtitle || t.contactPage.defaultHeaderSubtitle}
+            <p className="text-xs sm:text-base md:text-lg text-slate-300 font-light leading-relaxed">
+              {header.subtitle || 'Tim profesional kami siap membantu dan memberikan asistensi teknis untuk kebutuhan proyek Anda.'}
             </p>
           </motion.div>
         </div>
@@ -191,18 +193,18 @@ export default function Contact() {
                   {data?.contactSettings?.badge || 'HUBUNGI KAMI'}
                 </span>
                 <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0f172a] mb-4">
-                  {data?.contactSettings?.title || t.contactPage.title}
+                  {data?.contactSettings?.title || 'Diskusikan Kebutuhan Rekayasa & Proyek Anda'}
                 </h2>
                 <p className="text-slate-500 font-medium mb-8 text-sm sm:text-base leading-relaxed">
-                  {data?.contactSettings?.subtitle || t.contactPage.subtitle}
+                  {data?.contactSettings?.subtitle || 'Sampaikan spesifikasi atau ruang lingkup pekerjaan Anda, perwakilan kami akan memberikan skema kerja sama dan asistensi yang tepat sasaran.'}
                 </p>
 
                 <div className="space-y-4">
                   {contactInfo.map((info, idx) => {
                     const Icon = info.icon;
                     return (
-                      <div key={idx} className="bg-white p-5 rounded-2xl border border-slate-100 flex items-start gap-4 shadow-sm">
-                        <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 bg-slate-50 text-[#0284c7]">
+                      <div key={idx} className="bg-white p-5 rounded-none border border-slate-100 flex items-start gap-4 shadow-sm">
+                        <div className="w-10 h-10 rounded-none flex items-center justify-center shrink-0 bg-slate-50 text-[#0284c7]">
                           <Icon className="w-5 h-5" />
                         </div>
                         <div className="min-w-0 flex-1">
@@ -222,9 +224,9 @@ export default function Contact() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.1 }}
-                className="bg-white rounded-3xl p-7 sm:p-10 border border-slate-100 shadow-sm"
+                className="bg-white rounded-none p-7 sm:p-10 border border-slate-100 shadow-sm"
               >
-                <h2 className="text-xl sm:text-2xl font-extrabold text-[#0f172a] mb-6">{t.contactPage.formTitle}</h2>
+                <h2 className="text-xl sm:text-2xl font-extrabold text-[#0f172a] mb-6">Kirim Permintaan Informasi</h2>
 
                 <AnimatePresence>
                   {isSuccess && (
@@ -232,10 +234,10 @@ export default function Contact() {
                       initial={{ opacity: 0, y: -10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
-                      className="mb-6 p-4 bg-emerald-50 text-emerald-800 rounded-xl flex items-center gap-3 border border-emerald-100 text-sm"
+                      className="mb-6 p-4 bg-emerald-50 text-emerald-800 rounded-none flex items-center gap-3 border border-emerald-100 text-sm"
                     >
                       <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
-                      {t.contactPage.successDesc}
+                      Terima kasih atas komunikasi Anda. Tim representatif kami akan segera meninjau dan menghubungi Anda.
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -243,7 +245,7 @@ export default function Contact() {
                 <form onSubmit={handleSubmit} className="space-y-5">
                   <div className="grid md:grid-cols-2 gap-5">
                     <div>
-                      <label htmlFor="name" className="block text-xs font-semibold text-slate-700 mb-2 uppercase tracking-wider">{t.contactPage.nameLabel} *</label>
+                      <label htmlFor="name" className="block text-xs font-semibold text-slate-700 mb-2 uppercase tracking-wider">Nama Lengkap / Jabatan *</label>
                       <input
                         type="text"
                         id="name"
@@ -251,12 +253,12 @@ export default function Contact() {
                         value={formState.name}
                         onChange={handleChange}
                         required
-                        className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:ring-2 focus:ring-[#0284c7] focus:border-[#0284c7] outline-none text-sm transition-all"
-                        placeholder={t.contactPage.namePlaceholder}
+                        className="w-full px-4 py-3 rounded-none border border-slate-200 bg-slate-50/50 focus:bg-white focus:ring-2 focus:ring-[#0284c7] focus:border-[#0284c7] outline-none text-sm transition-all"
+                        placeholder="cth. Ir. Bambang Prakoso"
                       />
                     </div>
                     <div>
-                      <label htmlFor="email" className="block text-xs font-semibold text-slate-700 mb-2 uppercase tracking-wider">{t.contactPage.emailLabel} *</label>
+                      <label htmlFor="email" className="block text-xs font-semibold text-slate-700 mb-2 uppercase tracking-wider">Alamat Email Perusahaan *</label>
                       <input
                         type="email"
                         id="email"
@@ -264,46 +266,46 @@ export default function Contact() {
                         value={formState.email}
                         onChange={handleChange}
                         required
-                        className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:ring-2 focus:ring-[#0284c7] focus:border-[#0284c7] outline-none text-sm transition-all"
-                        placeholder={t.contactPage.emailPlaceholder}
+                        className="w-full px-4 py-3 rounded-none border border-slate-200 bg-slate-50/50 focus:bg-white focus:ring-2 focus:ring-[#0284c7] focus:border-[#0284c7] outline-none text-sm transition-all"
+                        placeholder="cth. bambang@perusahaan.co.id"
                       />
                     </div>
                   </div>
 
                   <div className="grid md:grid-cols-2 gap-5">
                     <div>
-                      <label htmlFor="phone" className="block text-xs font-semibold text-slate-700 mb-2 uppercase tracking-wider">{t.contactPage.phoneLabel}</label>
+                      <label htmlFor="phone" className="block text-xs font-semibold text-slate-700 mb-2 uppercase tracking-wider">Nomor Telepon / WhatsApp</label>
                       <input
                         type="tel"
                         id="phone"
                         name="phone"
                         value={formState.phone}
                         onChange={handleChange}
-                        className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:ring-2 focus:ring-[#0284c7] focus:border-[#0284c7] outline-none text-sm transition-all"
-                        placeholder={t.contactPage.phonePlaceholder}
+                        className="w-full px-4 py-3 rounded-none border border-slate-200 bg-slate-50/50 focus:bg-white focus:ring-2 focus:ring-[#0284c7] focus:border-[#0284c7] outline-none text-sm transition-all"
+                        placeholder="cth. 0812-3456-7890"
                       />
                     </div>
                     <div>
-                      <label htmlFor="subject" className="block text-xs font-semibold text-slate-700 mb-2 uppercase tracking-wider">{t.contactPage.subjectLabel} *</label>
+                      <label htmlFor="subject" className="block text-xs font-semibold text-slate-700 mb-2 uppercase tracking-wider">Klasifikasi Kebutuhan *</label>
                       <select
                         id="subject"
                         name="subject"
                         value={formState.subject}
                         onChange={handleChange}
                         required
-                        className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:ring-2 focus:ring-[#0284c7] focus:border-[#0284c7] outline-none text-sm transition-all"
+                        className="w-full px-4 py-3 rounded-none border border-slate-200 bg-slate-50/50 focus:bg-white focus:ring-2 focus:ring-[#0284c7] focus:border-[#0284c7] outline-none text-sm transition-all"
                       >
-                        <option value="">{t.contactPage.subjectPlaceholder}</option>
-                        <option value="Pertanyaan Layanan MEP">{t.contactPage.optMep}</option>
-                        <option value="Konstruksi & Infrastruktur">{t.contactPage.optConstruction}</option>
-                        <option value="Kerja Sama">{t.contactPage.optPartnership}</option>
-                        <option value="Lainnya">{t.contactPage.optOther}</option>
+                        <option value="">Pilih Bidang Kebutuhan Proyek</option>
+                        <option value="Pertanyaan Layanan MEP">Pekerjaan Sistem MEP (Mechanical, Electrical, Plumbing)</option>
+                        <option value="Konstruksi & Infrastruktur">Konstruksi Sipil & Bangunan Industri</option>
+                        <option value="Kerja Sama">Pengadaan Komponen & Penunjang Tambang</option>
+                        <option value="Lainnya">Konsultasi Teknis & Kerja Sama Lainnya</option>
                       </select>
                     </div>
                   </div>
 
                   <div>
-                    <label htmlFor="message" className="block text-xs font-semibold text-slate-700 mb-2 uppercase tracking-wider">{t.contactPage.messageLabel} *</label>
+                    <label htmlFor="message" className="block text-xs font-semibold text-slate-700 mb-2 uppercase tracking-wider">Uraian Kebutuhan / Detail Proyek *</label>
                     <textarea
                       id="message"
                       name="message"
@@ -311,8 +313,8 @@ export default function Contact() {
                       onChange={handleChange}
                       required
                       rows="4"
-                      className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:ring-2 focus:ring-[#0284c7] focus:border-[#0284c7] outline-none text-sm transition-all resize-none"
-                      placeholder={t.contactPage.messagePlaceholder}
+                      className="w-full px-4 py-3 rounded-none border border-slate-200 bg-slate-50/50 focus:bg-white focus:ring-2 focus:ring-[#0284c7] focus:border-[#0284c7] outline-none text-sm transition-all resize-none"
+                      placeholder="Tuliskan deskripsi ringkas mengenai skala proyek, lokasi, kebutuhan teknis, atau jadwal yang direncanakan..."
                     ></textarea>
                   </div>
 
@@ -325,7 +327,7 @@ export default function Contact() {
                       <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                     ) : (
                       <>
-                        <span>{t.contactPage.sendButton}</span>
+                        <span>Kirim Formulir Pesan</span>
                         <Send className="w-4 h-4 text-white" />
                       </>
                     )}
@@ -340,8 +342,8 @@ export default function Contact() {
       {/* Map Section */}
       <section className="pb-20 bg-[#f8fafc]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-white p-3 md:p-4 rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
-            <div className="relative w-full h-[320px] md:h-[420px] rounded-2xl overflow-hidden bg-slate-100">
+          <div className="bg-white p-3 md:p-4 rounded-none shadow-sm border border-slate-100 overflow-hidden">
+            <div className="relative w-full h-[320px] md:h-[420px] rounded-none overflow-hidden bg-slate-100">
               {mapSrc ? (
                 <iframe
                   title="Google Maps Lokasi Kantor PT Ziotech Global Inovasi"
@@ -354,8 +356,8 @@ export default function Contact() {
               ) : (
                 <div className="absolute inset-0 flex items-center justify-center text-gray-500 flex-col p-4 text-center">
                   <MapPin className="w-10 h-10 mb-3 text-gray-400" />
-                  <p className="font-medium text-slate-700">{t.common.mapsFallbackTitle}</p>
-                  <p className="text-sm text-slate-400 mt-1">{t.common.mapsFallbackDesc}</p>
+                  <p className="font-medium text-slate-700">Peta Lokasi Kantor Operasional</p>
+                  <p className="text-sm text-slate-400 mt-1">Konfigurasi tautan lokasi Google Maps dapat diatur melalui CMS Admin</p>
                 </div>
               )}
             </div>

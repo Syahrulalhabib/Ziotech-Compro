@@ -1,37 +1,22 @@
-import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useData } from '../context/DataContext';
-import { useLanguage } from '../context/LanguageContext';
 import { ArrowLeft, MapPin, Calendar, Building2, CheckCircle2 } from 'lucide-react';
-import { motion } from 'framer-motion';
 
 export default function ProjectDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { data } = useData();
-  const { t } = useLanguage();
-  const [project, setProject] = useState(null);
-
-  useEffect(() => {
-    if (data?.projects && id) {
-      const found = data.projects.find(p => String(p.id) === String(id));
-      if (found) {
-        setProject(found);
-      }
-    }
-  }, [data, id]);
-
-  
+  const project = data?.projects?.find(p => String(p.id) === String(id)) ?? null;
 
   if (!project) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center pt-20">
-        <h2 className="text-2xl font-bold text-gray-800 mb-4">{t.common.projectNotFound}</h2>
+        <h2 className="text-2xl font-bold text-gray-800 mb-4">Proyek tidak ditemukan</h2>
         <button 
           onClick={() => navigate('/project')}
           className="btn-primary inline-flex items-center gap-2"
         >
-          <ArrowLeft className="w-4 h-4" /> {t.common.backToPortfolio}
+          <ArrowLeft className="w-4 h-4" /> Kembali ke Portofolio
         </button>
       </div>
     );
@@ -49,10 +34,10 @@ export default function ProjectDetail() {
           className="mb-6 sm:mb-8 inline-flex items-center text-sm sm:text-base text-gray-600 hover:text-[var(--primary-blue)] transition-colors"
         >
           <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
-          {t.common.backToPortfolio}
+          Kembali ke Portofolio
         </button>
 
-        <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
+        <div className="bg-white rounded-none shadow-xl overflow-hidden border border-gray-100">
           {/* Hero Image */}
           <div className="relative h-56 sm:h-72 md:h-96 w-full">
             <img 
@@ -60,7 +45,7 @@ export default function ProjectDetail() {
               alt={project.title} 
               className="w-full h-full object-cover"
             />
-            <div className="absolute top-4 left-4 bg-[var(--accent-gold)] text-[var(--primary-dark)] text-xs sm:text-sm font-bold px-3 sm:px-4 py-1.5 sm:py-2 rounded-full shadow-md z-10">
+            <div className="absolute top-4 left-4 bg-[var(--accent-gold)] text-[var(--primary-dark)] text-xs sm:text-sm font-bold px-3 sm:px-4 py-1.5 sm:py-2 rounded-none shadow-md z-10">
               {project.category}
             </div>
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent flex items-end">
@@ -79,7 +64,7 @@ export default function ProjectDetail() {
               {/* Main Info */}
               <div className="lg:col-span-2 space-y-8">
                 <div>
-                  <h2 className="text-2xl font-bold text-[var(--primary-dark)] mb-4">{t.projectPage.projectDesc}</h2>
+                  <h2 className="text-2xl font-bold text-[var(--primary-dark)] mb-4">Latar Belakang & Tantangan Pekerjaan</h2>
                   <p className="text-gray-600 leading-relaxed text-lg">
                     {project.description}
                   </p>
@@ -87,7 +72,7 @@ export default function ProjectDetail() {
                 
                 {project.details && (
                   <div>
-                    <h2 className="text-2xl font-bold text-[var(--primary-dark)] mb-4">{t.projectPage.workDetails}</h2>
+                    <h2 className="text-2xl font-bold text-[var(--primary-dark)] mb-4">Cakupan Solusi & Eksekusi Lapangan</h2>
                     <ul className="space-y-3">
                       {project.details.map((detail, idx) => (
                         <li key={idx} className="flex items-start text-gray-600">
@@ -101,16 +86,16 @@ export default function ProjectDetail() {
               </div>
 
               {/* Sidebar Info */}
-              <div className="bg-gray-50 p-6 rounded-xl border border-gray-100 h-fit space-y-6">
+              <div className="bg-gray-50 p-6 rounded-none border border-gray-100 h-fit space-y-6">
                 <h3 className="text-xl font-bold text-[var(--primary-dark)] border-b border-gray-200 pb-4">
-                  {t.projectPage.projectInfo}
+                  Spesifikasi Proyek
                 </h3>
                 
                 <div className="space-y-4">
                   <div className="flex items-start">
                     <Building2 className="w-6 h-6 text-[var(--primary-blue)] mr-4 flex-shrink-0" />
                     <div>
-                      <p className="text-sm text-gray-500 font-medium">{t.projectPage.clientLabel}</p>
+                      <p className="text-sm text-gray-500 font-medium">Klien / Pemberi Kerja</p>
                       <p className="font-semibold text-gray-800">{project.client}</p>
                     </div>
                   </div>
@@ -118,7 +103,7 @@ export default function ProjectDetail() {
                   <div className="flex items-start">
                     <MapPin className="w-6 h-6 text-[var(--primary-blue)] mr-4 flex-shrink-0" />
                     <div>
-                      <p className="text-sm text-gray-500 font-medium">{t.projectPage.locationLabel}</p>
+                      <p className="text-sm text-gray-500 font-medium">Lokasi Proyek</p>
                       <p className="font-semibold text-gray-800">{project.location}</p>
                     </div>
                   </div>
@@ -126,7 +111,7 @@ export default function ProjectDetail() {
                   <div className="flex items-start">
                     <Calendar className="w-6 h-6 text-[var(--primary-blue)] mr-4 flex-shrink-0" />
                     <div>
-                      <p className="text-sm text-gray-500 font-medium">{t.projectPage.yearLabel}</p>
+                      <p className="text-sm text-gray-500 font-medium">Tahun Pelaksanaan</p>
                       <p className="font-semibold text-gray-800">{project.year}</p>
                     </div>
                   </div>
@@ -135,7 +120,7 @@ export default function ProjectDetail() {
                      <div className="flex items-start">
                      <CheckCircle2 className="w-6 h-6 text-[var(--primary-blue)] mr-4 flex-shrink-0" />
                      <div>
-                       <p className="text-sm text-gray-500 font-medium">{t.projectPage.statusLabel}</p>
+                       <p className="text-sm text-gray-500 font-medium">Status Pekerjaan</p>
                        <p className="font-semibold text-gray-800">{project.status}</p>
                      </div>
                    </div>
@@ -144,7 +129,7 @@ export default function ProjectDetail() {
                 
                 <div className="pt-6 mt-6 border-t border-gray-200">
                   <Link to="/contact" className="btn-primary w-full text-center block">
-                    {t.common.interestedCta}
+                    Rencanakan Kebutuhan Proyek Anda Bersama Kami
                   </Link>
                 </div>
               </div>

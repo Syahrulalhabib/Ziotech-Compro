@@ -5,9 +5,12 @@ import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { ref, set, onValue, remove, update } from 'firebase/database';
 import { auth, db } from '../../firebase/config';
 import { useData, defaultData } from '../../context/DataContext';
-import { LogOut, Save, Home, Info, LayoutDashboard, Image as ImageIcon, Type, Menu, X, CheckCircle2, AlertCircle, Briefcase, Wrench, Phone, Plus, Trash2, Star, CalendarClock, Building2, Share2, Globe, MapPin, Inbox, Mail, User, Clock, ExternalLink, Copy, Check, Sparkles, ChevronRight, TrendingUp, Layers } from 'lucide-react';
+import { LogOut, Save, Home, Info, LayoutDashboard, Image as ImageIcon, Type, Menu, X, CheckCircle2, AlertCircle, Briefcase, Wrench, Phone, Plus, Trash2, Star, CalendarClock, Building2, Share2, Globe, MapPin, Inbox, Mail, Clock, ExternalLink, Sparkles, ChevronRight, TrendingUp, Layers } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { SERVICE_ICONS, getServiceIcon } from '../../data/serviceIcons';
+import logoZiotech from '../../assets/ziotech.png';
+import LoadingScreen from '../../components/LoadingScreen';
+
 
 const defaultCompany = defaultData?.company || {};
 const defaultPageHeaders = defaultData?.pageHeaders || {};
@@ -28,7 +31,7 @@ const InputField = ({ label, icon: Icon, type = "text", value, onChange, onBlur,
         onBlur={onBlur}
         placeholder={placeholder}
         rows="3"
-        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all outline-none resize-y text-slate-700"
+        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-md focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all outline-none resize-y text-slate-700"
       />
     ) : (
       <input
@@ -40,7 +43,7 @@ const InputField = ({ label, icon: Icon, type = "text", value, onChange, onBlur,
         max={max}
         step={step}
         placeholder={placeholder}
-        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all outline-none text-slate-700"
+        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-md focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all outline-none text-slate-700"
       />
     )}
     {helperText && <p className="text-xs text-slate-500 mt-1">{helperText}</p>}
@@ -49,11 +52,13 @@ const InputField = ({ label, icon: Icon, type = "text", value, onChange, onBlur,
 
 const ImageUploadBox = ({ value, onChange, label, onImageUpload, aspect }) => {
   const [previewError, setPreviewError] = useState(false);
+  const [trackedValue, setTrackedValue] = useState(value);
 
-  // Reset status error setiap kali nilai gambar berubah
-  useEffect(() => {
+  // Sync previewError reset when value prop changes (derived state pattern)
+  if (value !== trackedValue) {
+    setTrackedValue(value);
     setPreviewError(false);
-  }, [value]);
+  }
 
   return (
     <div className="space-y-1.5 w-full">
@@ -63,7 +68,7 @@ const ImageUploadBox = ({ value, onChange, label, onImageUpload, aspect }) => {
           {label}
         </label>
       )}
-      <div className="p-5 border border-slate-200 rounded-2xl bg-white shadow-sm hover:shadow-md transition-shadow group">
+      <div className="p-5 border border-slate-200 rounded-md bg-white shadow-sm hover:shadow-md transition-shadow group">
         <div className="flex flex-col md:flex-row gap-6">
           <div className="flex-1 space-y-4">
             <div>
@@ -73,7 +78,7 @@ const ImageUploadBox = ({ value, onChange, label, onImageUpload, aspect }) => {
                 value={value || ''}
                 onChange={(e) => onChange(e.target.value)}
                 placeholder="https://..."
-                className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:bg-white transition-all outline-none text-sm text-slate-700"
+                className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-md focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:bg-white transition-all outline-none text-sm text-slate-700"
               />
             </div>
             
@@ -84,7 +89,7 @@ const ImageUploadBox = ({ value, onChange, label, onImageUpload, aspect }) => {
             </div>
             
             <div>
-              <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-slate-200 rounded-xl bg-slate-50 hover:bg-blue-50/50 hover:border-blue-300 transition-colors cursor-pointer relative overflow-hidden group/upload">
+              <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-slate-200 rounded-md bg-slate-50 hover:bg-blue-50/50 hover:border-blue-300 transition-colors cursor-pointer relative overflow-hidden group/upload">
                 <div className="flex flex-col items-center justify-center pt-5 pb-6">
                    <div className="p-3 bg-white rounded-full shadow-sm mb-3 group-hover/upload:scale-110 transition-transform">
                       <ImageIcon className="w-5 h-5 text-blue-500" />
@@ -104,7 +109,7 @@ const ImageUploadBox = ({ value, onChange, label, onImageUpload, aspect }) => {
 
           <div className="w-full md:w-48 shrink-0 flex flex-col justify-start">
              <label className="block text-xs font-medium text-slate-500 mb-1.5">Preview</label>
-            <div className="w-full aspect-video rounded-xl overflow-hidden border border-slate-200 bg-slate-50 relative flex items-center justify-center">
+            <div className="w-full aspect-video rounded-md overflow-hidden border border-slate-200 bg-slate-50 relative flex items-center justify-center">
               {value && !previewError ? (
                 <img src={value} alt="Preview" className="w-full h-full object-contain" onError={() => setPreviewError(true)} />
               ) : value && previewError ? (
@@ -129,9 +134,9 @@ const ImageUploadBox = ({ value, onChange, label, onImageUpload, aspect }) => {
 
 // Reusable editor untuk header (judul, subjudul, background) tiap halaman
 const PageHeaderEditor = ({ page, label, formData, onChange, onImageUpload }) => (
-  <div className="bg-white rounded-3xl p-6 lg:p-8 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100">
+  <div className="bg-white rounded-lg p-6 lg:p-8 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100">
     <div className="flex items-center gap-4 mb-8 pb-5 border-b border-slate-100">
-      <div className="p-3 bg-blue-50 text-blue-600 rounded-xl"><ImageIcon className="w-6 h-6" /></div>
+      <div className="p-3 bg-blue-50 text-blue-600 rounded-md"><ImageIcon className="w-6 h-6" /></div>
       <div>
         <h3 className="text-xl font-bold text-slate-800">Header Halaman {label}</h3>
         <p className="text-sm text-slate-500 mt-1">Atur label badge, judul, subjudul, dan gambar background bagian atas halaman {label}.</p>
@@ -152,16 +157,16 @@ const ConfirmModal = ({ isOpen, onClose, onConfirm, title, message, confirmText 
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60">
         <motion.div
           initial={{ opacity: 0, scale: 0.92, y: 10 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.92, y: 10 }}
           transition={{ duration: 0.18, ease: "easeOut" }}
-          className="bg-white w-full max-w-md rounded-3xl p-6 sm:p-7 shadow-2xl border border-slate-100 relative"
+          className="bg-white w-full max-w-md rounded-lg p-6 sm:p-7 shadow-2xl border border-slate-100 relative"
         >
           <div className="flex items-start gap-4">
-            <div className={`p-3 rounded-2xl shrink-0 ${isDestructive ? 'bg-red-50 text-red-600' : 'bg-blue-50 text-blue-600'}`}>
+            <div className={`p-3 rounded-md shrink-0 ${isDestructive ? 'bg-red-50 text-red-600' : 'bg-blue-50 text-blue-600'}`}>
               <AlertCircle className="w-6 h-6" />
             </div>
             <div className="flex-1 min-w-0">
@@ -174,7 +179,7 @@ const ConfirmModal = ({ isOpen, onClose, onConfirm, title, message, confirmText 
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-100 active:scale-95 transition-all"
+              className="px-4 py-2.5 rounded-md text-sm font-semibold text-slate-600 hover:bg-slate-100 active:scale-95 transition-all"
             >
               Batal
             </button>
@@ -184,7 +189,7 @@ const ConfirmModal = ({ isOpen, onClose, onConfirm, title, message, confirmText 
                 onConfirm();
                 onClose();
               }}
-              className={`px-5 py-2.5 rounded-xl text-sm font-semibold text-white shadow-md active:scale-95 transition-all ${
+              className={`px-5 py-2.5 rounded-md text-sm font-semibold text-white shadow-md active:scale-95 transition-all ${
                 isDestructive
                   ? 'bg-red-600 hover:bg-red-700 shadow-red-500/20'
                   : 'bg-blue-600 hover:bg-blue-700 shadow-blue-500/20'
@@ -304,6 +309,7 @@ export default function Dashboard() {
         featured: Boolean(p.featured)
       }));
 
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setFormData({
         ...parsedData,
         company: { 
@@ -741,12 +747,7 @@ export default function Dashboard() {
   }, [showToast]);
 
   if (loadingAuth || dataLoading || !formData) {
-    return (
-      <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-red-600 mb-4"></div>
-        <p className="text-slate-500 font-medium animate-pulse">Memuat Dashboard CMS...</p>
-      </div>
-    );
+    return <LoadingScreen message="Memuat Dashboard CMS..." />;
   }
 
   return (
@@ -761,7 +762,7 @@ export default function Dashboard() {
             exit={{ opacity: 0, y: -50, scale: 0.9 }}
             className="fixed top-6 left-1/2 -translate-x-1/2 z-[100] pointer-events-none"
           >
-            <div className={`flex items-center gap-3 px-6 py-3 rounded-2xl shadow-xl border ${toast.type === 'success' ? 'bg-green-50 border-green-200 text-green-800' : 'bg-red-50 border-red-200 text-red-800'}`}>
+            <div className={`flex items-center gap-3 px-6 py-3 rounded-lg shadow-xl border ${toast.type === 'success' ? 'bg-green-50 border-green-200 text-green-800' : 'bg-red-50 border-red-200 text-red-800'}`}>
               {toast.type === 'success' ? <CheckCircle2 className="w-5 h-5 text-green-600" /> : <AlertCircle className="w-5 h-5 text-red-600" />}
               <span className="font-semibold">{toast.text}</span>
             </div>
@@ -773,9 +774,7 @@ export default function Dashboard() {
       <aside className={`hidden lg:flex inset-y-0 left-0 z-50 w-72 bg-slate-900 text-slate-300 flex-col transition-transform duration-300 ease-in-out`}>
         <div className="h-20 flex items-center justify-between px-6 bg-slate-950 border-b border-slate-800 shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-900/50">
-              <LayoutDashboard className="w-5 h-5 text-white" />
-            </div>
+            <img src={logoZiotech} alt="Ziotech CMS" className="h-9 w-auto no-placeholder" />
             <span className="text-white text-xl font-bold tracking-tight">Ziotech CMS</span>
           </div>
           <button onClick={() => setIsMobileMenuOpen(false)} className="lg:hidden text-slate-400 hover:text-white">
@@ -786,23 +785,23 @@ export default function Dashboard() {
         <div className="flex-1 overflow-y-auto py-8 px-4 space-y-2 dark-scroll">
           <p className="px-4 text-xs font-bold text-slate-500 uppercase tracking-wider mb-4">Manajemen Halaman</p>
           
-          <button onClick={() => { setActiveTab('home'); setIsMobileMenuOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${activeTab === 'home' ? 'bg-blue-600 text-white shadow-md shadow-blue-900/20' : 'hover:bg-slate-800 hover:text-white'}`}>
+          <button onClick={() => { setActiveTab('home'); setIsMobileMenuOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3 rounded-md transition-all ${activeTab === 'home' ? 'bg-blue-600 text-white shadow-md shadow-blue-900/20' : 'hover:bg-slate-800 hover:text-white'}`}>
             <Home className="w-5 h-5" /> <span className="font-medium">Beranda (Home)</span>
           </button>
           
-          <button onClick={() => { setActiveTab('about'); setIsMobileMenuOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${activeTab === 'about' ? 'bg-blue-600 text-white shadow-md shadow-blue-900/20' : 'hover:bg-slate-800 hover:text-white'}`}>
+          <button onClick={() => { setActiveTab('about'); setIsMobileMenuOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3 rounded-md transition-all ${activeTab === 'about' ? 'bg-blue-600 text-white shadow-md shadow-blue-900/20' : 'hover:bg-slate-800 hover:text-white'}`}>
             <Info className="w-5 h-5" /> <span className="font-medium">Tentang Kami</span>
           </button>
 
-          <button onClick={() => { setActiveTab('services'); setIsMobileMenuOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${activeTab === 'services' ? 'bg-blue-600 text-white shadow-md shadow-blue-900/20' : 'hover:bg-slate-800 hover:text-white'}`}>
+          <button onClick={() => { setActiveTab('services'); setIsMobileMenuOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3 rounded-md transition-all ${activeTab === 'services' ? 'bg-blue-600 text-white shadow-md shadow-blue-900/20' : 'hover:bg-slate-800 hover:text-white'}`}>
             <Wrench className="w-5 h-5" /> <span className="font-medium">Layanan (Services)</span>
           </button>
 
-          <button onClick={() => { setActiveTab('projects'); setIsMobileMenuOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${activeTab === 'projects' ? 'bg-blue-600 text-white shadow-md shadow-blue-900/20' : 'hover:bg-slate-800 hover:text-white'}`}>
+          <button onClick={() => { setActiveTab('projects'); setIsMobileMenuOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3 rounded-md transition-all ${activeTab === 'projects' ? 'bg-blue-600 text-white shadow-md shadow-blue-900/20' : 'hover:bg-slate-800 hover:text-white'}`}>
             <Briefcase className="w-5 h-5" /> <span className="font-medium">Proyek (Projects)</span>
           </button>
 
-          <button onClick={() => { setActiveTab('contact'); setIsMobileMenuOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${activeTab === 'contact' ? 'bg-blue-600 text-white shadow-md shadow-blue-900/20' : 'hover:bg-slate-800 hover:text-white'}`}>
+          <button onClick={() => { setActiveTab('contact'); setIsMobileMenuOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3 rounded-md transition-all ${activeTab === 'contact' ? 'bg-blue-600 text-white shadow-md shadow-blue-900/20' : 'hover:bg-slate-800 hover:text-white'}`}>
             <Phone className="w-5 h-5" /> <span className="font-medium">Kontak & Perusahaan</span>
           </button>
 
@@ -810,7 +809,7 @@ export default function Dashboard() {
             <p className="px-4 text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Interaksi</p>
             <button 
               onClick={() => { setActiveTab('inbox'); setIsMobileMenuOpen(false); }} 
-              className={`w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all ${activeTab === 'inbox' ? 'bg-blue-600 text-white shadow-md shadow-blue-900/20' : 'hover:bg-slate-800 hover:text-white'}`}
+              className={`w-full flex items-center justify-between px-4 py-3 rounded-md transition-all ${activeTab === 'inbox' ? 'bg-blue-600 text-white shadow-md shadow-blue-900/20' : 'hover:bg-slate-800 hover:text-white'}`}
             >
               <div className="flex items-center gap-3">
                 <Inbox className="w-5 h-5" />
@@ -826,14 +825,14 @@ export default function Dashboard() {
         </div>
 
         <div className="p-4 border-t border-slate-800 shrink-0">
-          <div className="bg-slate-800/50 rounded-xl p-4 mb-4 flex items-center gap-3">
+          <div className="bg-slate-800/50 rounded-md p-4 mb-4 flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-slate-700 flex items-center justify-center text-white font-bold shrink-0">AD</div>
             <div className="overflow-hidden">
               <p className="text-sm font-semibold text-white truncate">Administrator</p>
               <p className="text-xs text-slate-400 truncate">{user?.email}</p>
             </div>
           </div>
-          <button onClick={handleLogout} className="flex items-center justify-center gap-2 w-full px-4 py-3 text-red-400 hover:text-white hover:bg-red-500/10 rounded-xl transition-all border border-transparent hover:border-red-500/20 font-medium">
+          <button onClick={handleLogout} className="flex items-center justify-center gap-2 w-full px-4 py-3 text-red-400 hover:text-white hover:bg-red-500/10 rounded-md transition-all border border-transparent hover:border-red-500/20 font-medium">
             <LogOut className="w-5 h-5" /> Keluar
           </button>
         </div>
@@ -848,15 +847,13 @@ export default function Dashboard() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.22 }}
-              className="fixed inset-0 z-[9998] lg:hidden flex flex-col bg-black/80 backdrop-blur-md"
+              className="fixed inset-0 z-[9998] lg:hidden flex flex-col bg-black/80"
               onClick={() => setIsMobileMenuOpen(false)}
             >
               {/* Header bar overlay */}
               <div className="flex items-center justify-between px-5 py-4 shrink-0 border-b border-white/10 bg-transparent">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-900/50">
-                    <LayoutDashboard className="w-5 h-5 text-white" />
-                  </div>
+                  <img src={logoZiotech} alt="Ziotech CMS" className="h-9 w-auto no-placeholder" />
                   <span className="text-white text-xl font-bold tracking-tight">Ziotech CMS</span>
                 </div>
                 <button
@@ -926,7 +923,7 @@ export default function Dashboard() {
                   transition={{ delay: 0.05 + 6 * 0.05 }}
                   className="mt-6 px-6"
                 >
-                  <div className="bg-white/5 rounded-xl p-4 mb-4 flex items-center gap-3 border border-white/10">
+                  <div className="bg-white/5 rounded-md p-4 mb-4 flex items-center gap-3 border border-white/10">
                     <div className="w-10 h-10 rounded-full bg-slate-700 flex items-center justify-center text-white font-bold shrink-0">AD</div>
                     <div className="overflow-hidden">
                       <p className="text-sm font-semibold text-white truncate">Administrator</p>
@@ -935,7 +932,7 @@ export default function Dashboard() {
                   </div>
                   <button
                     onClick={handleLogout}
-                    className="w-full flex items-center justify-center gap-2 px-4 py-4 text-red-400 hover:text-white hover:bg-red-500/20 rounded-xl transition-all border border-red-500/20 font-medium"
+                    className="w-full flex items-center justify-center gap-2 px-4 py-4 text-red-400 hover:text-white hover:bg-red-500/20 rounded-md transition-all border border-red-500/20 font-medium"
                   >
                     <LogOut className="w-5 h-5" /> Keluar
                   </button>
@@ -950,9 +947,9 @@ export default function Dashboard() {
       {/* Main Content */}
       <main className="flex-1 flex flex-col min-w-0 overflow-hidden bg-slate-100/50">
         {/* Header */}
-        <header className="h-20 bg-white/80 backdrop-blur-md border-b border-slate-200 flex items-center justify-between px-4 lg:px-8 z-30 shrink-0">
+        <header className="h-20 bg-white/80 border-b border-slate-200 flex items-center justify-between px-4 lg:px-8 z-30 shrink-0">
           <div className="flex items-center gap-4">
-            <button onClick={() => setIsMobileMenuOpen(true)} className="lg:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-lg transition-colors">
+            <button onClick={() => setIsMobileMenuOpen(true)} className="lg:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-md transition-colors">
               <Menu className="w-6 h-6" />
             </button>
             <h2 className="text-base sm:text-xl lg:text-2xl font-bold text-slate-800 truncate max-w-[160px] sm:max-w-none">
@@ -966,13 +963,13 @@ export default function Dashboard() {
           </div>
           
           {activeTab !== 'inbox' ? (
-            <button onClick={handleSave} disabled={saving} className="flex items-center gap-2 bg-blue-600 text-white px-5 lg:px-6 py-2.5 lg:py-3 rounded-xl font-semibold hover:bg-blue-700 transition-all shadow-md shadow-blue-600/20 active:scale-95 disabled:opacity-70 disabled:active:scale-100 disabled:cursor-not-allowed">
+            <button onClick={handleSave} disabled={saving} className="flex items-center gap-2 bg-blue-600 text-white px-5 lg:px-6 py-2.5 lg:py-3 rounded-md font-semibold hover:bg-blue-700 transition-all shadow-md shadow-blue-600/20 active:scale-95 disabled:opacity-70 disabled:active:scale-100 disabled:cursor-not-allowed">
               {saving ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin shrink-0" /> : <Save className="w-5 h-5 shrink-0" />}
               <span className="hidden sm:inline">{saving ? 'Menyimpan...' : 'Simpan Perubahan'}</span>
               <span className="sm:hidden">{saving ? '...' : 'Simpan'}</span>
             </button>
           ) : (
-            <div className="flex items-center gap-2 text-xs font-semibold text-slate-500 bg-slate-100 px-3 py-1.5 rounded-lg">
+            <div className="flex items-center gap-2 text-xs font-semibold text-slate-500 bg-slate-100 px-3 py-1.5 rounded-md">
               <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
               Realtime Sync
             </div>
@@ -988,9 +985,9 @@ export default function Dashboard() {
               {/* HOME TAB */}
               {activeTab === 'home' && (
                 <motion.div key="home" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.2 }} className="space-y-8">
-                  <div className="bg-white rounded-3xl p-6 lg:p-8 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100">
+                  <div className="bg-white rounded-lg p-6 lg:p-8 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100">
                     <div className="flex items-center gap-4 mb-8 pb-5 border-b border-slate-100">
-                      <div className="p-3 bg-blue-50 text-blue-600 rounded-xl"><LayoutDashboard className="w-6 h-6" /></div>
+                      <div className="p-3 bg-blue-50 text-blue-600 rounded-md"><LayoutDashboard className="w-6 h-6" /></div>
                       <div>
                         <h3 className="text-xl font-bold text-slate-800">Hero Section</h3>
                         <p className="text-sm text-slate-500 mt-1">Bagian paling atas yang pertama kali dilihat pengunjung.</p>
@@ -1028,21 +1025,21 @@ export default function Dashboard() {
                               const currentImages = formData.home?.heroImages || [];
                               handleChange('home', 'heroImages', [...currentImages, '']);
                             }}
-                            className="shrink-0 text-sm flex items-center gap-1 text-[var(--primary-blue)] hover:text-blue-700 font-medium bg-blue-50 px-3 py-1.5 rounded-lg transition-colors"
+                            className="shrink-0 text-sm flex items-center gap-1 text-[var(--primary-blue)] hover:text-blue-700 font-medium bg-blue-50 px-3 py-1.5 rounded-md transition-colors"
                           >
                             <Plus className="w-4 h-4" /> Tambah Gambar
                           </button>
                         </div>
                         
                         {(formData.home?.heroImages || []).map((img, idx) => (
-                          <div key={idx} className="relative group p-4 border border-slate-200 rounded-xl bg-slate-50">
+                          <div key={idx} className="relative group p-4 border border-slate-200 rounded-md bg-slate-50">
                             <button
                               onClick={() => {
                                 const currentImages = [...(formData.home?.heroImages || [])];
                                 currentImages.splice(idx, 1);
                                 handleChange('home', 'heroImages', currentImages);
                               }}
-                              className="absolute top-2 right-2 p-1.5 bg-red-100 text-red-600 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity z-10 hover:bg-red-200"
+                              className="absolute top-2 right-2 p-1.5 bg-red-100 text-red-600 rounded-md opacity-0 group-hover:opacity-100 transition-opacity z-10 hover:bg-red-200"
                               title="Hapus Gambar"
                             >
                               <Trash2 className="w-4 h-4" />
@@ -1061,7 +1058,7 @@ export default function Dashboard() {
                           </div>
                         ))}
                         {(!formData.home?.heroImages || formData.home?.heroImages.length === 0) && (
-                          <div className="text-center p-8 border-2 border-dashed border-slate-200 rounded-xl bg-slate-50 text-slate-500 text-sm">
+                          <div className="text-center p-8 border-2 border-dashed border-slate-200 rounded-md bg-slate-50 text-slate-500 text-sm">
                             Belum ada gambar slider. Klik Tambah Gambar untuk memulai.
                           </div>
                         )}
@@ -1069,9 +1066,9 @@ export default function Dashboard() {
                     </div>
                   </div>
 
-                  <div className="bg-white rounded-3xl p-6 lg:p-8 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100">
+                  <div className="bg-white rounded-lg p-6 lg:p-8 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100">
                     <div className="flex items-center gap-4 mb-8 pb-5 border-b border-slate-100">
-                      <div className="p-3 bg-sky-50 text-[#0284c7] rounded-xl"><Sparkles className="w-6 h-6" /></div>
+                      <div className="p-3 bg-sky-50 text-[#0284c7] rounded-md"><Sparkles className="w-6 h-6" /></div>
                       <div>
                         <h3 className="text-xl font-bold text-slate-800">Visual & Teks Editorial Intro (Inovasi & Kualitas)</h3>
                         <p className="text-sm text-slate-500 mt-1">Kelola gambar kotak dan teks editorial intro di bawah hero beranda.</p>
@@ -1128,9 +1125,9 @@ export default function Dashboard() {
                     </div>
                   </div>
 
-                  <div className="bg-white rounded-3xl p-6 lg:p-8 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100">
+                  <div className="bg-white rounded-lg p-6 lg:p-8 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100">
                     <div className="flex items-center gap-4 mb-8 pb-5 border-b border-slate-100">
-                      <div className="p-3 bg-indigo-50 text-indigo-600 rounded-xl"><Info className="w-6 h-6" /></div>
+                      <div className="p-3 bg-indigo-50 text-indigo-600 rounded-md"><Info className="w-6 h-6" /></div>
                       <div>
                         <h3 className="text-xl font-bold text-slate-800">Sekilas Perusahaan (Tentang Ziotech di Beranda)</h3>
                         <p className="text-sm text-slate-500 mt-1">Atur teks narasi dan gambar banner bagian 'Tentang Ziotech' di halaman Beranda.</p>
@@ -1164,10 +1161,10 @@ export default function Dashboard() {
                   </div>
 
                   {/* Statistik & Angka Kinerja (Quick Facts) */}
-                  <div className="bg-white rounded-3xl p-6 lg:p-8 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100">
+                  <div className="bg-white rounded-lg p-6 lg:p-8 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100">
                     <div className="flex items-center justify-between pb-5 border-b border-slate-100 mb-6">
                       <div className="flex items-center gap-4">
-                        <div className="p-3 bg-blue-50 text-blue-600 rounded-xl"><TrendingUp className="w-6 h-6" /></div>
+                        <div className="p-3 bg-blue-50 text-blue-600 rounded-md"><TrendingUp className="w-6 h-6" /></div>
                         <div>
                           <h3 className="text-xl font-bold text-slate-800">Statistik & Kinerja Perusahaan</h3>
                           <p className="text-sm text-slate-500 mt-1">Kelola angka-angka statistik di Beranda. Efek animasi angka bergulir tetap otomatis bekerja.</p>
@@ -1175,7 +1172,7 @@ export default function Dashboard() {
                       </div>
                       <button
                         onClick={addHomeStat}
-                        className="text-sm flex items-center gap-1 text-[var(--primary-blue)] hover:text-blue-700 font-medium bg-blue-50 px-3 py-1.5 rounded-lg transition-colors"
+                        className="text-sm flex items-center gap-1 text-[var(--primary-blue)] hover:text-blue-700 font-medium bg-blue-50 px-3 py-1.5 rounded-md transition-colors"
                       >
                         <Plus className="w-4 h-4" /> Tambah Statistik
                       </button>
@@ -1206,14 +1203,14 @@ export default function Dashboard() {
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-2">
                         {(formData.home?.stats || defaultData?.home?.stats || []).map((stat, idx) => (
-                          <div key={stat.id || idx} className="p-5 border border-slate-200 rounded-2xl bg-slate-50/70 relative group space-y-4">
+                          <div key={stat.id || idx} className="p-5 border border-slate-200 rounded-md bg-slate-50/70 relative group space-y-4">
                             <div className="flex items-center justify-between border-b border-slate-200/80 pb-3">
-                              <span className="text-xs font-bold text-blue-700 bg-blue-100/70 px-2.5 py-1 rounded-full uppercase tracking-wider">
+                              <span className="text-xs font-bold text-blue-700 bg-blue-100/70 px-2.5 py-1 rounded-md uppercase tracking-wider">
                                 Kartu #{idx + 1}
                               </span>
                               <button
                                 onClick={() => removeHomeStat(idx)}
-                                className="p-1.5 bg-red-100 text-red-600 rounded-lg opacity-80 hover:opacity-100 transition-opacity hover:bg-red-200"
+                                className="p-1.5 bg-red-100 text-red-600 rounded-md opacity-80 hover:opacity-100 transition-opacity hover:bg-red-200"
                                 title="Hapus Kartu Statistik"
                               >
                                 <Trash2 className="w-4 h-4" />
@@ -1258,9 +1255,9 @@ export default function Dashboard() {
 
 
                   {/* Bagian Pilar Utama (Focus Pillars) */}
-                  <div className="bg-white rounded-3xl p-6 lg:p-8 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100">
+                  <div className="bg-white rounded-lg p-6 lg:p-8 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100">
                     <div className="flex items-center gap-4 mb-6 pb-5 border-b border-slate-100">
-                      <div className="p-3 bg-amber-50 text-amber-600 rounded-xl"><Layers className="w-6 h-6" /></div>
+                      <div className="p-3 bg-amber-50 text-amber-600 rounded-md"><Layers className="w-6 h-6" /></div>
                       <div>
                         <h3 className="text-xl font-bold text-slate-800">Bagian Pilar Utama (4 Editorial Focus)</h3>
                         <p className="text-sm text-slate-500 mt-1">Atur label badge dan judul bagian 4 kartu pilar utama di Beranda.</p>
@@ -1285,9 +1282,9 @@ export default function Dashboard() {
                   </div>
 
                   {/* Bagian Layanan Unggulan (Services Showcase) */}
-                  <div className="bg-white rounded-3xl p-6 lg:p-8 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100">
+                  <div className="bg-white rounded-lg p-6 lg:p-8 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100">
                     <div className="flex items-center gap-4 mb-6 pb-5 border-b border-slate-100">
-                      <div className="p-3 bg-blue-50 text-blue-600 rounded-xl"><Wrench className="w-6 h-6" /></div>
+                      <div className="p-3 bg-blue-50 text-blue-600 rounded-md"><Wrench className="w-6 h-6" /></div>
                       <div>
                         <h3 className="text-xl font-bold text-slate-800">Bagian Layanan Unggulan (Services)</h3>
                         <p className="text-sm text-slate-500 mt-1">Atur judul, badge, dan pengantar bagian Layanan Unggulan di Beranda.</p>
@@ -1320,9 +1317,9 @@ export default function Dashboard() {
                   </div>
 
                   {/* Bagian Portofolio & Rekam Jejak (Projects Showcase) */}
-                  <div className="bg-white rounded-3xl p-6 lg:p-8 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100">
+                  <div className="bg-white rounded-lg p-6 lg:p-8 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100">
                     <div className="flex items-center gap-4 mb-6 pb-5 border-b border-slate-100">
-                      <div className="p-3 bg-violet-50 text-violet-600 rounded-xl"><Briefcase className="w-6 h-6" /></div>
+                      <div className="p-3 bg-violet-50 text-violet-600 rounded-md"><Briefcase className="w-6 h-6" /></div>
                       <div>
                         <h3 className="text-xl font-bold text-slate-800">Bagian Portofolio Proyek (Projects Showcase)</h3>
                         <p className="text-sm text-slate-500 mt-1">Atur judul, badge, dan pengantar showcase proyek di Beranda.</p>
@@ -1355,10 +1352,10 @@ export default function Dashboard() {
                   </div>
 
                   {/* Mitra / Client Logos Section */}
-                  <div className="bg-white rounded-3xl p-6 lg:p-8 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100">
+                  <div className="bg-white rounded-lg p-6 lg:p-8 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100">
                     <div className="flex items-center justify-between pb-5 border-b border-slate-100 mb-6">
                       <div className="flex items-center gap-4">
-                        <div className="p-3 bg-blue-50 text-blue-600 rounded-xl"><Building2 className="w-6 h-6" /></div>
+                        <div className="p-3 bg-blue-50 text-blue-600 rounded-md"><Building2 className="w-6 h-6" /></div>
                         <div>
                           <h3 className="text-xl font-bold text-slate-800">Mitra & Klien Terpercaya</h3>
                           <p className="text-sm text-slate-500 mt-1">Kelola daftar perusahaan klien yang ditampilkan di Beranda.</p>
@@ -1366,7 +1363,7 @@ export default function Dashboard() {
                       </div>
                       <button
                         onClick={addHomePartner}
-                        className="text-sm flex items-center gap-1 text-[var(--primary-blue)] hover:text-blue-700 font-medium bg-blue-50 px-3 py-1.5 rounded-lg transition-colors"
+                        className="text-sm flex items-center gap-1 text-[var(--primary-blue)] hover:text-blue-700 font-medium bg-blue-50 px-3 py-1.5 rounded-md transition-colors"
                       >
                         <Plus className="w-4 h-4" /> Tambah Mitra
                       </button>
@@ -1389,10 +1386,10 @@ export default function Dashboard() {
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {(formData.home?.clientPartners || []).map((partner, idx) => (
-                          <div key={partner.id || idx} className="p-4 border border-slate-200 rounded-xl bg-slate-50 relative group flex flex-col justify-between">
+                          <div key={partner.id || idx} className="p-4 border border-slate-200 rounded-md bg-slate-50 relative group flex flex-col justify-between">
                             <button
                               onClick={() => removeHomePartner(idx)}
-                              className="absolute top-2 right-2 p-1.5 bg-red-100 text-red-600 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity z-10 hover:bg-red-200"
+                              className="absolute top-2 right-2 p-1.5 bg-red-100 text-red-600 rounded-md opacity-0 group-hover:opacity-100 transition-opacity z-10 hover:bg-red-200"
                               title="Hapus Mitra"
                             >
                               <Trash2 className="w-4 h-4" />
@@ -1415,7 +1412,7 @@ export default function Dashboard() {
                       </div>
 
                       {(!formData.home?.clientPartners || formData.home?.clientPartners.length === 0) && (
-                        <div className="text-center p-8 border-2 border-dashed border-slate-200 rounded-xl bg-slate-50 text-slate-500 text-sm">
+                        <div className="text-center p-8 border-2 border-dashed border-slate-200 rounded-md bg-slate-50 text-slate-500 text-sm">
                           Belum ada daftar mitra. Klik 'Tambah Mitra' untuk menambahkan.
                         </div>
                       )}
@@ -1423,9 +1420,9 @@ export default function Dashboard() {
                   </div>
 
                   {/* Call to Action (CTA) Section Editor */}
-                  <div className="bg-white rounded-3xl p-6 lg:p-8 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100">
+                  <div className="bg-white rounded-lg p-6 lg:p-8 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100">
                     <div className="flex items-center gap-4 mb-6 pb-5 border-b border-slate-100">
-                      <div className="p-3 bg-blue-50 text-[#0284c7] rounded-xl"><Sparkles className="w-6 h-6" /></div>
+                      <div className="p-3 bg-blue-50 text-[#0284c7] rounded-md"><Sparkles className="w-6 h-6" /></div>
                       <div>
                         <h3 className="text-xl font-bold text-slate-800">Bagian Call To Action (Kolaborasi)</h3>
                         <p className="text-sm text-slate-500 mt-1">Atur teks ajakan, tombol, dan gambar background di bagian paling bawah Beranda.</p>
@@ -1478,9 +1475,9 @@ export default function Dashboard() {
               {activeTab === 'about' && (
                 <motion.div key="about" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.2 }} className="space-y-8">
                   <PageHeaderEditor page="about" label="Tentang Kami" formData={formData} onChange={handlePageHeaderChange} onImageUpload={handleImageUpload} />
-                  <div className="bg-white rounded-3xl p-6 lg:p-8 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100">
+                  <div className="bg-white rounded-lg p-6 lg:p-8 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100">
                     <div className="flex items-center gap-4 mb-8 pb-5 border-b border-slate-100">
-                      <div className="p-3 bg-emerald-50 text-emerald-600 rounded-xl"><Info className="w-6 h-6" /></div>
+                      <div className="p-3 bg-emerald-50 text-emerald-600 rounded-md"><Info className="w-6 h-6" /></div>
                       <div>
                         <h3 className="text-xl font-bold text-slate-800">Informasi Perusahaan</h3>
                         <p className="text-sm text-slate-500 mt-1">Deskripsi lengkap, visi, dan misi perusahaan.</p>
@@ -1523,9 +1520,9 @@ export default function Dashboard() {
                   </div>
 
                   {/* Core Values Section Editor */}
-                  <div className="bg-white rounded-3xl p-6 lg:p-8 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100">
+                  <div className="bg-white rounded-lg p-6 lg:p-8 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100">
                     <div className="flex items-center gap-4 mb-8 pb-5 border-b border-slate-100">
-                      <div className="p-3 bg-indigo-50 text-indigo-600 rounded-xl"><Sparkles className="w-6 h-6" /></div>
+                      <div className="p-3 bg-indigo-50 text-indigo-600 rounded-md"><Sparkles className="w-6 h-6" /></div>
                       <div>
                         <h3 className="text-xl font-bold text-slate-800">Bagian Nilai-Nilai Utama (Core Values)</h3>
                         <p className="text-sm text-slate-500 mt-1">Atur teks pengantar dan 4 kartu nilai inti perusahaan di halaman Tentang Kami.</p>
@@ -1547,14 +1544,14 @@ export default function Dashboard() {
                           <button
                             type="button"
                             onClick={addAboutValue}
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors shrink-0"
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-md transition-colors shrink-0"
                           >
                             <Plus className="w-3.5 h-3.5" /> Tambah Nilai
                           </button>
                         </div>
                         <div className="grid md:grid-cols-2 gap-4">
                           {(formData.about?.values || defaultData?.about?.values || []).map((val, idx) => (
-                            <div key={val.id || idx} className="relative p-5 rounded-2xl bg-slate-50 border border-slate-200/70 space-y-3">
+                            <div key={val.id || idx} className="relative p-5 rounded-md bg-slate-50 border border-slate-200/70 space-y-3">
                               <div className="flex items-center justify-between">
                                 <span className="text-xs font-bold text-blue-600 uppercase tracking-wider">
                                   Nilai #{idx + 1}
@@ -1598,7 +1595,7 @@ export default function Dashboard() {
               {activeTab === 'services' && (
                 <motion.div key="services" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.2 }} className="space-y-8">
                   <PageHeaderEditor page="service" label="Layanan" formData={formData} onChange={handlePageHeaderChange} onImageUpload={handleImageUpload} />
-                  <div className="flex justify-between items-center bg-white p-6 rounded-3xl shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100">
+                  <div className="flex justify-between items-center bg-white p-6 rounded-md shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100">
                     <div>
                       <h3 className="text-xl font-bold text-slate-800">Daftar Layanan</h3>
                       <p className="text-sm text-slate-500 mt-1">
@@ -1613,7 +1610,7 @@ export default function Dashboard() {
                     </div>
                     <button 
                       onClick={() => addArrayItem('services', { id: Date.now().toString(), title: 'Layanan Baru', description: '', icon: 'Wrench', features: [], image: '', featured: false })}
-                      className="flex items-center gap-2 bg-blue-100 text-blue-700 px-4 py-2 rounded-xl font-semibold hover:bg-blue-200 transition-colors"
+                      className="flex items-center gap-2 bg-blue-100 text-blue-700 px-4 py-2 rounded-md font-semibold hover:bg-blue-200 transition-colors"
                     >
                       <Plus className="w-5 h-5" /> Tambah Layanan
                     </button>
@@ -1626,11 +1623,11 @@ export default function Dashboard() {
                       <div 
                         key={service.id || index} 
                         id={isLast ? 'services-new-item' : undefined}
-                        className="bg-white rounded-3xl p-6 lg:p-8 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100 relative group"
+                        className="bg-white rounded-lg p-6 lg:p-8 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100 relative group"
                       >
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 pb-4 border-b border-slate-100 gap-4">
                           <div className="flex items-center gap-4 min-w-0 flex-1">
-                            <div className="p-3 bg-blue-50 text-blue-600 rounded-xl shrink-0"><ServiceItemIcon className="w-6 h-6" /></div>
+                            <div className="p-3 bg-blue-50 text-blue-600 rounded-md shrink-0"><ServiceItemIcon className="w-6 h-6" /></div>
                             <h3 className="text-lg font-bold text-slate-800 truncate pr-2" title={`Layanan #${index + 1}: ${service.title}`}>
                               Layanan #{index + 1}: {service.title}
                             </h3>
@@ -1639,7 +1636,7 @@ export default function Dashboard() {
                             <button
                               type="button"
                               onClick={() => handleArrayChange('services', index, 'featured', !service.featured)}
-                              className={`flex items-center gap-2.5 pl-3 pr-4 py-2 rounded-full text-xs font-semibold border transition-all active:scale-95 whitespace-nowrap ${
+                              className={`flex items-center gap-2.5 pl-3 pr-4 py-2 rounded-md text-xs font-semibold border transition-all active:scale-95 whitespace-nowrap ${
                                 service.featured
                                   ? 'bg-amber-50 text-amber-700 border-amber-300 hover:bg-amber-100'
                                   : 'bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100'
@@ -1654,7 +1651,7 @@ export default function Dashboard() {
                             </button>
                             <button 
                               onClick={() => removeArrayItem('services', index)}
-                              className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors border border-transparent hover:border-red-100 shrink-0"
+                              className="p-2 text-red-500 hover:bg-red-50 rounded-md transition-colors border border-transparent hover:border-red-100 shrink-0"
                               title="Hapus Layanan"
                             >
                               <Trash2 className="w-5 h-5" />
@@ -1666,7 +1663,7 @@ export default function Dashboard() {
                             <InputField label="Nama Layanan" value={service.title} onChange={(e) => handleArrayChange('services', index, 'title', e.target.value)} />
                             <div>
                               <label className="block text-sm font-semibold text-slate-700 mb-2">Pilih Icon Layanan</label>
-                              <div className="grid grid-cols-5 sm:grid-cols-5 gap-2 p-3 bg-slate-50 rounded-2xl border border-slate-200">
+                              <div className="grid grid-cols-5 sm:grid-cols-5 gap-2 p-3 bg-slate-50 rounded-md border border-slate-200">
                                 {SERVICE_ICONS.map((item) => {
                                   const IconComponent = item.icon;
                                   const isSelected = (service.icon || 'Wrench') === item.id;
@@ -1675,7 +1672,7 @@ export default function Dashboard() {
                                       key={item.id}
                                       type="button"
                                       onClick={() => handleArrayChange('services', index, 'icon', item.id)}
-                                      className={`flex flex-col items-center justify-center p-2.5 rounded-xl border text-center transition-all ${
+                                      className={`flex flex-col items-center justify-center p-2.5 rounded-md border text-center transition-all ${
                                         isSelected
                                           ? 'bg-blue-600 text-white border-blue-600 shadow-sm'
                                           : 'bg-white text-slate-600 border-slate-200 hover:bg-blue-50 hover:text-blue-600'
@@ -1712,7 +1709,7 @@ export default function Dashboard() {
               {activeTab === 'projects' && (
                 <motion.div key="projects" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.2 }} className="space-y-8">
                   <PageHeaderEditor page="project" label="Proyek" formData={formData} onChange={handlePageHeaderChange} onImageUpload={handleImageUpload} />
-                  <div className="flex justify-between items-center bg-white p-6 rounded-3xl shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100">
+                  <div className="flex justify-between items-center bg-white p-6 rounded-md shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100">
                     <div>
                       <h3 className="text-xl font-bold text-slate-800">Daftar Proyek</h3>
                       <p className="text-sm text-slate-500 mt-1">
@@ -1727,7 +1724,7 @@ export default function Dashboard() {
                     </div>
                     <button 
                       onClick={() => addArrayItem('projects', { id: Date.now(), title: 'Proyek Baru', category: 'MEP', location: '', year: new Date().getFullYear().toString(), client: '', description: '', image: '', featured: false })}
-                      className="flex items-center gap-2 bg-blue-100 text-blue-700 px-4 py-2 rounded-xl font-semibold hover:bg-blue-200 transition-colors"
+                      className="flex items-center gap-2 bg-blue-100 text-blue-700 px-4 py-2 rounded-md font-semibold hover:bg-blue-200 transition-colors"
                     >
                       <Plus className="w-5 h-5" /> Tambah Proyek
                     </button>
@@ -1739,11 +1736,11 @@ export default function Dashboard() {
                       <div 
                         key={project.id || index} 
                         id={isLast ? 'projects-new-item' : undefined}
-                        className="bg-white rounded-3xl p-6 lg:p-8 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100 relative group"
+                        className="bg-white rounded-lg p-6 lg:p-8 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100 relative group"
                       >
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 pb-4 border-b border-slate-100 gap-4">
                           <div className="flex items-center gap-4 min-w-0 flex-1">
-                            <div className="p-3 bg-purple-50 text-purple-600 rounded-xl shrink-0"><Briefcase className="w-6 h-6" /></div>
+                            <div className="p-3 bg-purple-50 text-purple-600 rounded-md shrink-0"><Briefcase className="w-6 h-6" /></div>
                             <h3 className="text-lg font-bold text-slate-800 truncate pr-2" title={`Proyek #${index + 1}: ${project.title}`}>
                               Proyek #{index + 1}: {project.title}
                             </h3>
@@ -1752,7 +1749,7 @@ export default function Dashboard() {
                             <button
                               type="button"
                               onClick={() => handleArrayChange('projects', index, 'featured', !project.featured)}
-                              className={`flex items-center gap-2.5 pl-3 pr-4 py-2 rounded-full text-xs font-semibold border transition-all active:scale-95 whitespace-nowrap ${
+                              className={`flex items-center gap-2.5 pl-3 pr-4 py-2 rounded-md text-xs font-semibold border transition-all active:scale-95 whitespace-nowrap ${
                                 project.featured
                                   ? 'bg-amber-50 text-amber-700 border-amber-300 hover:bg-amber-100'
                                   : 'bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100'
@@ -1770,7 +1767,7 @@ export default function Dashboard() {
                             <button
                               type="button"
                               onClick={() => removeArrayItem('projects', index)}
-                              className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors border border-transparent hover:border-red-100 shrink-0"
+                              className="p-2 text-red-500 hover:bg-red-50 rounded-md transition-colors border border-transparent hover:border-red-100 shrink-0"
                               title="Hapus Proyek"
                             >
                               <Trash2 className="w-5 h-5" />
@@ -1806,9 +1803,9 @@ export default function Dashboard() {
                   <PageHeaderEditor page="contact" label="Kontak" formData={formData} onChange={handlePageHeaderChange} onImageUpload={handleImageUpload} />
                   
                   {/* Teks Pengantar Halaman Kontak */}
-                  <div className="bg-white rounded-3xl p-6 lg:p-8 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100">
+                  <div className="bg-white rounded-lg p-6 lg:p-8 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100">
                     <div className="flex items-center gap-4 mb-8 pb-5 border-b border-slate-100">
-                      <div className="p-3 bg-blue-50 text-[#0284c7] rounded-xl"><Sparkles className="w-6 h-6" /></div>
+                      <div className="p-3 bg-blue-50 text-[#0284c7] rounded-md"><Sparkles className="w-6 h-6" /></div>
                       <div>
                         <h3 className="text-xl font-bold text-slate-800">Teks Pengantar Halaman Kontak</h3>
                         <p className="text-sm text-slate-500 mt-1">Atur label badge, judul, dan subjudul bagian informasi kontak dan formulir.</p>
@@ -1840,9 +1837,9 @@ export default function Dashboard() {
                     </div>
                   </div>
 
-                  <div className="bg-white rounded-3xl p-6 lg:p-8 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100">
+                  <div className="bg-white rounded-lg p-6 lg:p-8 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100">
                     <div className="flex items-center gap-4 mb-8 pb-5 border-b border-slate-100">
-                      <div className="p-3 bg-orange-50 text-orange-600 rounded-xl"><Phone className="w-6 h-6" /></div>
+                      <div className="p-3 bg-orange-50 text-orange-600 rounded-md"><Phone className="w-6 h-6" /></div>
                       <div>
                         <h3 className="text-xl font-bold text-slate-800">Informasi Kontak & Perusahaan</h3>
                         <p className="text-sm text-slate-500 mt-1">Atur alamat, email, no HP dan info terkait di halaman kontak.</p>
@@ -1864,7 +1861,7 @@ export default function Dashboard() {
                           onChange={(e) => handleChange('company', 'googleMapsEmbedUrl', e.target.value)} 
                           placeholder="Contoh: https://maps.google.com/maps?q=PT+Ziotech... atau kode <iframe src='...'>"
                         />
-                        <div className="text-xs text-slate-500 space-y-1 bg-slate-50 p-3 rounded-xl border border-slate-200">
+                        <div className="text-xs text-slate-500 space-y-1 bg-slate-50 p-3 rounded-md border border-slate-200">
                           <p className="font-semibold text-slate-700">Cara menyematkan lokasi tepat:</p>
                           <p>1. Buka titik lokasi di <b>Google Maps</b> di browser.</p>
                           <p>2. Klik <b>Bagikan (Share)</b> &rarr; pilih tab <b>Sematkan peta (Embed a map)</b> &rarr; klik <b>Salin HTML (Copy HTML)</b>, lalu tempel di sini.</p>
@@ -1875,10 +1872,10 @@ export default function Dashboard() {
                   </div>
 
                   {/* Social Media Section */}
-                  <div className="bg-white rounded-3xl p-6 lg:p-8 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100">
+                  <div className="bg-white rounded-lg p-6 lg:p-8 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100">
                     <div className="flex items-center justify-between pb-5 border-b border-slate-100 mb-6">
                       <div className="flex items-center gap-4">
-                        <div className="p-3 bg-pink-50 text-pink-600 rounded-xl"><Share2 className="w-6 h-6" /></div>
+                        <div className="p-3 bg-pink-50 text-pink-600 rounded-md"><Share2 className="w-6 h-6" /></div>
                         <div>
                           <h3 className="text-xl font-bold text-slate-800">Media Sosial Footer</h3>
                           <p className="text-sm text-slate-500 mt-1">Kelola link sosial media yang ditampilkan di footer website.</p>
@@ -1886,7 +1883,7 @@ export default function Dashboard() {
                       </div>
                       <button
                         onClick={addCompanySocial}
-                        className="text-sm flex items-center gap-1 text-[var(--primary-blue)] hover:text-blue-700 font-medium bg-blue-50 px-3 py-1.5 rounded-lg transition-colors"
+                        className="text-sm flex items-center gap-1 text-[var(--primary-blue)] hover:text-blue-700 font-medium bg-blue-50 px-3 py-1.5 rounded-md transition-colors"
                       >
                         <Plus className="w-4 h-4" /> Tambah Sosmed
                       </button>
@@ -1894,10 +1891,10 @@ export default function Dashboard() {
 
                     <div className="space-y-4">
                       {(formData.company?.socials || []).map((item, idx) => (
-                        <div key={item.id || idx} className="p-4 border border-slate-200 rounded-xl bg-slate-50 relative group flex flex-col md:flex-row gap-4 items-start md:items-center">
+                        <div key={item.id || idx} className="p-4 border border-slate-200 rounded-md bg-slate-50 relative group flex flex-col md:flex-row gap-4 items-start md:items-center">
                           <button
                             onClick={() => removeCompanySocial(idx)}
-                            className="absolute top-2 right-2 md:static md:order-last p-2 bg-red-50 text-red-600 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-100"
+                            className="absolute top-2 right-2 md:static md:order-last p-2 bg-red-50 text-red-600 rounded-md opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-100"
                             title="Hapus Sosmed"
                           >
                             <Trash2 className="w-4 h-4" />
@@ -1908,7 +1905,7 @@ export default function Dashboard() {
                             <select
                               value={item.platform || 'instagram'}
                               onChange={(e) => handleCompanySocialChange(idx, 'platform', e.target.value)}
-                              className="w-full px-3 py-2 text-sm bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 font-medium text-slate-700"
+                              className="w-full px-3 py-2 text-sm bg-white border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 font-medium text-slate-700"
                             >
                               <option value="linkedin">LinkedIn</option>
                               <option value="instagram">Instagram</option>
@@ -1927,14 +1924,14 @@ export default function Dashboard() {
                               value={item.url || ''}
                               placeholder="https://..."
                               onChange={(e) => handleCompanySocialChange(idx, 'url', e.target.value)}
-                              className="w-full px-3 py-2 text-sm bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 font-medium text-slate-700"
+                              className="w-full px-3 py-2 text-sm bg-white border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 font-medium text-slate-700"
                             />
                           </div>
                         </div>
                       ))}
 
                       {(!formData.company?.socials || formData.company?.socials.length === 0) && (
-                        <div className="text-center p-8 border-2 border-dashed border-slate-200 rounded-xl bg-slate-50 text-slate-500 text-sm">
+                        <div className="text-center p-8 border-2 border-dashed border-slate-200 rounded-md bg-slate-50 text-slate-500 text-sm">
                           Belum ada sosial media. Klik 'Tambah Sosmed' untuk menambahkan tautan.
                         </div>
                       )}
@@ -1942,10 +1939,10 @@ export default function Dashboard() {
                   </div>
 
                   {/* Footer Services Links Section */}
-                  <div className="bg-white rounded-3xl p-6 lg:p-8 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100">
+                  <div className="bg-white rounded-lg p-6 lg:p-8 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100">
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-5 border-b border-slate-100 mb-6 gap-4">
                       <div className="flex items-center gap-4">
-                        <div className="p-3 bg-blue-50 text-blue-600 rounded-xl"><Globe className="w-6 h-6" /></div>
+                        <div className="p-3 bg-blue-50 text-blue-600 rounded-md"><Globe className="w-6 h-6" /></div>
                         <div>
                           <h3 className="text-xl font-bold text-slate-800">Tautan Layanan di Footer</h3>
                           <p className="text-sm text-slate-500 mt-1">Atur nama layanan dan hyperlink yang muncul di kolom 'Layanan' pada footer website.</p>
@@ -1954,7 +1951,7 @@ export default function Dashboard() {
                       <button
                         type="button"
                         onClick={addFooterService}
-                        className="text-sm flex items-center justify-center gap-1.5 text-white font-semibold bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-xl transition-colors shrink-0"
+                        className="text-sm flex items-center justify-center gap-1.5 text-white font-semibold bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-md transition-colors shrink-0"
                       >
                         <Plus className="w-4 h-4" /> Tambah Tautan Footer
                       </button>
@@ -1962,7 +1959,7 @@ export default function Dashboard() {
 
                     <div className="space-y-4">
                       {(formData.company?.footerServices || []).map((item, idx) => (
-                        <div key={item.id || idx} className="p-4 sm:p-5 border border-slate-200 rounded-2xl bg-slate-50 relative group flex flex-col md:flex-row gap-4 items-start md:items-center transition-all hover:border-slate-300">
+                        <div key={item.id || idx} className="p-4 sm:p-5 border border-slate-200 rounded-md bg-slate-50 relative group flex flex-col md:flex-row gap-4 items-start md:items-center transition-all hover:border-slate-300">
                           <div className="flex-1 w-full">
                             <label className="block text-xs font-semibold text-slate-700 mb-1.5">
                               Judul / Label Teks yang Tampil
@@ -1972,7 +1969,7 @@ export default function Dashboard() {
                               value={item.title || ''}
                               placeholder="cth: Mechanical, Electrical & Plumbing"
                               onChange={(e) => handleFooterServiceChange(idx, 'title', e.target.value)}
-                              className="w-full px-3.5 py-2.5 text-sm bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 font-medium text-slate-800"
+                              className="w-full px-3.5 py-2.5 text-sm bg-white border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 font-medium text-slate-800"
                             />
                           </div>
 
@@ -1985,14 +1982,14 @@ export default function Dashboard() {
                               value={item.url || ''}
                               placeholder="cth: /service/1 atau https://..."
                               onChange={(e) => handleFooterServiceChange(idx, 'url', e.target.value)}
-                              className="w-full px-3.5 py-2.5 text-sm bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 font-mono text-xs text-slate-800"
+                              className="w-full px-3.5 py-2.5 text-sm bg-white border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 font-mono text-xs text-slate-800"
                             />
                           </div>
 
                           <button
                             type="button"
                             onClick={() => removeFooterService(idx)}
-                            className="p-2.5 text-red-500 hover:bg-red-50 rounded-xl transition-colors border border-transparent hover:border-red-200 self-end md:self-center shrink-0 mt-1 md:mt-5"
+                            className="p-2.5 text-red-500 hover:bg-red-50 rounded-md transition-colors border border-transparent hover:border-red-200 self-end md:self-center shrink-0 mt-1 md:mt-5"
                             title="Hapus tautan ini"
                           >
                             <Trash2 className="w-4 h-4" />
@@ -2001,7 +1998,7 @@ export default function Dashboard() {
                       ))}
 
                       {(!formData.company?.footerServices || formData.company?.footerServices.length === 0) && (
-                        <div className="text-center p-8 border-2 border-dashed border-slate-200 rounded-2xl bg-slate-50 text-slate-500 text-sm">
+                        <div className="text-center p-8 border-2 border-dashed border-slate-200 rounded-md bg-slate-50 text-slate-500 text-sm">
                           Belum ada tautan layanan khusus yang dikonfigurasi. Footer otomatis menampilkan 5 layanan teratas dari database. Klik <b>'Tambah Tautan Footer'</b> untuk mengatur secara khusus.
                         </div>
                       )}
@@ -2012,19 +2009,19 @@ export default function Dashboard() {
               {/* INBOX TAB */}
               {activeTab === 'inbox' && (
                 <motion.div key="inbox" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.2 }} className="space-y-6">
-                  <div className="bg-white rounded-3xl p-6 lg:p-8 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100">
+                  <div className="bg-white rounded-lg p-6 lg:p-8 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100">
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-5 border-b border-slate-100">
                       <div className="flex items-center gap-4">
-                        <div className="p-3 bg-blue-50 text-blue-600 rounded-xl"><Inbox className="w-6 h-6" /></div>
+                        <div className="p-3 bg-blue-50 text-blue-600 rounded-md"><Inbox className="w-6 h-6" /></div>
                         <div>
                           <h3 className="text-xl font-bold text-slate-800">Daftar Pesan Masuk</h3>
                           <p className="text-sm text-slate-500 mt-1">Pesan formulir kontak dari pengunjung website.</p>
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600">Total: {messages.length}</span>
+                        <span className="text-xs font-semibold px-3 py-1.5 rounded-md bg-slate-100 text-slate-600">Total: {messages.length}</span>
                         {unreadCount > 0 && (
-                          <span className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-red-50 text-red-600 border border-red-100">{unreadCount} baru</span>
+                          <span className="text-xs font-semibold px-3 py-1.5 rounded-md bg-red-50 text-red-600 border border-red-100">{unreadCount} baru</span>
                         )}
                       </div>
                     </div>
@@ -2040,7 +2037,7 @@ export default function Dashboard() {
                         {messages.map((msg) => {
                           const isUnread = msg.status !== 'read';
                           return (
-                            <div key={msg.id} className={`p-5 rounded-2xl border transition-all ${isUnread ? 'bg-blue-50/40 border-blue-200 shadow-sm' : 'bg-white border-slate-200'}`}>
+                            <div key={msg.id} className={`p-5 rounded-md border transition-all ${isUnread ? 'bg-blue-50/40 border-blue-200 shadow-sm' : 'bg-white border-slate-200'}`}>
                               <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-3">
                                 <div className="flex items-center gap-2">
                                   {isUnread && <span className="w-2.5 h-2.5 rounded-full bg-blue-600 shrink-0" />}
@@ -2052,18 +2049,18 @@ export default function Dashboard() {
                                   {msg.createdAt ? new Date(msg.createdAt).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' }) : '-'}
                                 </span>
                               </div>
-                              <div className="grid sm:grid-cols-2 gap-2 text-xs text-slate-500 mb-3 bg-slate-50 p-2.5 rounded-xl">
+                              <div className="grid sm:grid-cols-2 gap-2 text-xs text-slate-500 mb-3 bg-slate-50 p-2.5 rounded-md">
                                 <div className="flex items-center gap-2 truncate"><Mail className="w-3.5 h-3.5 text-slate-400 shrink-0" /><span className="truncate">{msg.email || '-'}</span></div>
                                 <div className="flex items-center gap-2 truncate"><Phone className="w-3.5 h-3.5 text-slate-400 shrink-0" /><span className="truncate">{msg.phone || '-'}</span></div>
                               </div>
-                              <div className="p-3.5 bg-white rounded-xl border border-slate-100 text-sm text-slate-700 whitespace-pre-wrap leading-relaxed">{msg.message}</div>
+                              <div className="p-3.5 bg-white rounded-md border border-slate-100 text-sm text-slate-700 whitespace-pre-wrap leading-relaxed">{msg.message}</div>
                               <div className="flex items-center justify-between mt-4 pt-3 border-t border-slate-100 text-xs">
                                 <div className="flex items-center gap-2">
-                                  <button onClick={() => handleMarkMessageStatus(msg.id, isUnread ? 'read' : 'unread')} className={`px-3 py-1.5 rounded-lg font-medium transition-colors ${isUnread ? 'bg-blue-100 text-blue-700 hover:bg-blue-200' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}>
+                                  <button onClick={() => handleMarkMessageStatus(msg.id, isUnread ? 'read' : 'unread')} className={`px-3 py-1.5 rounded-md font-medium transition-colors ${isUnread ? 'bg-blue-100 text-blue-700 hover:bg-blue-200' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}>
                                     {isUnread ? 'Tandai Dibaca' : 'Tandai Belum Dibaca'}
                                   </button>
                                   {msg.email && (
-                                    <a href={`mailto:${msg.email}?subject=Re: ${encodeURIComponent(msg.subject || 'Pesan Website')}`} className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-green-50 text-green-700 hover:bg-green-100 font-medium">
+                                    <a href={`mailto:${msg.email}?subject=Re: ${encodeURIComponent(msg.subject || 'Pesan Website')}`} className="inline-flex items-center gap-1 px-3 py-1.5 rounded-md bg-green-50 text-green-700 hover:bg-green-100 font-medium">
                                       <Mail className="w-3.5 h-3.5" /> Balas Email
                                     </a>
                                   )}
@@ -2072,7 +2069,7 @@ export default function Dashboard() {
                                       href={`https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(msg.email)}&su=${encodeURIComponent(`Re: ${msg.subject || 'Pesan Website'}`)}`}
                                       target="_blank"
                                       rel="noopener noreferrer"
-                                      className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 font-medium"
+                                      className="inline-flex items-center gap-1 px-3 py-1.5 rounded-md bg-blue-50 text-blue-700 hover:bg-blue-100 font-medium"
                                       title="Buka langsung di Gmail Browser"
                                     >
                                       <ExternalLink className="w-3.5 h-3.5" /> Buka Gmail
@@ -2083,7 +2080,7 @@ export default function Dashboard() {
                                       href={`https://wa.me/${msg.phone.replace(/[^0-9]/g, '').replace(/^0/, '62')}`}
                                       target="_blank"
                                       rel="noopener noreferrer"
-                                      className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100 font-medium"
+                                      className="inline-flex items-center gap-1 px-3 py-1.5 rounded-md bg-emerald-50 text-emerald-700 hover:bg-emerald-100 font-medium"
                                       title="Balas via WhatsApp"
                                     >
                                       <Phone className="w-3.5 h-3.5" /> WhatsApp
@@ -2091,7 +2088,7 @@ export default function Dashboard() {
                                   )}
 
                                 </div>
-                                <button onClick={() => handleDeleteMessage(msg.id, msg.name)} className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg" title="Hapus Pesan">
+                                <button onClick={() => handleDeleteMessage(msg.id, msg.name)} className="p-1.5 text-red-500 hover:bg-red-50 rounded-md" title="Hapus Pesan">
                                   <Trash2 className="w-4 h-4" />
                                 </button>
                               </div>

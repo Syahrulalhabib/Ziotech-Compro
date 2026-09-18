@@ -1,16 +1,12 @@
 import { useState } from 'react';
 import { useData } from '../context/DataContext';
-import { useLanguage } from '../context/LanguageContext';
 import { Link } from 'react-router-dom';
-import { MapPin, Calendar, Building2, ChevronRight, Filter } from 'lucide-react';
+import { MapPin, Calendar, Building2, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Project() {
   const { data } = useData();
-  const { t } = useLanguage();
   const [activeCategory, setActiveCategory] = useState('Semua');
-
-  
 
   const projects = Array.isArray(data?.projects) ? data.projects : [];
 
@@ -25,11 +21,15 @@ export default function Project() {
   return (
     <div className="overflow-hidden bg-[#f8fafc]">
       {/* 1. Header (Pertamina corporate style) */}
-      <section className="relative bg-[#0b1329] text-white pt-36 pb-20 md:pt-44 md:pb-28 overflow-hidden">
+      <section className="relative bg-[#0b1329] text-white pt-28 pb-14 sm:pt-36 sm:pb-20 md:pt-44 md:pb-28 overflow-hidden">
         {header.image ? (
-          <div className="absolute inset-0 z-0 bg-[#1e293b]">
-            <img src={header.image} alt="Background" className="w-full h-full object-cover" />
-            <div className="absolute inset-0 bg-black/50" />
+          <div className="absolute inset-0 z-0 bg-[#0b1329]">
+            <img 
+              src={header.image} 
+              alt="Background" 
+              className="w-full h-full object-cover object-center sm:object-right opacity-45 sm:opacity-55" 
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0b1329] via-[#0b1329]/85 to-[#0b1329]/60 sm:bg-gradient-to-r sm:from-[#0b1329] sm:via-[#0b1329]/85 sm:to-[#0b1329]/35 pointer-events-none" />
           </div>
         ) : (
           <div className="absolute inset-0 z-0 opacity-20 bg-[radial-gradient(#0284c7_1px,transparent_1px)] [background-size:24px_24px]" />
@@ -42,14 +42,14 @@ export default function Project() {
             transition={{ duration: 0.5 }}
             className="max-w-3xl"
           >
-            <span className="text-[11px] font-bold tracking-widest text-[#38bdf8] uppercase block mb-3">
-              {header.badge || t.projectPage.heroBadge}
+            <span className="text-[11px] sm:text-xs font-bold tracking-widest text-[#38bdf8] uppercase block mb-2 sm:mb-3">
+              {header.badge || 'REKAM JEJAK & EKSEKUSI'}
             </span>
-            <h1 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight mb-4 leading-tight">
-              {header.title || t.projectPage.defaultHeaderTitle}
+            <h1 className="text-2xl sm:text-4xl md:text-5xl font-extrabold text-white tracking-tight mb-3 sm:mb-4 leading-tight">
+              {header.title || 'Portofolio Proyek'}
             </h1>
-            <p className="text-sm sm:text-lg text-slate-300 font-light leading-relaxed">
-              {header.subtitle || t.projectPage.defaultHeaderSubtitle}
+            <p className="text-xs sm:text-base md:text-lg text-slate-300 font-light leading-relaxed">
+              {header.subtitle || 'Bukti kompetensi lapangan dan konsistensi mutu yang telah diselesaikan di berbagai fasilitas komersial dan industri.'}
             </p>
           </motion.div>
         </div>
@@ -70,13 +70,13 @@ export default function Project() {
               <button
                 key={category}
                 onClick={() => setActiveCategory(category)}
-                className={`cursor-pointer px-4 sm:px-5 py-2 rounded-full text-xs font-semibold transition-all duration-200 ${
+                className={`cursor-pointer px-4 sm:px-5 py-2 rounded-none text-xs font-semibold transition-all duration-200 ${
                   activeCategory === category
                     ? 'bg-[#0f172a] text-white shadow-sm'
                     : 'bg-white text-slate-600 hover:bg-slate-50 border border-slate-200'
                 }`}
               >
-                {category === 'Semua' ? t.common.all : category}
+                {category}
               </button>
             ))}
           </motion.div>
@@ -95,7 +95,7 @@ export default function Project() {
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.95 }}
                   transition={{ duration: 0.3 }}
-                  className="bg-white rounded-2xl overflow-hidden border border-slate-100 hover:border-slate-300 hover:shadow-md transition-all duration-300 group flex flex-col justify-between"
+                  className="bg-white rounded-none overflow-hidden border border-slate-100 hover:border-slate-300 hover:shadow-md transition-all duration-300 group flex flex-col justify-between"
                 >
                   <div>
                     {/* Project Image */}
@@ -105,7 +105,7 @@ export default function Project() {
                         alt={project.title}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />
-                      <div className="absolute top-3.5 right-3.5 bg-white/95 backdrop-blur-sm text-[#0f172a] text-[11px] font-bold px-3 py-1 rounded-full border border-slate-100 shadow-sm">
+                      <div className="absolute top-3.5 right-3.5 bg-white/95  text-[#0f172a] text-[11px] font-bold px-3 py-1 rounded-none border border-slate-100 shadow-sm">
                         {project.category}
                       </div>
                     </div>
@@ -131,7 +131,7 @@ export default function Project() {
                         </div>
                         <div className="flex items-center gap-2.5">
                           <Calendar className="w-3.5 h-3.5 text-[#0284c7] shrink-0" />
-                          <span>{t.common.yearPrefix} {project.year}</span>
+                          <span>Tahun {project.year}</span>
                         </div>
                       </div>
                     </div>
@@ -142,7 +142,7 @@ export default function Project() {
                       to={`/project/${project.id}`} 
                       className="pertamina-btn-pill w-full justify-center text-center"
                     >
-                      {t.common.viewDetail}
+                      Detail Pekerjaan
                       <ChevronRight className="w-3.5 h-3.5 text-[#0284c7]" />
                     </Link>
                   </div>
@@ -153,9 +153,9 @@ export default function Project() {
 
           {/* Empty State */}
           {filteredProjects.length === 0 && (
-            <div className="text-center py-20 bg-white rounded-2xl border border-slate-100 p-8 max-w-md mx-auto">
+            <div className="text-center py-20 bg-white rounded-none border border-slate-100 p-8 max-w-md mx-auto">
               <Building2 className="w-12 h-12 mx-auto mb-3 text-slate-300" />
-              <p className="text-sm font-semibold text-slate-600">{t.common.emptyProjects}</p>
+              <p className="text-sm font-semibold text-slate-600">Belum ada dokumentasi proyek pada kategori ini.</p>
             </div>
           )}
 

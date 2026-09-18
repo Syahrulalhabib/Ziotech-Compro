@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom';
 import { useData } from '../context/DataContext';
-import { useLanguage } from '../context/LanguageContext';
 import { MapPin, Phone, Mail, Globe } from 'lucide-react';
 import logo from '../assets/ziotech.png';
 
@@ -53,7 +52,6 @@ const renderSocialIcon = (platform) => {
 
 export default function Footer() {
   const { data } = useData();
-  const { t } = useLanguage();
 
   const company = {
     name: data?.company?.name || 'PT Ziotech Global Inovasi',
@@ -68,11 +66,11 @@ export default function Footer() {
   };
   const socials = company.socials || [];
   const navLinks = [
-    { name: t?.nav?.home || 'Beranda', path: '/' },
-    { name: t?.nav?.about || 'Tentang Kami', path: '/about' },
-    { name: t?.nav?.service || 'Layanan', path: '/service' },
-    { name: t?.nav?.project || 'Proyek', path: '/project' },
-    { name: t?.nav?.contact || 'Kontak', path: '/contact' },
+    { name: 'Beranda', path: '/' },
+    { name: 'Tentang Kami', path: '/about' },
+    { name: 'Layanan', path: '/service' },
+    { name: 'Proyek', path: '/project' },
+    { name: 'Kontak', path: '/contact' },
   ];
   // Ambil dari CMS (company.footerServices) yang bisa diatur admin.
   // Fallback ke data.services (5 teratas) jika belum dikonfigurasi admin.
@@ -98,13 +96,13 @@ export default function Footer() {
               <img src={logo} alt={company.name} className="h-9 sm:h-10 w-auto" />
             </Link>
             <p className="text-sm leading-relaxed text-slate-400 max-w-xs">
-              {t?.common?.footerAbout || 'Mitra strategis untuk sektor industri dan infrastruktur dengan komitmen pada kualitas, efisiensi, dan inovasi berkelanjutan.'}
+              Mitra strategis untuk sektor industri dan infrastruktur dengan komitmen pada kualitas, efisiensi, dan inovasi berkelanjutan.
             </p>
             {socials.length > 0 && (
               <div className="flex items-center gap-2.5">
                 {socials.map((item, idx) => (
                   <a key={item.id || idx} href={item.url || '#'} target="_blank" rel="noopener noreferrer" aria-label={item.platform}
-                    className="w-9 h-9 rounded-lg bg-slate-800/80 border border-slate-700/60 flex items-center justify-center text-slate-400 hover:text-white hover:bg-[#0284c7] hover:border-[#0284c7] transition-all duration-200">
+                    className="w-9 h-9 rounded-none bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-400 hover:text-white hover:bg-[#1e3a8a] hover:border-[#1e3a8a] transition-all duration-200">
                     {renderSocialIcon(item.platform)}
                   </a>
                 ))}
@@ -114,7 +112,7 @@ export default function Footer() {
 
           <div className="lg:col-span-2">
             <h3 className="text-[11px] font-bold tracking-widest text-[#38bdf8] uppercase mb-5">
-              {t?.common?.quickLinks || 'Navigasi'}
+              Navigasi
             </h3>
             <ul className="space-y-3">
               {navLinks.map((link) => (
@@ -129,7 +127,7 @@ export default function Footer() {
 
           <div className="lg:col-span-3">
             <h3 className="text-[11px] font-bold tracking-widest text-[#38bdf8] uppercase mb-5">
-              {t?.common?.ourServices || 'Layanan'}
+              Layanan
             </h3>
             <ul className="space-y-3">
               {serviceLinks.map((link, idx) => (
@@ -158,7 +156,7 @@ export default function Footer() {
 
           <div className="lg:col-span-3">
             <h3 className="text-[11px] font-bold tracking-widest text-[#38bdf8] uppercase mb-5">
-              {t?.common?.contactInfo || 'Kontak'}
+              Kontak
             </h3>
             <ul className="space-y-3.5">
               <li>
@@ -183,7 +181,7 @@ export default function Footer() {
         </div>
 
         <div className="py-5 flex flex-col sm:flex-row justify-between items-center gap-3 text-xs text-slate-600">
-          <p>&copy; {new Date().getFullYear()} {company.name}. {t?.common?.rightsReserved || 'Hak Cipta Dilindungi.'}</p>
+          <p>&copy; {new Date().getFullYear()} {company.name}. Hak Cipta Dilindungi.</p>
         </div>
 
       </div>

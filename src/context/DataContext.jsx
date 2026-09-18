@@ -1,8 +1,6 @@
-import { createContext, useContext, useEffect, useState, useMemo } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import { ref, onValue } from 'firebase/database';
 import { db } from '../firebase/config';
-import { useLanguage } from './LanguageContext';
-import { translateContent } from '../services/translator';
 
 const DataContext = createContext();
 
@@ -306,22 +304,19 @@ const defaultData = {
 
 export function DataProvider({ children }) {
   const [rawData, setRawData] = useState(defaultData);
-  const [translatedData, setTranslatedData] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const { lang } = useLanguage();
+  const [loading, setLoading] = useState(() => Boolean(import.meta.env.VITE_FIREBASE_API_KEY));
 
   useEffect(() => {
     // Pastikan app id firebase valid sebelum fetching (mencegah error jika .env kosong)
     if (!import.meta.env.VITE_FIREBASE_API_KEY) {
       console.warn("Firebase config not found, using default data.");
-      setLoading(false);
       return;
     }
 
     // Safety timeout: jangan biarkan loading screen menggantung selamanya jika koneksi lambat
     const safetyTimer = setTimeout(() => {
       setLoading(false);
-    }, 3000);
+    }, 2500);
 
     try {
       const dataRef = ref(db, 'content');
@@ -441,43 +436,8 @@ export function DataProvider({ children }) {
     }
   }, []);
 
-  // When language switches to 'en', dynamically translate Indonesian RTDB content
-  const [translating, setTranslating] = useState(false);
-
-  // TRANSLATE_DISABLED: comment out translate trigger until feature is re-enabled
-  /* TRANSLATE_DISABLED
-  useEffect(() => {
-    let cancelled = false;
-
-    if (lang === 'en' && rawData) {
-      setTranslating(true);
-      translateContent(rawData, 'en')
-        .then((translated) => {
-          if (!cancelled) {
-            setTranslatedData(translated);
-            setTranslating(false);
-          }
-        })
-        .catch((err) => {
-          console.warn('Translation error:', err);
-          if (!cancelled) setTranslating(false);
-        });
-    } else {
-      setTranslatedData(null);
-      setTranslating(false);
-    }
-
-    return () => {
-      cancelled = true;
-    };
-  }, [lang, rawData]);
-  */
-
-  // TRANSLATE_DISABLED: always use rawData until translate feature is re-enabled
-  const activeData = rawData;
-
   return (
-    <DataContext.Provider value={{ data: activeData, rawData, loading, translating }}>
+    <DataContext.Provider value={{ data: rawData, rawData, loading }}>
       {children}
     </DataContext.Provider>
   );

@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useData } from '../context/DataContext';
-import { useLanguage } from '../context/LanguageContext';
 import { Menu, X, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import logo from '../assets/ziotech.png';
@@ -11,18 +10,17 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const { data } = useData();
-  const { t } = useLanguage();
   const location = useLocation();
   const navigate = useNavigate();
 
   const company = data?.company || { name: 'Ziotech' };
 
   const navLinks = [
-    { name: t.nav.home, path: '/' },
-    { name: t.nav.about, path: '/about' },
-    { name: t.nav.service, path: '/service' },
-    { name: t.nav.project, path: '/project' },
-    { name: t.nav.contact, path: '/contact' },
+    { name: 'Beranda', path: '/' },
+    { name: 'Tentang Kami', path: '/about' },
+    { name: 'Layanan', path: '/service' },
+    { name: 'Proyek', path: '/project' },
+    { name: 'Kontak', path: '/contact' },
   ];
 
   useEffect(() => {
@@ -32,7 +30,11 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  useEffect(() => { setIsOpen(false); }, [location.pathname]);
+  const [trackedPath, setTrackedPath] = useState(location.pathname);
+  if (location.pathname !== trackedPath) {
+    setTrackedPath(location.pathname);
+    setIsOpen(false);
+  }
 
   // Lock body scroll when mobile menu open
   useEffect(() => {
@@ -52,9 +54,9 @@ export default function Navbar() {
   return (
     <>
       <header
-        className={`fixed top-0 w-full z-50 transition-all duration-500 ${
+        className={`fixed top-0 w-full z-50 transition-all duration-300 ${
           scrolled
-            ? 'bg-[var(--primary-dark)]/95 backdrop-blur-md shadow-lg py-2.5'
+            ? 'bg-[#0f172a] shadow-md py-2.5'
             : 'bg-transparent py-4 md:py-5'
         }`}
       >
@@ -85,7 +87,7 @@ export default function Navbar() {
                   {isActive && (
                     <motion.div
                       layoutId="navbar-indicator"
-                      className="absolute -bottom-1.5 left-0 right-0 h-0.5 bg-[var(--accent-gold)] rounded-full"
+                      className="absolute -bottom-1.5 left-0 right-0 h-0.5 bg-white"
                       initial={false}
                       transition={{ type: 'spring', stiffness: 300, damping: 30 }}
                     />
@@ -93,13 +95,10 @@ export default function Navbar() {
                 </button>
               );
             })}
-            {/* Translate Button Desktop - DISABLED */}
-            {/* <div className="pl-2 border-l border-white/20"><LanguageToggle /></div> */}
           </nav>
 
           {/* Mobile Hamburger */}
           <div className="flex items-center gap-3 lg:hidden">
-            {/* <LanguageToggle /> DISABLED */}
             <button
               className="text-white hover:text-[var(--accent-gold)] transition-colors p-1 relative z-[60]"
               onClick={() => setIsOpen(!isOpen)}
@@ -121,7 +120,7 @@ export default function Navbar() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.22 }}
-              className="fixed inset-0 z-[9998] lg:hidden flex flex-col bg-black/80 backdrop-blur-md"
+              className="fixed inset-0 z-[9998] lg:hidden flex flex-col bg-[#0f172a]"
               onClick={() => setIsOpen(false)}
             >
               {/* Header bar overlay */}
