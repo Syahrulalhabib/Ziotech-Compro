@@ -277,129 +277,12 @@ export default function Home() {
         </div>
       </section>
 
-
-
-      {/* 2. EDITORIAL INTRO SECTION (Pertamina "Energizing You" Style) */}
-      <section className="py-14 sm:py-28 bg-white border-b border-slate-100">
+      {/* 2. KEY METRICS — langsung setelah hero untuk trust conversion B2B */}
+      <section className="py-14 sm:py-20 bg-white border-b border-slate-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-12 gap-8 lg:gap-16 items-center">
-            {/* Editorial Content — first on mobile */}
-            <div className="lg:col-span-7 order-1">
-              <span className="text-[11px] font-bold tracking-widest text-[#0284c7] uppercase mb-3 block">
-                {homeData?.introBadge || 'INOVASI & KUALITAS'}
-              </span>
-              <h2 className="text-2xl sm:text-4xl font-extrabold text-[#0f172a] leading-tight tracking-tight mb-6">
-                {homeData?.introTitle || 'Menghadirkan Solusi Teknik dan Konstruksi Terbaik untuk Negeri'}
-              </h2>
-              <p className="text-slate-600 text-base sm:text-lg leading-relaxed mb-6 font-normal">
-                {homeData?.introDescription || homeData?.heroSubtitle || 'PT. Ziotech Global Inovasi hadir sebagai mitra strategis dengan komitmen pada kualitas, efisiensi, dan inovasi berkelanjutan khususnya di spesialisasi Mechanical, Electrical & Plumbing (MEP).'}
-              </p>
-              <p className="text-slate-500 text-sm sm:text-base leading-relaxed mb-8">
-                {homeData?.introDescription2 || 'Dengan tim profesional bersertifikasi, dedikasi tinggi, dan standar mutu ketat, kami siap memberikan solusi engineering terbaik yang efisien, tepat waktu, dan berorientasi jangka panjang.'}
-              </p>
-
-              <Link
-                to="/about"
-                className="pertamina-btn-pill"
-              >
-                Selengkapnya <ArrowRight className="w-4 h-4 text-[#0284c7]" />
-              </Link>
-            </div>
-
-            {/* Visual Branding Graphic — second on mobile */}
-            <div className="lg:col-span-5 flex justify-center order-2">
-              <div className="relative w-full max-w-md aspect-square rounded-2xl bg-gradient-to-tr from-slate-50 via-sky-50/50 to-blue-50 p-8 flex items-center justify-center border border-slate-100 shadow-sm overflow-hidden group">
-                <div className="absolute -top-10 -right-10 w-44 h-44 rounded-none bg-[#0284c7]/10 blur-2xl pointer-events-none" />
-                <div className="absolute -bottom-10 -left-10 w-44 h-44 rounded-none bg-[#1e3a8a]/10 blur-2xl pointer-events-none" />
-                
-                {homeData?.introImageUrl ? (
-                  <div className="relative w-full h-full rounded-xl overflow-hidden shadow-inner flex items-center justify-center bg-slate-100">
-                    <img 
-                      src={homeData.introImageUrl} 
-                      alt={homeData?.introTag || "Innovation & Integrity"} 
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    />
-                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent p-4 text-center">
-                      <span className="text-[11px] font-bold tracking-[0.2em] text-white uppercase drop-shadow-sm">
-                        {homeData?.introTag || 'INNOVATION & INTEGRITY'}
-                      </span>
-                    </div>
-                  </div>
-                ) : (
-                  <>
-                    {/* Geometric Pattern Accent ala Pertamina */}
-                    <div className="grid grid-cols-3 gap-3 w-4/5">
-                      <div className="h-16 rounded-sm bg-gradient-to-br from-[#1e3a8a] to-[#0284c7] shadow-sm transform -rotate-6"></div>
-                      <div className="h-16 rounded-sm bg-[#0284c7]/20 border border-[#0284c7]/30"></div>
-                      <div className="h-16 rounded-sm bg-slate-900 shadow-sm"></div>
-                      <div className="h-16 rounded-sm bg-sky-100"></div>
-                      <div className="h-16 rounded-sm bg-gradient-to-br from-[#0284c7] to-sky-400 shadow-md"></div>
-                      <div className="h-16 rounded-sm bg-slate-100 border border-slate-200"></div>
-                      <div className="h-16 rounded-sm bg-[#1e3a8a]/80"></div>
-                      <div className="h-16 rounded-sm bg-sky-200/50"></div>
-                      <div className="h-16 rounded-sm bg-gradient-to-tr from-slate-800 to-slate-900"></div>
-                    </div>
-
-                    <div className="absolute bottom-6 text-center">
-                      <span className="text-[11px] font-bold tracking-[0.2em] text-[#0284c7] uppercase">
-                        {homeData?.introTag || 'INNOVATION & INTEGRITY'}
-                      </span>
-                    </div>
-                  </>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 3. CINEMATIC BANNER "SEKILAS TENTANG KAMI" (Pertamina "Sekilas Pertamina" Style) */}
-      <section className="relative py-16 sm:py-24 lg:py-32 bg-slate-900 overflow-hidden">
-        <div className="absolute inset-0 z-0">
-          <img 
-            src={data?.home?.aboutPreviewImageUrl || data?.about?.image || "https://images.unsplash.com/photo-1503387762-592deb58ef4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80"} 
-            alt="Sekilas Ziotech" 
-            className="w-full h-full object-cover object-center sm:object-right opacity-45 sm:opacity-55"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/85 to-slate-950/65 sm:bg-gradient-to-r sm:from-slate-950 sm:via-slate-950/85 sm:to-slate-950/30 pointer-events-none" />
-        </div>
-
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="max-w-2xl text-white">
-            <span className="text-[11px] sm:text-xs font-bold tracking-widest text-[#38bdf8] uppercase mb-2 sm:mb-3 block">
-              {data?.home?.aboutSectionBadge || 'SEKILAS PERUSAHAAN'}
-            </span>
-            <h2 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold text-white mb-4 sm:mb-6 leading-tight tracking-tight">
-              {data?.home?.aboutSectionTitle || 'Tentang Kami'}
-            </h2>
-            <p className="text-slate-200 text-sm sm:text-base lg:text-lg leading-relaxed mb-6 sm:mb-8 font-light">
-              {data?.home?.aboutSectionDescription || data?.about?.description || 'Didirikan dengan semangat profesionalisme dan integritas tinggi, PT Ziotech Global Inovasi fokus menghadirkan layanan teknik MEP dan konstruksi yang berorientasi nilai tambah.'}
-            </p>
-
-            <div className="flex flex-wrap items-center gap-3 sm:gap-4">
-              <Link 
-                to="/about"
-                className="pertamina-btn-pill-dark"
-              >
-                Profil Perusahaan <ArrowUpRight className="w-4 h-4" />
-              </Link>
-              <Link 
-                to="/about"
-                className="pertamina-btn-pill-dark"
-              >
-                Visi & Misi <ArrowUpRight className="w-4 h-4" />
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 4. KEY METRICS & RECOGNITION (Pertamina Fortune 500 / Stats Style) */}
-      <section className="py-20 sm:py-24 bg-white border-b border-slate-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-12 gap-6 items-end pb-12 mb-12 border-b border-slate-100">
+          <div className="grid lg:grid-cols-12 gap-6 items-end pb-10 mb-10 border-b border-slate-100">
             <div className="lg:col-span-6">
-              <span className="text-[11px] font-bold tracking-widest text-[#0284c7] uppercase mb-2 block">
+              <span className="text-[11px] font-bold tracking-widest text-slate-400 uppercase mb-2 block">
                 {data.home?.quickFactsBadge || 'KREDIBILITAS & PERFORMA'}
               </span>
               <h2 className="text-2xl sm:text-4xl font-extrabold text-[#0f172a] leading-tight">
@@ -459,7 +342,7 @@ export default function Home() {
                   value={stat.value}
                   className="text-3xl sm:text-5xl font-black text-[#0f172a] tracking-tight"
                 />
-                <div className="text-sm font-semibold text-[#0284c7] mt-1 mb-2">
+                <div className="text-sm font-semibold text-slate-600 mt-1 mb-2">
                   {stat.unit}
                 </div>
                 <p className="text-xs sm:text-sm text-slate-500 font-normal leading-relaxed">
@@ -471,11 +354,126 @@ export default function Home() {
         </div>
       </section>
 
+      {/* 3. EDITORIAL INTRO SECTION (Pertamina "Energizing You" Style) */}
+      <section className="py-14 sm:py-28 bg-white border-b border-slate-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-12 gap-8 lg:gap-16 items-center">
+            {/* Editorial Content — first on mobile */}
+            <div className="lg:col-span-7 order-1">
+              <span className="text-[11px] font-bold tracking-widest text-slate-400 uppercase mb-3 block">
+                {homeData?.introBadge || 'INOVASI & KUALITAS'}
+              </span>
+              <h2 className="text-2xl sm:text-4xl font-extrabold text-[#0f172a] leading-tight tracking-tight mb-6">
+                {homeData?.introTitle || 'Menghadirkan Solusi Teknik dan Konstruksi Terbaik untuk Negeri'}
+              </h2>
+              <p className="text-slate-600 text-base sm:text-lg leading-relaxed mb-6 font-normal">
+                {homeData?.introDescription || homeData?.heroSubtitle || 'PT. Ziotech Global Inovasi hadir sebagai mitra strategis dengan komitmen pada kualitas, efisiensi, dan inovasi berkelanjutan khususnya di spesialisasi Mechanical, Electrical & Plumbing (MEP).'}
+              </p>
+              <p className="text-slate-500 text-sm sm:text-base leading-relaxed mb-8">
+                {homeData?.introDescription2 || 'Dengan tim profesional bersertifikasi, dedikasi tinggi, dan standar mutu ketat, kami siap memberikan solusi engineering terbaik yang efisien, tepat waktu, dan berorientasi jangka panjang.'}
+              </p>
+
+              <Link
+                to="/about"
+                className="pertamina-btn-pill"
+              >
+                Selengkapnya <ArrowRight className="w-4 h-4 text-slate-500" />
+              </Link>
+            </div>
+
+            {/* Visual Branding Graphic — second on mobile */}
+            <div className="lg:col-span-5 flex justify-center order-2">
+              <div className="relative w-full max-w-md aspect-square rounded-2xl bg-gradient-to-tr from-slate-50 via-sky-50/50 to-blue-50 p-8 flex items-center justify-center border border-slate-100 shadow-sm overflow-hidden group">
+                <div className="absolute -top-10 -right-10 w-44 h-44 rounded-none bg-[#0284c7]/10 blur-2xl pointer-events-none" />
+                <div className="absolute -bottom-10 -left-10 w-44 h-44 rounded-none bg-[#1e3a8a]/10 blur-2xl pointer-events-none" />
+                
+                {homeData?.introImageUrl ? (
+                  <div className="relative w-full h-full rounded-xl overflow-hidden shadow-inner flex items-center justify-center bg-slate-100">
+                    <img 
+                      src={homeData.introImageUrl} 
+                      alt={homeData?.introTag || "Innovation & Integrity"} 
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent p-4 text-center">
+                      <span className="text-[11px] font-bold tracking-[0.2em] text-white uppercase drop-shadow-sm">
+                        {homeData?.introTag || 'INNOVATION & INTEGRITY'}
+                      </span>
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    {/* Geometric Pattern Accent ala Pertamina */}
+                    <div className="grid grid-cols-3 gap-3 w-4/5">
+                      <div className="h-16 rounded-sm bg-gradient-to-br from-[#1e3a8a] to-[#0284c7] shadow-sm transform -rotate-6"></div>
+                      <div className="h-16 rounded-sm bg-[#0284c7]/20 border border-[#0284c7]/30"></div>
+                      <div className="h-16 rounded-sm bg-slate-900 shadow-sm"></div>
+                      <div className="h-16 rounded-sm bg-sky-100"></div>
+                      <div className="h-16 rounded-sm bg-gradient-to-br from-[#0284c7] to-sky-400 shadow-md"></div>
+                      <div className="h-16 rounded-sm bg-slate-100 border border-slate-200"></div>
+                      <div className="h-16 rounded-sm bg-[#1e3a8a]/80"></div>
+                      <div className="h-16 rounded-sm bg-sky-200/50"></div>
+                      <div className="h-16 rounded-sm bg-gradient-to-tr from-slate-800 to-slate-900"></div>
+                    </div>
+
+                    <div className="absolute bottom-6 text-center">
+                      <span className="text-[11px] font-bold tracking-[0.2em] text-slate-500 uppercase">
+                        {homeData?.introTag || 'INNOVATION & INTEGRITY'}
+                      </span>
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 3. CINEMATIC BANNER "SEKILAS TENTANG KAMI" (Pertamina "Sekilas Pertamina" Style) */}
+      <section className="relative py-16 sm:py-24 lg:py-32 bg-slate-900 overflow-hidden">
+        <div className="absolute inset-0 z-0">
+          <img 
+            src={data?.home?.aboutPreviewImageUrl || data?.about?.image || "https://images.unsplash.com/photo-1503387762-592deb58ef4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80"} 
+            alt="Sekilas Ziotech" 
+            className="w-full h-full object-cover object-center sm:object-right opacity-45 sm:opacity-55"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/85 to-slate-950/65 sm:bg-gradient-to-r sm:from-slate-950 sm:via-slate-950/85 sm:to-slate-950/30 pointer-events-none" />
+        </div>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="max-w-2xl text-white">
+            <span className="text-[11px] sm:text-xs font-bold tracking-widest text-[#38bdf8] uppercase mb-2 sm:mb-3 block">
+              {data?.home?.aboutSectionBadge || 'SEKILAS PERUSAHAAN'}
+            </span>
+            <h2 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold text-white mb-4 sm:mb-6 leading-tight tracking-tight">
+              {data?.home?.aboutSectionTitle || 'Tentang Kami'}
+            </h2>
+            <p className="text-slate-200 text-sm sm:text-base lg:text-lg leading-relaxed mb-6 sm:mb-8 font-light">
+              {data?.home?.aboutSectionDescription || data?.about?.description || 'Didirikan dengan semangat profesionalisme dan integritas tinggi, PT Ziotech Global Inovasi fokus menghadirkan layanan teknik MEP dan konstruksi yang berorientasi nilai tambah.'}
+            </p>
+
+            <div className="flex flex-wrap items-center gap-3 sm:gap-4">
+              <Link 
+                to="/about"
+                className="pertamina-btn-pill-dark"
+              >
+                Profil Perusahaan <ArrowUpRight className="w-4 h-4" />
+              </Link>
+              <Link 
+                to="/about"
+                className="pertamina-btn-pill-dark"
+              >
+                Visi & Misi <ArrowUpRight className="w-4 h-4" />
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* 5. FOUR EDITORIAL FOCUS CARDS (Pertamina 4 Image Cards: Layanan, PPID, Tata Kelola, Karir) */}
       <section className="py-20 sm:py-24 bg-[#f8fafc]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mb-10 sm:mb-12">
-            <span className="text-[11px] font-bold tracking-widest text-[#0284c7] uppercase mb-2 block">
+            <span className="text-[11px] font-bold tracking-widest text-slate-400 uppercase mb-2 block">
               {data?.home?.ourFocusBadge || 'PILAR UTAMA'}
             </span>
             <h2 className="text-2xl sm:text-4xl font-extrabold text-[#0f172a]">
@@ -526,7 +524,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-12 gap-6 items-end pb-12 mb-12 border-b border-slate-100">
             <div className="lg:col-span-6">
-              <span className="text-[11px] font-bold tracking-widest text-[#0284c7] uppercase mb-2 block">
+              <span className="text-[11px] font-bold tracking-widest text-slate-400 uppercase mb-2 block">
                 {data?.home?.serviceBadge || 'KOMPETENSI UTAMA'}
               </span>
               <h2 className="text-2xl sm:text-4xl font-extrabold text-[#0f172a] leading-tight">
@@ -596,7 +594,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-12 gap-6 items-end pb-8 mb-8 border-b border-slate-200/80">
             <div className="lg:col-span-6">
-              <span className="text-[11px] font-bold tracking-widest text-[#0284c7] uppercase mb-2 block">
+              <span className="text-[11px] font-bold tracking-widest text-slate-400 uppercase mb-2 block">
                 {data?.home?.portfolioBadge || 'PORTOFOLIO & REKAM JEJAK'}
               </span>
               <h2 className="text-2xl sm:text-4xl font-extrabold text-[#0f172a] leading-tight">
@@ -713,7 +711,7 @@ export default function Home() {
       <section className="py-20 sm:py-24 bg-[#f8fafc] border-b border-slate-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="pb-8 mb-10 border-b border-slate-200">
-            <span className="text-[11px] font-bold tracking-widest text-[#0284c7] uppercase mb-2 block">
+            <span className="text-[11px] font-bold tracking-widest text-slate-400 uppercase mb-2 block">
               {data?.home?.clientPartnersBadge || 'KEMITRAAN STRATEGIS'}
             </span>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0f172a]">

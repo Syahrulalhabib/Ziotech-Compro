@@ -95,6 +95,12 @@ export default function Navbar() {
                 </button>
               );
             })}
+            <button
+              onClick={() => handleNavClick('/contact')}
+              className="ml-2 px-4 py-2 bg-[#0284c7] hover:bg-[#0369a1] text-white text-sm font-semibold rounded-lg transition-colors duration-200"
+            >
+              Hubungi Kami
+            </button>
           </nav>
 
           {/* Mobile Hamburger */}
@@ -164,6 +170,14 @@ export default function Navbar() {
                     </motion.button>
                   );
                 })}
+                <div className="px-6 pt-6">
+                  <button
+                    onClick={() => handleNavClick('/contact')}
+                    className="w-full py-3.5 bg-[#0284c7] hover:bg-[#0369a1] text-white font-semibold rounded-lg transition-colors duration-200"
+                  >
+                    Hubungi Kami
+                  </button>
+                </div>
               </motion.div>
             </motion.div>
           )}
