@@ -254,6 +254,46 @@ export default function Dashboard() {
       unsubscribe();
     };
   }, [navigate]);
+  // Auto-logout setelah 30 menit tanpa aktivitas (standar CMS perusahaan)
+  useEffect(() => {
+    if (!user) return;
+
+    const INACTIVITY_TIMEOUT_MS = 30 * 60 * 1000; // 30 menit
+    let timeoutId;
+
+    const triggerAutoLogout = async () => {
+      try {
+        await signOut(auth);
+        navigate('/admin/login', { state: { sessionExpired: true } });
+      } catch (err) {
+        console.error('Auto logout error:', err);
+      }
+    };
+
+    const resetTimer = () => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(triggerAutoLogout, INACTIVITY_TIMEOUT_MS);
+    };
+
+    let lastActivity = Date.now();
+    const handleActivity = () => {
+      const now = Date.now();
+      if (now - lastActivity > 1000) {
+        lastActivity = now;
+        resetTimer();
+      }
+    };
+
+    const events = ['mousedown', 'mousemove', 'keydown', 'scroll', 'touchstart', 'click'];
+    events.forEach((evt) => window.addEventListener(evt, handleActivity, { passive: true }));
+    resetTimer();
+
+    return () => {
+      clearTimeout(timeoutId);
+      events.forEach((evt) => window.removeEventListener(evt, handleActivity));
+    };
+  }, [user, navigate]);
+
 
   useEffect(() => {
     document.body.style.overflow = isMobileMenuOpen ? 'hidden' : '';

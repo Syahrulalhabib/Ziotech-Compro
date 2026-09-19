@@ -432,6 +432,7 @@ export function DataProvider({ children }) {
       return () => { clearTimeout(safetyTimer); unsubscribe(); };
     } catch (error) {
       console.error("Firebase init error: ", error);
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setLoading(false);
     }
   }, []);
@@ -443,8 +444,10 @@ export function DataProvider({ children }) {
   );
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useData() {
   return useContext(DataContext);
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export { defaultData };
