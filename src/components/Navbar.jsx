@@ -85,12 +85,7 @@ export default function Navbar() {
                 >
                   {link.name}
                   {isActive && (
-                    <motion.div
-                      layoutId="navbar-indicator"
-                      className="absolute -bottom-1.5 left-0 right-0 h-0.5 bg-white"
-                      initial={false}
-                      transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                    />
+                    <span className="absolute -bottom-1.5 left-0 right-0 h-0.5 bg-white" />
                   )}
                 </button>
               );
