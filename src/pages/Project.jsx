@@ -70,7 +70,7 @@ export default function Project() {
               <button
                 key={category}
                 onClick={() => setActiveCategory(category)}
-                className={`cursor-pointer px-4 sm:px-5 py-2 rounded-none text-xs font-semibold transition-all duration-200 ${
+                className={`cursor-pointer px-4 sm:px-5 py-2 rounded-full text-xs font-semibold transition-all duration-200 ${
                   activeCategory === category
                     ? 'bg-[#0f172a] text-white shadow-sm'
                     : 'bg-white text-slate-600 hover:bg-slate-50 border border-slate-200'
@@ -95,7 +95,7 @@ export default function Project() {
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.95 }}
                   transition={{ duration: 0.3 }}
-                  className="bg-white rounded-none overflow-hidden border border-slate-100 hover:border-slate-300 hover:shadow-md transition-all duration-300 group flex flex-col justify-between"
+                  className="bg-white rounded-xl overflow-hidden border border-slate-100 hover:border-slate-300 hover:shadow-md transition-all duration-300 group flex flex-col justify-between"
                 >
                   <div>
                     {/* Project Image */}
@@ -105,7 +105,7 @@ export default function Project() {
                         alt={project.title}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />
-                      <div className="absolute top-3.5 right-3.5 bg-white/95  text-[#0f172a] text-[11px] font-bold px-3 py-1 rounded-none border border-slate-100 shadow-sm">
+                      <div className="absolute top-3.5 right-3.5 bg-white/95  text-[#0f172a] text-[11px] font-bold px-3 py-1 rounded-full border border-slate-100 shadow-sm">
                         {project.category}
                       </div>
                     </div>
@@ -153,7 +153,7 @@ export default function Project() {
 
           {/* Empty State */}
           {filteredProjects.length === 0 && (
-            <div className="text-center py-20 bg-white rounded-none border border-slate-100 p-8 max-w-md mx-auto">
+            <div className="text-center py-20 bg-white rounded-xl border border-slate-100 p-8 max-w-md mx-auto">
               <Building2 className="w-12 h-12 mx-auto mb-3 text-slate-300" />
               <p className="text-sm font-semibold text-slate-600">Belum ada dokumentasi proyek pada kategori ini.</p>
             </div>

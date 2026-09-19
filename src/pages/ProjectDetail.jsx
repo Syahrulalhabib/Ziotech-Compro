@@ -37,7 +37,7 @@ export default function ProjectDetail() {
           Kembali ke Portofolio
         </button>
 
-        <div className="bg-white rounded-none shadow-xl overflow-hidden border border-gray-100">
+        <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
           {/* Hero Image */}
           <div className="relative h-56 sm:h-72 md:h-96 w-full">
             <img 
@@ -45,7 +45,7 @@ export default function ProjectDetail() {
               alt={project.title} 
               className="w-full h-full object-cover"
             />
-            <div className="absolute top-4 left-4 bg-[var(--accent-gold)] text-[var(--primary-dark)] text-xs sm:text-sm font-bold px-3 sm:px-4 py-1.5 sm:py-2 rounded-none shadow-md z-10">
+            <div className="absolute top-4 left-4 bg-[var(--accent-gold)] text-[var(--primary-dark)] text-xs sm:text-sm font-bold px-3 sm:px-4 py-1.5 sm:py-2 rounded-full shadow-md z-10">
               {project.category}
             </div>
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent flex items-end">
@@ -86,7 +86,7 @@ export default function ProjectDetail() {
               </div>
 
               {/* Sidebar Info */}
-              <div className="bg-gray-50 p-6 rounded-none border border-gray-100 h-fit space-y-6">
+              <div className="bg-gray-50 p-6 rounded-xl border border-gray-100 h-fit space-y-6">
                 <h3 className="text-xl font-bold text-[var(--primary-dark)] border-b border-gray-200 pb-4">
                   Spesifikasi Proyek
                 </h3>

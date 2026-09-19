@@ -203,8 +203,8 @@ export default function Contact() {
                   {contactInfo.map((info, idx) => {
                     const Icon = info.icon;
                     return (
-                      <div key={idx} className="bg-white p-5 rounded-none border border-slate-100 flex items-start gap-4 shadow-sm">
-                        <div className="w-10 h-10 rounded-none flex items-center justify-center shrink-0 bg-slate-50 text-[#0284c7]">
+                      <div key={idx} className="bg-white p-5 rounded-xl border border-slate-100 flex items-start gap-4 shadow-sm">
+                        <div className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 bg-slate-50 text-[#0284c7]">
                           <Icon className="w-5 h-5" />
                         </div>
                         <div className="min-w-0 flex-1">
@@ -224,7 +224,7 @@ export default function Contact() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.1 }}
-                className="bg-white rounded-none p-7 sm:p-10 border border-slate-100 shadow-sm"
+                className="bg-white rounded-2xl p-7 sm:p-10 border border-slate-100 shadow-sm"
               >
                 <h2 className="text-xl sm:text-2xl font-extrabold text-[#0f172a] mb-6">Kirim Permintaan Informasi</h2>
 
@@ -234,7 +234,7 @@ export default function Contact() {
                       initial={{ opacity: 0, y: -10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
-                      className="mb-6 p-4 bg-emerald-50 text-emerald-800 rounded-none flex items-center gap-3 border border-emerald-100 text-sm"
+                      className="mb-6 p-4 bg-emerald-50 text-emerald-800 rounded-lg flex items-center gap-3 border border-emerald-100 text-sm"
                     >
                       <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
                       Terima kasih atas komunikasi Anda. Tim representatif kami akan segera meninjau dan menghubungi Anda.
@@ -253,7 +253,7 @@ export default function Contact() {
                         value={formState.name}
                         onChange={handleChange}
                         required
-                        className="w-full px-4 py-3 rounded-none border border-slate-200 bg-slate-50/50 focus:bg-white focus:ring-2 focus:ring-[#0284c7] focus:border-[#0284c7] outline-none text-sm transition-all"
+                        className="w-full px-4 py-3 rounded-lg border border-slate-200 bg-slate-50/50 focus:bg-white focus:ring-2 focus:ring-[#0284c7] focus:border-[#0284c7] outline-none text-sm transition-all"
                         placeholder="cth. Ir. Bambang Prakoso"
                       />
                     </div>
@@ -266,7 +266,7 @@ export default function Contact() {
                         value={formState.email}
                         onChange={handleChange}
                         required
-                        className="w-full px-4 py-3 rounded-none border border-slate-200 bg-slate-50/50 focus:bg-white focus:ring-2 focus:ring-[#0284c7] focus:border-[#0284c7] outline-none text-sm transition-all"
+                        className="w-full px-4 py-3 rounded-lg border border-slate-200 bg-slate-50/50 focus:bg-white focus:ring-2 focus:ring-[#0284c7] focus:border-[#0284c7] outline-none text-sm transition-all"
                         placeholder="cth. bambang@perusahaan.co.id"
                       />
                     </div>
@@ -281,7 +281,7 @@ export default function Contact() {
                         name="phone"
                         value={formState.phone}
                         onChange={handleChange}
-                        className="w-full px-4 py-3 rounded-none border border-slate-200 bg-slate-50/50 focus:bg-white focus:ring-2 focus:ring-[#0284c7] focus:border-[#0284c7] outline-none text-sm transition-all"
+                        className="w-full px-4 py-3 rounded-lg border border-slate-200 bg-slate-50/50 focus:bg-white focus:ring-2 focus:ring-[#0284c7] focus:border-[#0284c7] outline-none text-sm transition-all"
                         placeholder="cth. 0812-3456-7890"
                       />
                     </div>
@@ -293,7 +293,7 @@ export default function Contact() {
                         value={formState.subject}
                         onChange={handleChange}
                         required
-                        className="w-full px-4 py-3 rounded-none border border-slate-200 bg-slate-50/50 focus:bg-white focus:ring-2 focus:ring-[#0284c7] focus:border-[#0284c7] outline-none text-sm transition-all"
+                        className="w-full px-4 py-3 rounded-lg border border-slate-200 bg-slate-50/50 focus:bg-white focus:ring-2 focus:ring-[#0284c7] focus:border-[#0284c7] outline-none text-sm transition-all"
                       >
                         <option value="">Pilih Bidang Kebutuhan Proyek</option>
                         <option value="Pertanyaan Layanan MEP">Pekerjaan Sistem MEP (Mechanical, Electrical, Plumbing)</option>
@@ -313,7 +313,7 @@ export default function Contact() {
                       onChange={handleChange}
                       required
                       rows="4"
-                      className="w-full px-4 py-3 rounded-none border border-slate-200 bg-slate-50/50 focus:bg-white focus:ring-2 focus:ring-[#0284c7] focus:border-[#0284c7] outline-none text-sm transition-all resize-none"
+                      className="w-full px-4 py-3 rounded-lg border border-slate-200 bg-slate-50/50 focus:bg-white focus:ring-2 focus:ring-[#0284c7] focus:border-[#0284c7] outline-none text-sm transition-all resize-none"
                       placeholder="Tuliskan deskripsi ringkas mengenai skala proyek, lokasi, kebutuhan teknis, atau jadwal yang direncanakan..."
                     ></textarea>
                   </div>
@@ -342,8 +342,8 @@ export default function Contact() {
       {/* Map Section */}
       <section className="pb-20 bg-[#f8fafc]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-white p-3 md:p-4 rounded-none shadow-sm border border-slate-100 overflow-hidden">
-            <div className="relative w-full h-[320px] md:h-[420px] rounded-none overflow-hidden bg-slate-100">
+          <div className="bg-white p-3 md:p-4 rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+            <div className="relative w-full h-[320px] md:h-[420px] rounded-xl overflow-hidden bg-slate-100">
               {mapSrc ? (
                 <iframe
                   title="Google Maps Lokasi Kantor PT Ziotech Global Inovasi"

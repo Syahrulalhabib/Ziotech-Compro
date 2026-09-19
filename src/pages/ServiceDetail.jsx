@@ -32,7 +32,7 @@ export default function ServiceDetail() {
           <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5 mr-2" /> Kembali
         </button>
 
-        <div className="bg-white rounded-none shadow-xl overflow-hidden border border-gray-100">
+        <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
           <div className="relative h-60 sm:h-72 md:h-[400px] w-full">
             <img 
               src={service.image || "https://images.unsplash.com/photo-1581092921461-eab62e97a780?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"} 
@@ -41,7 +41,7 @@ export default function ServiceDetail() {
             />
             <div className="absolute inset-0 bg-gradient-to-t from-[var(--primary-dark)]/95 via-[var(--primary-dark)]/50 to-transparent flex items-end">
               <div className="p-5 sm:p-8 md:p-12 w-full flex items-center gap-4 sm:gap-6">
-                <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-none sm:rounded-none bg-[var(--accent-gold)] text-[var(--primary-dark)] flex items-center justify-center shrink-0 shadow-lg">
+                <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-xl bg-[var(--accent-gold)] text-[var(--primary-dark)] flex items-center justify-center shrink-0 shadow-lg">
                   {icon && createElement(icon, { className: "w-6 h-6 sm:w-8 sm:h-8" })}
                 </div>
                 <div>
@@ -67,7 +67,7 @@ export default function ServiceDetail() {
                     <h2 className="text-2xl font-bold text-[var(--primary-dark)] mb-6">Ruang Lingkup Pekerjaan</h2>
                     <div className="grid sm:grid-cols-2 gap-4">
                       {service.features.map((feature, idx) => (
-                        <div key={idx} className="flex items-start p-4 rounded-none bg-gray-50 border border-gray-100">
+                        <div key={idx} className="flex items-start p-4 rounded-lg bg-gray-50 border border-gray-100">
                           <CheckCircle2 className="w-5 h-5 text-[var(--accent-blue)] mr-3 flex-shrink-0 mt-0.5" />
                           <span className="text-gray-700 font-medium text-sm">{feature}</span>
                         </div>
@@ -78,7 +78,7 @@ export default function ServiceDetail() {
               </div>
 
               <div className="space-y-6">
-                <div className="bg-gray-50 p-6 rounded-none border border-gray-100">
+                <div className="bg-gray-50 p-6 rounded-xl border border-gray-100">
                   <h3 className="text-xl font-bold text-[var(--primary-dark)] mb-3">Rencanakan Kebutuhan Proyek Anda Bersama Kami</h3>
                   <p className="text-sm text-gray-600 mb-6 leading-relaxed">
                     Diskusikan kebutuhan proyek MEP, konstruksi, atau pengadaan fasilitas industri Anda bersama tim rekayasa teknik kami.
@@ -88,7 +88,7 @@ export default function ServiceDetail() {
                   </Link>
                 </div>
 
-                <div className="bg-blue-50/60 p-6 rounded-none border border-blue-100">
+                <div className="bg-blue-50/60 p-6 rounded-xl border border-blue-100">
                   <h4 className="font-bold text-[var(--primary-blue)] text-sm uppercase tracking-wider mb-2">Jaminan Standar Mutu</h4>
                   <ul className="text-sm text-gray-600 space-y-2">
                     <li>✓ Kepatuhan standar mutu & regulasi keselamatan industri</li>

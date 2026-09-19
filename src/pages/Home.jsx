@@ -252,7 +252,7 @@ export default function Home() {
                     className="flex-1 group cursor-pointer focus:outline-none flex flex-col"
                   >
                     <div className="flex items-center gap-2 mb-3 px-1">
-                      <span className={`inline-block w-2 h-2 rounded-none shrink-0 transition-colors duration-300 ${isActive ? 'bg-[#0284c7]' : 'bg-white/20 group-hover:bg-white/40'}`}></span>
+                      <span className={`inline-block w-2 h-2 rounded-sm shrink-0 transition-colors duration-300 ${isActive ? 'bg-[#0284c7]' : 'bg-white/20 group-hover:bg-white/40'}`}></span>
                       <span className={`text-xs sm:text-sm font-medium transition-colors duration-300 truncate drop-shadow-md ${isActive ? 'text-white' : 'text-white/60 group-hover:text-white/80'}`}>
                         {title}
                       </span>
@@ -308,12 +308,12 @@ export default function Home() {
 
             {/* Visual Branding Graphic — second on mobile */}
             <div className="lg:col-span-5 flex justify-center order-2">
-              <div className="relative w-full max-w-md aspect-square rounded-none bg-gradient-to-tr from-slate-50 via-sky-50/50 to-blue-50 p-8 flex items-center justify-center border border-slate-100 shadow-sm overflow-hidden group">
+              <div className="relative w-full max-w-md aspect-square rounded-2xl bg-gradient-to-tr from-slate-50 via-sky-50/50 to-blue-50 p-8 flex items-center justify-center border border-slate-100 shadow-sm overflow-hidden group">
                 <div className="absolute -top-10 -right-10 w-44 h-44 rounded-none bg-[#0284c7]/10 blur-2xl pointer-events-none" />
                 <div className="absolute -bottom-10 -left-10 w-44 h-44 rounded-none bg-[#1e3a8a]/10 blur-2xl pointer-events-none" />
                 
                 {homeData?.introImageUrl ? (
-                  <div className="relative w-full h-full rounded-none overflow-hidden shadow-inner flex items-center justify-center bg-slate-100">
+                  <div className="relative w-full h-full rounded-xl overflow-hidden shadow-inner flex items-center justify-center bg-slate-100">
                     <img 
                       src={homeData.introImageUrl} 
                       alt={homeData?.introTag || "Innovation & Integrity"} 
@@ -329,15 +329,15 @@ export default function Home() {
                   <>
                     {/* Geometric Pattern Accent ala Pertamina */}
                     <div className="grid grid-cols-3 gap-3 w-4/5">
-                      <div className="h-16 rounded-none bg-gradient-to-br from-[#1e3a8a] to-[#0284c7] shadow-sm transform -rotate-6"></div>
-                      <div className="h-16 rounded-none bg-[#0284c7]/20 border border-[#0284c7]/30"></div>
-                      <div className="h-16 rounded-none bg-slate-900 shadow-sm"></div>
-                      <div className="h-16 rounded-none bg-sky-100"></div>
-                      <div className="h-16 rounded-none bg-gradient-to-br from-[#0284c7] to-sky-400 shadow-md"></div>
-                      <div className="h-16 rounded-none bg-slate-100 border border-slate-200"></div>
-                      <div className="h-16 rounded-none bg-[#1e3a8a]/80"></div>
-                      <div className="h-16 rounded-none bg-sky-200/50"></div>
-                      <div className="h-16 rounded-none bg-gradient-to-tr from-slate-800 to-slate-900"></div>
+                      <div className="h-16 rounded-sm bg-gradient-to-br from-[#1e3a8a] to-[#0284c7] shadow-sm transform -rotate-6"></div>
+                      <div className="h-16 rounded-sm bg-[#0284c7]/20 border border-[#0284c7]/30"></div>
+                      <div className="h-16 rounded-sm bg-slate-900 shadow-sm"></div>
+                      <div className="h-16 rounded-sm bg-sky-100"></div>
+                      <div className="h-16 rounded-sm bg-gradient-to-br from-[#0284c7] to-sky-400 shadow-md"></div>
+                      <div className="h-16 rounded-sm bg-slate-100 border border-slate-200"></div>
+                      <div className="h-16 rounded-sm bg-[#1e3a8a]/80"></div>
+                      <div className="h-16 rounded-sm bg-sky-200/50"></div>
+                      <div className="h-16 rounded-sm bg-gradient-to-tr from-slate-800 to-slate-900"></div>
                     </div>
 
                     <div className="absolute bottom-6 text-center">
@@ -488,7 +488,7 @@ export default function Home() {
               <Link
                 key={idx}
                 to={item.link}
-                className="group relative h-[380px] sm:h-[420px] rounded-none overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-end p-6 border border-slate-100"
+                className="group relative h-[380px] sm:h-[420px] rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-end p-6 border border-slate-100"
               >
                 {/* Image Background */}
                 <img 
@@ -511,7 +511,7 @@ export default function Home() {
                   </p>
 
                   {/* Circular Action Arrow Ala Pertamina */}
-                  <div className="w-9 h-9 rounded-none border border-white/40 flex items-center justify-center text-white group-hover:border-white group-hover:bg-white group-hover:text-slate-950 transition-all">
+                  <div className="w-9 h-9 rounded-lg border border-white/40 flex items-center justify-center text-white group-hover:border-white group-hover:bg-white group-hover:text-slate-950 transition-all">
                     <ArrowRight className="w-4 h-4" />
                   </div>
                 </div>
@@ -553,9 +553,9 @@ export default function Home() {
               {services.slice(0, 3).map((service, idx) => (
                 <div 
                   key={service.id || idx}
-                  className="flex flex-col bg-white rounded-none overflow-hidden border border-slate-100 hover:border-slate-300 transition-all duration-300 p-2 group"
+                  className="flex flex-col bg-white rounded-xl overflow-hidden border border-slate-100 hover:border-slate-300 transition-all duration-300 p-2 group"
                 >
-                  <div className="aspect-[16/10] rounded-none overflow-hidden mb-5 relative">
+                  <div className="aspect-[16/10] rounded-lg overflow-hidden mb-5 relative">
                     <img 
                       src={service.image || "https://images.unsplash.com/photo-1581092921461-eab62e97a780?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"} 
                       alt={service.title} 
@@ -626,7 +626,7 @@ export default function Home() {
               <button
                 key={key}
                 onClick={() => setActiveTabCategory(key)}
-                className={`px-4 py-1.5 rounded-none text-xs font-semibold transition-all cursor-pointer ${
+                className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${
                   activeTabCategory === key
                     ? 'bg-[#1e3a8a] text-white shadow-sm'
                     : 'bg-white border border-slate-200 text-slate-600 hover:border-slate-400'
@@ -644,7 +644,7 @@ export default function Home() {
                   {filteredProjects[0] && (
                     <Link
                       to={`/project/${filteredProjects[0].id}`}
-                      className="group relative block h-[420px] sm:h-[500px] rounded-none overflow-hidden shadow-sm border border-slate-100"
+                      className="group relative block h-[420px] sm:h-[500px] rounded-xl overflow-hidden shadow-sm border border-slate-100"
                     >
                       <img 
                         src={filteredProjects[0].image} 
@@ -677,7 +677,7 @@ export default function Home() {
                     <Link
                       key={project.id}
                       to={`/project/${project.id}`}
-                      className="group relative block h-[235px] rounded-none overflow-hidden shadow-sm border border-slate-100"
+                      className="group relative block h-[235px] rounded-xl overflow-hidden shadow-sm border border-slate-100"
                     >
                       <img 
                         src={project.image} 
@@ -731,7 +731,7 @@ export default function Home() {
             ]).map((partner, idx) => (
               <div 
                 key={partner.id || idx}
-                className="bg-white rounded-none border border-slate-200/80 p-6 flex items-center justify-center h-28 hover:border-[#0284c7] hover:shadow-sm transition-all duration-300 group"
+                className="bg-white rounded-xl border border-slate-200/80 p-6 flex items-center justify-center h-28 hover:border-[#0284c7] hover:shadow-sm transition-all duration-300 group"
               >
                 {partner.logo ? (
                   <img 
@@ -753,7 +753,7 @@ export default function Home() {
       {/* 10. CALL TO ACTION - Elevated Floating Card (Pertamina Corporate Style) */}
       <section className="py-14 sm:py-24 bg-[#f8fafc]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="relative rounded-none overflow-hidden bg-slate-900 shadow-2xl shadow-slate-900/15 border border-slate-800">
+          <div className="relative rounded-2xl overflow-hidden bg-slate-900 shadow-2xl shadow-slate-900/15 border border-slate-800">
             {/* Background Image & Gradient */}
             <div className="absolute inset-0 z-0">
               <img 

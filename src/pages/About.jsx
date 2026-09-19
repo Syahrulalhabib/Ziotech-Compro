@@ -78,7 +78,7 @@ export default function About() {
               viewport={{ once: true }}
               className="lg:col-span-5 relative mb-8 lg:mb-0"
             >
-              <div className="relative rounded-none overflow-hidden border border-slate-100 shadow-sm bg-slate-200">
+              <div className="relative rounded-xl overflow-hidden border border-slate-100 shadow-sm bg-slate-200">
                 <img 
                   src={aboutData.image || "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"} 
                   alt="Tentang Ziotech" 
@@ -86,7 +86,7 @@ export default function About() {
                 />
               </div>
               
-              <div className="absolute -bottom-5 right-2 sm:-bottom-6 sm:-right-6 bg-white p-4 sm:p-6 rounded-none shadow-xl border border-slate-100 max-w-[200px] sm:max-w-[220px]">
+              <div className="absolute -bottom-5 right-2 sm:-bottom-6 sm:-right-6 bg-white p-4 sm:p-6 rounded-xl shadow-xl border border-slate-100 max-w-[200px] sm:max-w-[220px]">
                 <div className="flex items-center gap-3 mb-1">
                   <Award className="w-6 h-6 text-[#0284c7]" />
                   <span className="text-3xl font-extrabold text-[#0f172a]">
@@ -118,8 +118,8 @@ export default function About() {
 
               {/* Visi & Misi Cards */}
               <div className="grid sm:grid-cols-2 gap-5">
-                <div className="bg-[#f8fafc] p-6 rounded-none border border-slate-100 hover:border-slate-200 transition-colors">
-                  <div className="w-10 h-10 rounded-none bg-[#0284c7]/10 flex items-center justify-center text-[#0284c7] mb-4">
+                <div className="bg-[#f8fafc] p-6 rounded-xl border border-slate-100 hover:border-slate-200 transition-colors">
+                  <div className="w-10 h-10 rounded-lg bg-[#0284c7]/10 flex items-center justify-center text-[#0284c7] mb-4">
                     <Compass className="w-5 h-5" />
                   </div>
                   <h3 className="text-base font-bold text-[#0f172a] mb-2">
@@ -130,8 +130,8 @@ export default function About() {
                   </p>
                 </div>
 
-                <div className="bg-[#f8fafc] p-6 rounded-none border border-slate-100 hover:border-slate-200 transition-colors">
-                  <div className="w-10 h-10 rounded-none bg-[#0284c7]/10 flex items-center justify-center text-[#0284c7] mb-4">
+                <div className="bg-[#f8fafc] p-6 rounded-xl border border-slate-100 hover:border-slate-200 transition-colors">
+                  <div className="w-10 h-10 rounded-lg bg-[#0284c7]/10 flex items-center justify-center text-[#0284c7] mb-4">
                     <Target className="w-5 h-5" />
                   </div>
                   <h3 className="text-base font-bold text-[#0f172a] mb-2">
@@ -172,10 +172,10 @@ export default function About() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: idx * 0.08 }}
-                  className="bg-white p-7 rounded-none border border-slate-100 hover:border-slate-300 hover:shadow-sm transition-all duration-300 group flex flex-col justify-between"
+                  className="bg-white p-7 rounded-xl border border-slate-100 hover:border-slate-300 hover:shadow-md transition-all duration-300 group flex flex-col justify-between"
                 >
                   <div>
-                    <div className="w-12 h-12 rounded-none bg-slate-50 text-[#0284c7] flex items-center justify-center mb-5 group-hover:bg-[#0284c7] group-hover:text-white transition-colors duration-300">
+                    <div className="w-12 h-12 rounded-lg bg-slate-50 text-[#0284c7] flex items-center justify-center mb-5 group-hover:bg-[#0284c7] group-hover:text-white transition-colors duration-300">
                       <Icon className="w-6 h-6" />
                     </div>
                     <h3 className="text-lg font-bold text-[#0f172a] mb-2.5">

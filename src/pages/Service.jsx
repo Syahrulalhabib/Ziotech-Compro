@@ -61,17 +61,17 @@ export default function Service() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-100px" }}
                 transition={{ duration: 0.5 }}
-                className={`bg-white rounded-none p-6 sm:p-10 lg:p-12 border border-slate-100 flex flex-col ${isEven ? 'lg:flex-row-reverse' : 'lg:flex-row'} gap-8 lg:gap-14 items-center shadow-sm hover:shadow-md transition-shadow`}
+                className={`bg-white rounded-2xl p-6 sm:p-10 lg:p-12 border border-slate-100 flex flex-col ${isEven ? 'lg:flex-row-reverse' : 'lg:flex-row'} gap-8 lg:gap-14 items-center shadow-sm hover:shadow-lg transition-shadow`}
               >
                 {/* Image Side */}
                 <div className="w-full lg:w-1/2">
-                  <div className="relative rounded-none overflow-hidden aspect-[16/11] border border-slate-100 group bg-slate-200">
+                  <div className="relative rounded-xl overflow-hidden aspect-[16/11] border border-slate-100 group bg-slate-200">
                     <img 
                       src={service.image} 
                       alt={service.title} 
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
-                    <div className="absolute top-4 left-4 z-20 bg-white/95  p-3 rounded-none shadow-sm border border-slate-100">
+                    <div className="absolute top-4 left-4 z-20 bg-white/95  p-3 rounded-lg shadow-sm border border-slate-100">
                       {Icon ? <Icon className="w-6 h-6 text-[#0284c7]" /> : <Wrench className="w-6 h-6 text-[#0284c7]" />}
                     </div>
                   </div>
@@ -89,7 +89,7 @@ export default function Service() {
                     {service.description}
                   </p>
                   
-                  <div className="bg-[#f8fafc] p-5 sm:p-6 rounded-none border border-slate-100 mb-8">
+                  <div className="bg-[#f8fafc] p-5 sm:p-6 rounded-xl border border-slate-100 mb-8">
                     <h3 className="font-bold text-[#0f172a] mb-3 flex items-center gap-2 text-xs sm:text-sm tracking-wide uppercase">
                       Ruang Lingkup Pekerjaan
                     </h3>

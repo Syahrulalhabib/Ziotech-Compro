@@ -102,7 +102,7 @@ export default function Footer() {
               <div className="flex items-center gap-2.5">
                 {socials.map((item, idx) => (
                   <a key={item.id || idx} href={item.url || '#'} target="_blank" rel="noopener noreferrer" aria-label={item.platform}
-                    className="w-9 h-9 rounded-none bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-400 hover:text-white hover:bg-[#1e3a8a] hover:border-[#1e3a8a] transition-all duration-200">
+                    className="w-9 h-9 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-400 hover:text-white hover:bg-[#1e3a8a] hover:border-[#1e3a8a] transition-all duration-200">
                     {renderSocialIcon(item.platform)}
                   </a>
                 ))}
