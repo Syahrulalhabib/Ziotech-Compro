@@ -85,7 +85,12 @@ export default function Navbar() {
                 >
                   {link.name}
                   {isActive && (
-                    <span className="absolute -bottom-1.5 left-0 right-0 h-0.5 bg-white" />
+                    <motion.span
+                      className="absolute -bottom-1.5 left-0 right-0 h-0.5 bg-white origin-center"
+                      initial={{ scaleX: 0, opacity: 0 }}
+                      animate={{ scaleX: 1, opacity: 1 }}
+                      transition={{ duration: 0.25, ease: 'easeOut' }}
+                    />
                   )}
                 </button>
               );
