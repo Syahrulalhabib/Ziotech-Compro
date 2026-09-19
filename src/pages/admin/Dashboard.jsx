@@ -20,7 +20,7 @@ const defaultProjects = defaultData?.projects || [];
 // --- COMPONENTS MOVED OUTSIDE to prevent focus loss on every keystroke ---
 const InputField = ({ label, icon: Icon, type = "text", value, onChange, onBlur, placeholder, isTextarea, helperText, min, max, step }) => (
   <div className="space-y-1.5 w-full">
-    <label className="flex items-center gap-2 text-sm font-semibold text-slate-700">
+    <label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-slate-700">
       {Icon && <Icon className="w-4 h-4 text-slate-400" />}
       {label}
     </label>
@@ -31,7 +31,7 @@ const InputField = ({ label, icon: Icon, type = "text", value, onChange, onBlur,
         onBlur={onBlur}
         placeholder={placeholder}
         rows="3"
-        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-md focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all outline-none resize-y text-slate-700"
+        className="w-full px-3.5 py-2.5 bg-slate-50/70 border border-slate-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition-all outline-none resize-y text-sm text-slate-800"
       />
     ) : (
       <input
@@ -43,7 +43,7 @@ const InputField = ({ label, icon: Icon, type = "text", value, onChange, onBlur,
         max={max}
         step={step}
         placeholder={placeholder}
-        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-md focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all outline-none text-slate-700"
+        className="w-full px-3.5 py-2.5 bg-slate-50/70 border border-slate-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition-all outline-none text-sm text-slate-800"
       />
     )}
     {helperText && <p className="text-xs text-slate-500 mt-1">{helperText}</p>}
@@ -63,22 +63,22 @@ const ImageUploadBox = ({ value, onChange, label, onImageUpload, aspect }) => {
   return (
     <div className="space-y-1.5 w-full">
       {label && (
-        <label className="flex items-center gap-2 text-sm font-semibold text-slate-700">
+        <label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-slate-700">
           <ImageIcon className="w-4 h-4 text-slate-400" />
           {label}
         </label>
       )}
-      <div className="p-5 border border-slate-200 rounded-md bg-white shadow-sm hover:shadow-md transition-shadow group">
-        <div className="flex flex-col md:flex-row gap-6">
-          <div className="flex-1 space-y-4">
+      <div className="p-4 sm:p-5 border border-slate-200 rounded-xl bg-white shadow-sm hover:border-slate-300 transition-all group">
+        <div className="flex flex-col md:flex-row gap-5">
+          <div className="flex-1 space-y-3.5">
             <div>
-               <label className="block text-xs font-medium text-slate-500 mb-1.5">URL Gambar (Opsional)</label>
+              <label className="block text-xs font-medium text-slate-500 mb-1.5">URL Gambar (Opsional)</label>
               <input
                 type="text"
                 value={value || ''}
                 onChange={(e) => onChange(e.target.value)}
                 placeholder="https://..."
-                className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-md focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:bg-white transition-all outline-none text-sm text-slate-700"
+                className="w-full px-3.5 py-2 bg-slate-50/70 border border-slate-200 rounded-lg focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 focus:bg-white transition-all outline-none text-sm text-slate-800"
               />
             </div>
             
@@ -89,13 +89,13 @@ const ImageUploadBox = ({ value, onChange, label, onImageUpload, aspect }) => {
             </div>
             
             <div>
-              <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-slate-200 rounded-md bg-slate-50 hover:bg-blue-50/50 hover:border-blue-300 transition-colors cursor-pointer relative overflow-hidden group/upload">
+              <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-slate-200 rounded-xl bg-slate-50/60 hover:bg-sky-50/50 hover:border-sky-300 transition-colors cursor-pointer relative overflow-hidden group/upload">
                 <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                   <div className="p-3 bg-white rounded-full shadow-sm mb-3 group-hover/upload:scale-110 transition-transform">
-                      <ImageIcon className="w-5 h-5 text-blue-500" />
-                   </div>
-                  <p className="text-sm font-semibold text-slate-700 mb-1">Klik untuk upload</p>
-                  <p className="text-xs text-slate-500">Maks. 5MB</p>
+                  <div className="p-2.5 bg-white rounded-full shadow-sm mb-2 group-hover/upload:scale-110 transition-transform">
+                    <ImageIcon className="w-5 h-5 text-sky-600" />
+                  </div>
+                  <p className="text-sm font-semibold text-slate-700 mb-0.5">Klik untuk upload berkas</p>
+                  <p className="text-xs text-slate-400">PNG, JPG, WebP (Maks. 5MB)</p>
                 </div>
                 <input
                   type="file"
@@ -108,19 +108,19 @@ const ImageUploadBox = ({ value, onChange, label, onImageUpload, aspect }) => {
           </div>
 
           <div className="w-full md:w-48 shrink-0 flex flex-col justify-start">
-             <label className="block text-xs font-medium text-slate-500 mb-1.5">Preview</label>
-            <div className="w-full aspect-video rounded-md overflow-hidden border border-slate-200 bg-slate-50 relative flex items-center justify-center">
+            <label className="block text-xs font-medium text-slate-500 mb-1.5">Preview</label>
+            <div className="w-full aspect-video rounded-lg overflow-hidden border border-slate-200 bg-slate-50 relative flex items-center justify-center">
               {value && !previewError ? (
                 <img src={value} alt="Preview" className="w-full h-full object-contain" onError={() => setPreviewError(true)} />
               ) : value && previewError ? (
-                <div className="flex flex-col items-center justify-center gap-2 p-3 text-center">
+                <div className="flex flex-col items-center justify-center gap-1.5 p-3 text-center">
                   <AlertCircle className="w-5 h-5 text-red-400" />
                   <p className="text-[10px] text-red-500">Gagal dimuat</p>
                 </div>
               ) : (
                 <div className="flex flex-col items-center justify-center text-slate-300">
-                    <ImageIcon className="w-6 h-6 mb-1 opacity-50" />
-                    <span className="text-[10px] font-medium">Belum ada gambar</span>
+                  <ImageIcon className="w-6 h-6 mb-1 opacity-50" />
+                  <span className="text-[10px] font-medium">Belum ada gambar</span>
                 </div>
               )}
             </div>
@@ -134,12 +134,12 @@ const ImageUploadBox = ({ value, onChange, label, onImageUpload, aspect }) => {
 
 // Reusable editor untuk header (judul, subjudul, background) tiap halaman
 const PageHeaderEditor = ({ page, label, formData, onChange, onImageUpload }) => (
-  <div className="bg-white rounded-lg p-6 lg:p-8 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100">
+  <div className="bg-white rounded-xl p-6 lg:p-8 shadow-sm border border-slate-200/80">
     <div className="flex items-center gap-4 mb-8 pb-5 border-b border-slate-100">
-      <div className="p-3 bg-blue-50 text-blue-600 rounded-md"><ImageIcon className="w-6 h-6" /></div>
+      <div className="p-3 bg-sky-50 text-sky-600 rounded-xl"><ImageIcon className="w-6 h-6" /></div>
       <div>
-        <h3 className="text-xl font-bold text-slate-800">Header Halaman {label}</h3>
-        <p className="text-sm text-slate-500 mt-1">Atur label badge, judul, subjudul, dan gambar background bagian atas halaman {label}.</p>
+        <h3 className="text-lg sm:text-xl font-bold text-slate-800">Header Halaman {label}</h3>
+        <p className="text-xs sm:text-sm text-slate-500 mt-0.5">Atur label badge, judul, subjudul, dan gambar background bagian atas halaman {label}.</p>
       </div>
     </div>
     <div className="grid lg:grid-cols-2 gap-6 items-start">
@@ -152,21 +152,22 @@ const PageHeaderEditor = ({ page, label, formData, onChange, onImageUpload }) =>
     </div>
   </div>
 );
+
 const ConfirmModal = ({ isOpen, onClose, onConfirm, title, message, confirmText = "Hapus", isDestructive = true }) => {
   if (!isOpen) return null;
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60">
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm">
         <motion.div
-          initial={{ opacity: 0, scale: 0.92, y: 10 }}
+          initial={{ opacity: 0, scale: 0.94, y: 8 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.92, y: 10 }}
+          exit={{ opacity: 0, scale: 0.94, y: 8 }}
           transition={{ duration: 0.18, ease: "easeOut" }}
-          className="bg-white w-full max-w-md rounded-lg p-6 sm:p-7 shadow-2xl border border-slate-100 relative"
+          className="bg-white w-full max-w-md rounded-2xl p-6 sm:p-7 shadow-2xl border border-slate-200 relative"
         >
           <div className="flex items-start gap-4">
-            <div className={`p-3 rounded-md shrink-0 ${isDestructive ? 'bg-red-50 text-red-600' : 'bg-blue-50 text-blue-600'}`}>
+            <div className={`p-3 rounded-xl shrink-0 ${isDestructive ? 'bg-red-50 text-red-600' : 'bg-sky-50 text-sky-600'}`}>
               <AlertCircle className="w-6 h-6" />
             </div>
             <div className="flex-1 min-w-0">
@@ -179,7 +180,7 @@ const ConfirmModal = ({ isOpen, onClose, onConfirm, title, message, confirmText 
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2.5 rounded-md text-sm font-semibold text-slate-600 hover:bg-slate-100 active:scale-95 transition-all"
+              className="px-4 py-2.5 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-100 active:scale-95 transition-all cursor-pointer"
             >
               Batal
             </button>
@@ -189,10 +190,10 @@ const ConfirmModal = ({ isOpen, onClose, onConfirm, title, message, confirmText 
                 onConfirm();
                 onClose();
               }}
-              className={`px-5 py-2.5 rounded-md text-sm font-semibold text-white shadow-md active:scale-95 transition-all ${
+              className={`px-5 py-2.5 rounded-lg text-sm font-semibold text-white shadow-sm active:scale-95 transition-all cursor-pointer ${
                 isDestructive
                   ? 'bg-red-600 hover:bg-red-700 shadow-red-500/20'
-                  : 'bg-blue-600 hover:bg-blue-700 shadow-blue-500/20'
+                  : 'bg-sky-600 hover:bg-sky-500 shadow-sky-500/20'
               }`}
             >
               {confirmText}
@@ -751,72 +752,143 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="flex h-screen bg-slate-100 font-sans overflow-hidden">
+    <div className="flex h-screen bg-slate-100/70 font-sans overflow-hidden">
       
       {/* Toast Notification */}
       <AnimatePresence>
         {toast.show && (
           <motion.div
-            initial={{ opacity: 0, y: -50, scale: 0.9 }}
+            initial={{ opacity: 0, y: -40, scale: 0.94 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -50, scale: 0.9 }}
+            exit={{ opacity: 0, y: -40, scale: 0.94 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
             className="fixed top-6 left-1/2 -translate-x-1/2 z-[100] pointer-events-none"
           >
-            <div className={`flex items-center gap-3 px-6 py-3 rounded-lg shadow-xl border ${toast.type === 'success' ? 'bg-green-50 border-green-200 text-green-800' : 'bg-red-50 border-red-200 text-red-800'}`}>
-              {toast.type === 'success' ? <CheckCircle2 className="w-5 h-5 text-green-600" /> : <AlertCircle className="w-5 h-5 text-red-600" />}
-              <span className="font-semibold">{toast.text}</span>
+            <div className={`flex items-center gap-3 px-5 py-3 rounded-xl shadow-xl border backdrop-blur-md ${
+              toast.type === 'success' 
+                ? 'bg-slate-900/95 border-emerald-500/40 text-emerald-200' 
+                : toast.type === 'info'
+                ? 'bg-slate-900/95 border-slate-700 text-slate-200'
+                : 'bg-slate-900/95 border-red-500/40 text-red-200'
+            }`}>
+              {toast.type === 'success' ? (
+                <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
+              ) : toast.type === 'info' ? (
+                <Sparkles className="w-5 h-5 text-sky-400 shrink-0" />
+              ) : (
+                <AlertCircle className="w-5 h-5 text-red-400 shrink-0" />
+              )}
+              <span className="text-sm font-semibold">{toast.text}</span>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
 
       {/* Sidebar */}
-      <aside className={`hidden lg:flex inset-y-0 left-0 z-50 w-72 bg-slate-900 text-slate-300 flex-col transition-transform duration-300 ease-in-out`}>
-        <div className="h-20 flex items-center justify-between px-6 bg-slate-950 border-b border-slate-800 shrink-0">
+      <aside className={`hidden lg:flex inset-y-0 left-0 z-50 w-72 bg-slate-950 text-slate-300 flex-col border-r border-slate-800/80 transition-transform duration-300 ease-in-out`}>
+        <div className="h-20 flex items-center justify-between px-6 border-b border-slate-800/80 shrink-0">
           <div className="flex items-center gap-3">
-            <img src={logoZiotech} alt="Ziotech CMS" className="h-9 w-auto no-placeholder" />
-            <span className="text-white text-xl font-bold tracking-tight">Ziotech CMS</span>
+            <img src={logoZiotech} alt="Ziotech CMS" className="h-9 w-auto no-placeholder object-contain" />
+            <div>
+              <span className="text-white text-lg font-bold tracking-tight block leading-tight">Ziotech CMS</span>
+              <span className="text-[10px] text-slate-400 font-semibold tracking-wider uppercase">Portal Admin</span>
+            </div>
           </div>
           <button onClick={() => setIsMobileMenuOpen(false)} className="lg:hidden text-slate-400 hover:text-white">
             <X className="w-6 h-6" />
           </button>
         </div>
+
+        {/* Shortcut to public website */}
+        <div className="px-4 pt-4 shrink-0">
+          <a
+            href="/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-between px-3 py-2 text-xs font-medium text-slate-300 bg-slate-900 hover:bg-slate-800 hover:text-white rounded-lg border border-slate-800 transition-colors group"
+          >
+            <span className="flex items-center gap-2">
+              <Globe className="w-3.5 h-3.5 text-sky-400" />
+              <span>Lihat Website Publik</span>
+            </span>
+            <ExternalLink className="w-3.5 h-3.5 opacity-60 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
+          </a>
+        </div>
         
-        <div className="flex-1 overflow-y-auto py-8 px-4 space-y-2 dark-scroll">
-          <p className="px-4 text-xs font-bold text-slate-500 uppercase tracking-wider mb-4">Manajemen Halaman</p>
+        <div className="flex-1 overflow-y-auto py-4 px-4 space-y-1.5 dark-scroll">
+          <p className="px-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Manajemen Halaman</p>
           
-          <button onClick={() => { setActiveTab('home'); setIsMobileMenuOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3 rounded-md transition-all ${activeTab === 'home' ? 'bg-blue-600 text-white shadow-md shadow-blue-900/20' : 'hover:bg-slate-800 hover:text-white'}`}>
-            <Home className="w-5 h-5" /> <span className="font-medium">Beranda (Home)</span>
+          <button 
+            onClick={() => { setActiveTab('home'); setIsMobileMenuOpen(false); }} 
+            className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm transition-all cursor-pointer ${
+              activeTab === 'home' 
+                ? 'bg-sky-600 text-white font-semibold shadow-md shadow-sky-950/40' 
+                : 'text-slate-300 hover:bg-slate-900 hover:text-white font-medium'
+            }`}
+          >
+            <Home className="w-4 h-4" /> <span>Beranda (Home)</span>
           </button>
           
-          <button onClick={() => { setActiveTab('about'); setIsMobileMenuOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3 rounded-md transition-all ${activeTab === 'about' ? 'bg-blue-600 text-white shadow-md shadow-blue-900/20' : 'hover:bg-slate-800 hover:text-white'}`}>
-            <Info className="w-5 h-5" /> <span className="font-medium">Tentang Kami</span>
+          <button 
+            onClick={() => { setActiveTab('about'); setIsMobileMenuOpen(false); }} 
+            className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm transition-all cursor-pointer ${
+              activeTab === 'about' 
+                ? 'bg-sky-600 text-white font-semibold shadow-md shadow-sky-950/40' 
+                : 'text-slate-300 hover:bg-slate-900 hover:text-white font-medium'
+            }`}
+          >
+            <Info className="w-4 h-4" /> <span>Tentang Kami</span>
           </button>
 
-          <button onClick={() => { setActiveTab('services'); setIsMobileMenuOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3 rounded-md transition-all ${activeTab === 'services' ? 'bg-blue-600 text-white shadow-md shadow-blue-900/20' : 'hover:bg-slate-800 hover:text-white'}`}>
-            <Wrench className="w-5 h-5" /> <span className="font-medium">Layanan (Services)</span>
+          <button 
+            onClick={() => { setActiveTab('services'); setIsMobileMenuOpen(false); }} 
+            className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm transition-all cursor-pointer ${
+              activeTab === 'services' 
+                ? 'bg-sky-600 text-white font-semibold shadow-md shadow-sky-950/40' 
+                : 'text-slate-300 hover:bg-slate-900 hover:text-white font-medium'
+            }`}
+          >
+            <Wrench className="w-4 h-4" /> <span>Layanan (Services)</span>
           </button>
 
-          <button onClick={() => { setActiveTab('projects'); setIsMobileMenuOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3 rounded-md transition-all ${activeTab === 'projects' ? 'bg-blue-600 text-white shadow-md shadow-blue-900/20' : 'hover:bg-slate-800 hover:text-white'}`}>
-            <Briefcase className="w-5 h-5" /> <span className="font-medium">Proyek (Projects)</span>
+          <button 
+            onClick={() => { setActiveTab('projects'); setIsMobileMenuOpen(false); }} 
+            className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm transition-all cursor-pointer ${
+              activeTab === 'projects' 
+                ? 'bg-sky-600 text-white font-semibold shadow-md shadow-sky-950/40' 
+                : 'text-slate-300 hover:bg-slate-900 hover:text-white font-medium'
+            }`}
+          >
+            <Briefcase className="w-4 h-4" /> <span>Proyek (Projects)</span>
           </button>
 
-          <button onClick={() => { setActiveTab('contact'); setIsMobileMenuOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3 rounded-md transition-all ${activeTab === 'contact' ? 'bg-blue-600 text-white shadow-md shadow-blue-900/20' : 'hover:bg-slate-800 hover:text-white'}`}>
-            <Phone className="w-5 h-5" /> <span className="font-medium">Kontak & Perusahaan</span>
+          <button 
+            onClick={() => { setActiveTab('contact'); setIsMobileMenuOpen(false); }} 
+            className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm transition-all cursor-pointer ${
+              activeTab === 'contact' 
+                ? 'bg-sky-600 text-white font-semibold shadow-md shadow-sky-950/40' 
+                : 'text-slate-300 hover:bg-slate-900 hover:text-white font-medium'
+            }`}
+          >
+            <Phone className="w-4 h-4" /> <span>Kontak & Perusahaan</span>
           </button>
 
           <div className="pt-4 mt-4 border-t border-slate-800/80">
-            <p className="px-4 text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Interaksi</p>
+            <p className="px-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Interaksi</p>
             <button 
               onClick={() => { setActiveTab('inbox'); setIsMobileMenuOpen(false); }} 
-              className={`w-full flex items-center justify-between px-4 py-3 rounded-md transition-all ${activeTab === 'inbox' ? 'bg-blue-600 text-white shadow-md shadow-blue-900/20' : 'hover:bg-slate-800 hover:text-white'}`}
+              className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-lg text-sm transition-all cursor-pointer ${
+                activeTab === 'inbox' 
+                  ? 'bg-sky-600 text-white font-semibold shadow-md shadow-sky-950/40' 
+                  : 'text-slate-300 hover:bg-slate-900 hover:text-white font-medium'
+              }`}
             >
               <div className="flex items-center gap-3">
-                <Inbox className="w-5 h-5" />
-                <span className="font-medium">Pesan Masuk</span>
+                <Inbox className="w-4 h-4" />
+                <span>Pesan Masuk</span>
               </div>
               {unreadCount > 0 && (
-                <span className="px-2 py-0.5 text-xs font-bold bg-red-500 text-white rounded-full">
+                <span className="px-2 py-0.5 text-xs font-bold bg-sky-500 text-white rounded-full">
                   {unreadCount}
                 </span>
               )}
@@ -824,16 +896,21 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <div className="p-4 border-t border-slate-800 shrink-0">
-          <div className="bg-slate-800/50 rounded-md p-4 mb-4 flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-slate-700 flex items-center justify-center text-white font-bold shrink-0">AD</div>
-            <div className="overflow-hidden">
-              <p className="text-sm font-semibold text-white truncate">Administrator</p>
-              <p className="text-xs text-slate-400 truncate">{user?.email}</p>
+        <div className="p-4 border-t border-slate-800/80 shrink-0">
+          <div className="bg-slate-900 rounded-xl p-3 mb-3 flex items-center gap-3 border border-slate-800/60">
+            <div className="w-9 h-9 rounded-lg bg-sky-600/20 border border-sky-500/30 flex items-center justify-center text-sky-400 font-bold text-xs shrink-0">
+              AD
+            </div>
+            <div className="overflow-hidden min-w-0">
+              <p className="text-xs font-semibold text-white truncate">Administrator</p>
+              <p className="text-[11px] text-slate-400 truncate">{user?.email}</p>
             </div>
           </div>
-          <button onClick={handleLogout} className="flex items-center justify-center gap-2 w-full px-4 py-3 text-red-400 hover:text-white hover:bg-red-500/10 rounded-md transition-all border border-transparent hover:border-red-500/20 font-medium">
-            <LogOut className="w-5 h-5" /> Keluar
+          <button 
+            onClick={handleLogout} 
+            className="flex items-center justify-center gap-2 w-full px-3 py-2 text-xs font-semibold text-red-400 hover:text-white hover:bg-red-500/10 rounded-lg transition-all border border-transparent hover:border-red-500/20 cursor-pointer"
+          >
+            <LogOut className="w-4 h-4" /> Keluar dari Sistem
           </button>
         </div>
       </aside>
@@ -847,7 +924,7 @@ export default function Dashboard() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.22 }}
-              className="fixed inset-0 z-[9998] lg:hidden flex flex-col bg-black/80"
+              className="fixed inset-0 z-[9998] lg:hidden flex flex-col bg-black/75 backdrop-blur-xl"
               onClick={() => setIsMobileMenuOpen(false)}
             >
               {/* Header bar overlay */}
@@ -857,11 +934,11 @@ export default function Dashboard() {
                   <span className="text-white text-xl font-bold tracking-tight">Ziotech CMS</span>
                 </div>
                 <button
-                  className="text-white hover:text-gray-300 transition-colors p-1"
+                  className="text-white/80 hover:text-white p-1.5 rounded-lg hover:bg-white/10 transition-colors cursor-pointer"
                   onClick={() => setIsMobileMenuOpen(false)}
                   aria-label="Tutup menu"
                 >
-                  <X size={26} />
+                  <X size={24} />
                 </button>
               </div>
 
@@ -874,6 +951,21 @@ export default function Dashboard() {
                 className="flex flex-col w-full h-full pt-4 overflow-y-auto pb-6"
                 onClick={(e) => e.stopPropagation()}
               >
+                <div className="px-6 pb-4 mb-2 border-b border-white/10">
+                  <a
+                    href="/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-between px-4 py-2.5 rounded-lg bg-white/10 text-white text-sm font-medium hover:bg-white/15 transition-colors"
+                  >
+                    <span className="flex items-center gap-2">
+                      <Globe className="w-4 h-4 text-sky-400" />
+                      <span>Buka Website Publik</span>
+                    </span>
+                    <ExternalLink className="w-4 h-4 text-slate-400" />
+                  </a>
+                </div>
+
                 {[
                   { id: 'home', label: 'Beranda (Home)', icon: Home },
                   { id: 'about', label: 'Tentang Kami', icon: Info },
@@ -894,23 +986,23 @@ export default function Dashboard() {
                         setActiveTab(item.id);
                         setIsMobileMenuOpen(false);
                       }}
-                      className={`w-full flex items-center justify-between px-6 py-5 text-left text-lg transition-colors border-b border-white/5 ${
+                      className={`w-full flex items-center justify-between px-6 py-4 text-left text-base transition-colors border-b border-white/5 ${
                         isActive
-                          ? 'text-white font-bold'
-                          : 'text-gray-400 hover:text-white font-medium'
+                          ? 'text-white font-bold bg-white/10'
+                          : 'text-slate-400 hover:text-white font-medium'
                       }`}
                     >
                       <div className="flex items-center gap-3">
-                        <Icon size={22} className={isActive ? 'text-blue-500' : 'text-gray-500'} />
+                        <Icon size={20} className={isActive ? 'text-sky-400' : 'text-slate-500'} />
                         {item.label}
                       </div>
                       <div className="flex items-center gap-3">
                         {item.id === 'inbox' && unreadCount > 0 && (
-                          <span className="px-2 py-0.5 text-xs font-bold bg-red-500 text-white rounded-full">
+                          <span className="px-2 py-0.5 text-xs font-bold bg-sky-500 text-white rounded-full">
                             {unreadCount}
                           </span>
                         )}
-                        <ChevronRight size={20} className={isActive ? "text-white" : "text-gray-600"} />
+                        <ChevronRight size={18} className={isActive ? "text-sky-400" : "text-slate-600"} />
                       </div>
                     </motion.button>
                   );
@@ -923,18 +1015,18 @@ export default function Dashboard() {
                   transition={{ delay: 0.05 + 6 * 0.05 }}
                   className="mt-6 px-6"
                 >
-                  <div className="bg-white/5 rounded-md p-4 mb-4 flex items-center gap-3 border border-white/10">
-                    <div className="w-10 h-10 rounded-full bg-slate-700 flex items-center justify-center text-white font-bold shrink-0">AD</div>
+                  <div className="bg-slate-900 rounded-xl p-3.5 mb-3 flex items-center gap-3 border border-white/10">
+                    <div className="w-9 h-9 rounded-lg bg-sky-600/20 border border-sky-500/30 flex items-center justify-center text-sky-400 font-bold text-xs shrink-0">AD</div>
                     <div className="overflow-hidden">
-                      <p className="text-sm font-semibold text-white truncate">Administrator</p>
-                      <p className="text-xs text-slate-400 truncate">{user?.email}</p>
+                      <p className="text-xs font-semibold text-white truncate">Administrator</p>
+                      <p className="text-[11px] text-slate-400 truncate">{user?.email}</p>
                     </div>
                   </div>
                   <button
                     onClick={handleLogout}
-                    className="w-full flex items-center justify-center gap-2 px-4 py-4 text-red-400 hover:text-white hover:bg-red-500/20 rounded-md transition-all border border-red-500/20 font-medium"
+                    className="w-full flex items-center justify-center gap-2 px-4 py-3 text-red-400 hover:text-white hover:bg-red-500/20 rounded-xl transition-all border border-red-500/20 text-xs font-semibold"
                   >
-                    <LogOut className="w-5 h-5" /> Keluar
+                    <LogOut className="w-4 h-4" /> Keluar dari Sistem
                   </button>
                 </motion.div>
               </motion.div>
@@ -945,35 +1037,63 @@ export default function Dashboard() {
       )}
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col min-w-0 overflow-hidden bg-slate-100/50">
+      <main className="flex-1 flex flex-col min-w-0 overflow-hidden bg-slate-50/70">
         {/* Header */}
-        <header className="h-20 bg-white/80 border-b border-slate-200 flex items-center justify-between px-4 lg:px-8 z-30 shrink-0">
+        <header className="h-16 lg:h-20 bg-white/95 backdrop-blur-md border-b border-slate-200/80 flex items-center justify-between px-4 lg:px-8 z-30 shrink-0">
           <div className="flex items-center gap-4">
-            <button onClick={() => setIsMobileMenuOpen(true)} className="lg:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-md transition-colors">
-              <Menu className="w-6 h-6" />
+            <button 
+              onClick={() => setIsMobileMenuOpen(true)} 
+              className="lg:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
+              aria-label="Buka navigasi admin"
+            >
+              <Menu className="w-5 h-5" />
             </button>
-            <h2 className="text-base sm:text-xl lg:text-2xl font-bold text-slate-800 truncate max-w-[160px] sm:max-w-none">
-              {activeTab === 'home' && 'Edit Beranda'}
-              {activeTab === 'about' && 'Edit Tentang Kami'}
-              {activeTab === 'services' && 'Edit Layanan'}
-              {activeTab === 'projects' && 'Edit Proyek'}
-              {activeTab === 'contact' && 'Edit Kontak & Info Perusahaan'}
-              {activeTab === 'inbox' && 'Pesan Masuk (Inbox)'}
-            </h2>
+            <div>
+              <div className="hidden sm:flex items-center gap-1.5 text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-0.5">
+                <span>Admin CMS</span>
+                <ChevronRight className="w-3 h-3 text-slate-400" />
+                <span className="text-slate-700">
+                  {activeTab === 'home' && 'Beranda'}
+                  {activeTab === 'about' && 'Tentang Kami'}
+                  {activeTab === 'services' && 'Layanan'}
+                  {activeTab === 'projects' && 'Proyek'}
+                  {activeTab === 'contact' && 'Kontak & Perusahaan'}
+                  {activeTab === 'inbox' && 'Pesan Masuk'}
+                </span>
+              </div>
+              <h2 className="text-base sm:text-xl font-bold text-slate-900 truncate max-w-[200px] sm:max-w-none">
+                {activeTab === 'home' && 'Edit Beranda'}
+                {activeTab === 'about' && 'Edit Tentang Kami'}
+                {activeTab === 'services' && 'Edit Layanan (Services)'}
+                {activeTab === 'projects' && 'Edit Portofolio Proyek'}
+                {activeTab === 'contact' && 'Edit Kontak & Profil Perusahaan'}
+                {activeTab === 'inbox' && 'Pesan Masuk (Inbox)'}
+              </h2>
+            </div>
           </div>
           
-          {activeTab !== 'inbox' ? (
-            <button onClick={handleSave} disabled={saving} className="flex items-center gap-2 bg-blue-600 text-white px-5 lg:px-6 py-2.5 lg:py-3 rounded-md font-semibold hover:bg-blue-700 transition-all shadow-md shadow-blue-600/20 active:scale-95 disabled:opacity-70 disabled:active:scale-100 disabled:cursor-not-allowed">
-              {saving ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin shrink-0" /> : <Save className="w-5 h-5 shrink-0" />}
-              <span className="hidden sm:inline">{saving ? 'Menyimpan...' : 'Simpan Perubahan'}</span>
-              <span className="sm:hidden">{saving ? '...' : 'Simpan'}</span>
-            </button>
-          ) : (
-            <div className="flex items-center gap-2 text-xs font-semibold text-slate-500 bg-slate-100 px-3 py-1.5 rounded-md">
-              <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-              Realtime Sync
-            </div>
-          )}
+          <div className="flex items-center gap-3">
+            {activeTab !== 'inbox' ? (
+              <button 
+                onClick={handleSave} 
+                disabled={saving} 
+                className="flex items-center gap-2 bg-sky-600 hover:bg-sky-500 active:scale-[0.98] text-white px-4 sm:px-5 py-2 sm:py-2.5 rounded-lg text-xs sm:text-sm font-semibold transition-all shadow-sm shadow-sky-900/20 disabled:opacity-60 disabled:active:scale-100 disabled:cursor-not-allowed cursor-pointer"
+              >
+                {saving ? (
+                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin shrink-0" />
+                ) : (
+                  <Save className="w-4 h-4 shrink-0" />
+                )}
+                <span className="hidden sm:inline">{saving ? 'Menyimpan...' : 'Simpan Perubahan'}</span>
+                <span className="sm:hidden">{saving ? '...' : 'Simpan'}</span>
+              </button>
+            ) : (
+              <div className="flex items-center gap-2 text-xs font-semibold text-slate-600 bg-slate-100/90 border border-slate-200 px-3 py-1.5 rounded-full">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span>Realtime Sync</span>
+              </div>
+            )}
+          </div>
         </header>
 
         {/* Scrollable Content */}
@@ -985,9 +1105,9 @@ export default function Dashboard() {
               {/* HOME TAB */}
               {activeTab === 'home' && (
                 <motion.div key="home" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.2 }} className="space-y-8">
-                  <div className="bg-white rounded-lg p-6 lg:p-8 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100">
+                  <div className="bg-white rounded-xl p-6 lg:p-8 shadow-sm border border-slate-200/80">
                     <div className="flex items-center gap-4 mb-8 pb-5 border-b border-slate-100">
-                      <div className="p-3 bg-blue-50 text-blue-600 rounded-md"><LayoutDashboard className="w-6 h-6" /></div>
+                      <div className="p-3 bg-sky-50 text-sky-600 rounded-xl"><LayoutDashboard className="w-6 h-6" /></div>
                       <div>
                         <h3 className="text-xl font-bold text-slate-800">Hero Section</h3>
                         <p className="text-sm text-slate-500 mt-1">Bagian paling atas yang pertama kali dilihat pengunjung.</p>
@@ -1025,7 +1145,7 @@ export default function Dashboard() {
                               const currentImages = formData.home?.heroImages || [];
                               handleChange('home', 'heroImages', [...currentImages, '']);
                             }}
-                            className="shrink-0 text-sm flex items-center gap-1 text-[var(--primary-blue)] hover:text-blue-700 font-medium bg-blue-50 px-3 py-1.5 rounded-md transition-colors"
+                            className="shrink-0 inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-sky-700 hover:text-sky-800 bg-sky-50 hover:bg-sky-100/80 px-3 py-1.5 rounded-lg border border-sky-200/60 transition-colors cursor-pointer"
                           >
                             <Plus className="w-4 h-4" /> Tambah Gambar
                           </button>
@@ -1066,7 +1186,7 @@ export default function Dashboard() {
                     </div>
                   </div>
 
-                  <div className="bg-white rounded-lg p-6 lg:p-8 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100">
+                  <div className="bg-white rounded-xl p-6 lg:p-8 shadow-sm border border-slate-200/80">
                     <div className="flex items-center gap-4 mb-8 pb-5 border-b border-slate-100">
                       <div className="p-3 bg-sky-50 text-[#0284c7] rounded-md"><Sparkles className="w-6 h-6" /></div>
                       <div>
@@ -1125,7 +1245,7 @@ export default function Dashboard() {
                     </div>
                   </div>
 
-                  <div className="bg-white rounded-lg p-6 lg:p-8 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100">
+                  <div className="bg-white rounded-xl p-6 lg:p-8 shadow-sm border border-slate-200/80">
                     <div className="flex items-center gap-4 mb-8 pb-5 border-b border-slate-100">
                       <div className="p-3 bg-indigo-50 text-indigo-600 rounded-md"><Info className="w-6 h-6" /></div>
                       <div>
@@ -1161,10 +1281,10 @@ export default function Dashboard() {
                   </div>
 
                   {/* Statistik & Angka Kinerja (Quick Facts) */}
-                  <div className="bg-white rounded-lg p-6 lg:p-8 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100">
+                  <div className="bg-white rounded-xl p-6 lg:p-8 shadow-sm border border-slate-200/80">
                     <div className="flex items-center justify-between pb-5 border-b border-slate-100 mb-6">
                       <div className="flex items-center gap-4">
-                        <div className="p-3 bg-blue-50 text-blue-600 rounded-md"><TrendingUp className="w-6 h-6" /></div>
+                        <div className="p-3 bg-sky-50 text-sky-600 rounded-xl"><TrendingUp className="w-6 h-6" /></div>
                         <div>
                           <h3 className="text-xl font-bold text-slate-800">Statistik & Kinerja Perusahaan</h3>
                           <p className="text-sm text-slate-500 mt-1">Kelola angka-angka statistik di Beranda. Efek animasi angka bergulir tetap otomatis bekerja.</p>
@@ -1172,7 +1292,7 @@ export default function Dashboard() {
                       </div>
                       <button
                         onClick={addHomeStat}
-                        className="text-sm flex items-center gap-1 text-[var(--primary-blue)] hover:text-blue-700 font-medium bg-blue-50 px-3 py-1.5 rounded-md transition-colors"
+                        className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-sky-700 hover:text-sky-800 bg-sky-50 hover:bg-sky-100/80 px-3 py-1.5 rounded-lg border border-sky-200/60 transition-colors cursor-pointer"
                       >
                         <Plus className="w-4 h-4" /> Tambah Statistik
                       </button>
@@ -1205,7 +1325,7 @@ export default function Dashboard() {
                         {(formData.home?.stats || defaultData?.home?.stats || []).map((stat, idx) => (
                           <div key={stat.id || idx} className="p-5 border border-slate-200 rounded-md bg-slate-50/70 relative group space-y-4">
                             <div className="flex items-center justify-between border-b border-slate-200/80 pb-3">
-                              <span className="text-xs font-bold text-blue-700 bg-blue-100/70 px-2.5 py-1 rounded-md uppercase tracking-wider">
+                              <span className="text-xs font-bold text-sky-700 bg-sky-100/70 px-2.5 py-1 rounded-md uppercase tracking-wider">
                                 Kartu #{idx + 1}
                               </span>
                               <button
@@ -1255,7 +1375,7 @@ export default function Dashboard() {
 
 
                   {/* Bagian Pilar Utama (Focus Pillars) */}
-                  <div className="bg-white rounded-lg p-6 lg:p-8 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100">
+                  <div className="bg-white rounded-xl p-6 lg:p-8 shadow-sm border border-slate-200/80">
                     <div className="flex items-center gap-4 mb-6 pb-5 border-b border-slate-100">
                       <div className="p-3 bg-amber-50 text-amber-600 rounded-md"><Layers className="w-6 h-6" /></div>
                       <div>
@@ -1282,9 +1402,9 @@ export default function Dashboard() {
                   </div>
 
                   {/* Bagian Layanan Unggulan (Services Showcase) */}
-                  <div className="bg-white rounded-lg p-6 lg:p-8 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100">
+                  <div className="bg-white rounded-xl p-6 lg:p-8 shadow-sm border border-slate-200/80">
                     <div className="flex items-center gap-4 mb-6 pb-5 border-b border-slate-100">
-                      <div className="p-3 bg-blue-50 text-blue-600 rounded-md"><Wrench className="w-6 h-6" /></div>
+                      <div className="p-3 bg-sky-50 text-sky-600 rounded-xl"><Wrench className="w-6 h-6" /></div>
                       <div>
                         <h3 className="text-xl font-bold text-slate-800">Bagian Layanan Unggulan (Services)</h3>
                         <p className="text-sm text-slate-500 mt-1">Atur judul, badge, dan pengantar bagian Layanan Unggulan di Beranda.</p>
@@ -1317,7 +1437,7 @@ export default function Dashboard() {
                   </div>
 
                   {/* Bagian Portofolio & Rekam Jejak (Projects Showcase) */}
-                  <div className="bg-white rounded-lg p-6 lg:p-8 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100">
+                  <div className="bg-white rounded-xl p-6 lg:p-8 shadow-sm border border-slate-200/80">
                     <div className="flex items-center gap-4 mb-6 pb-5 border-b border-slate-100">
                       <div className="p-3 bg-violet-50 text-violet-600 rounded-md"><Briefcase className="w-6 h-6" /></div>
                       <div>
@@ -1352,10 +1472,10 @@ export default function Dashboard() {
                   </div>
 
                   {/* Mitra / Client Logos Section */}
-                  <div className="bg-white rounded-lg p-6 lg:p-8 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100">
+                  <div className="bg-white rounded-xl p-6 lg:p-8 shadow-sm border border-slate-200/80">
                     <div className="flex items-center justify-between pb-5 border-b border-slate-100 mb-6">
                       <div className="flex items-center gap-4">
-                        <div className="p-3 bg-blue-50 text-blue-600 rounded-md"><Building2 className="w-6 h-6" /></div>
+                        <div className="p-3 bg-sky-50 text-sky-600 rounded-xl"><Building2 className="w-6 h-6" /></div>
                         <div>
                           <h3 className="text-xl font-bold text-slate-800">Mitra & Klien Terpercaya</h3>
                           <p className="text-sm text-slate-500 mt-1">Kelola daftar perusahaan klien yang ditampilkan di Beranda.</p>
@@ -1363,7 +1483,7 @@ export default function Dashboard() {
                       </div>
                       <button
                         onClick={addHomePartner}
-                        className="text-sm flex items-center gap-1 text-[var(--primary-blue)] hover:text-blue-700 font-medium bg-blue-50 px-3 py-1.5 rounded-md transition-colors"
+                        className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-sky-700 hover:text-sky-800 bg-sky-50 hover:bg-sky-100/80 px-3 py-1.5 rounded-lg border border-sky-200/60 transition-colors cursor-pointer"
                       >
                         <Plus className="w-4 h-4" /> Tambah Mitra
                       </button>
@@ -1420,9 +1540,9 @@ export default function Dashboard() {
                   </div>
 
                   {/* Call to Action (CTA) Section Editor */}
-                  <div className="bg-white rounded-lg p-6 lg:p-8 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100">
+                  <div className="bg-white rounded-xl p-6 lg:p-8 shadow-sm border border-slate-200/80">
                     <div className="flex items-center gap-4 mb-6 pb-5 border-b border-slate-100">
-                      <div className="p-3 bg-blue-50 text-[#0284c7] rounded-md"><Sparkles className="w-6 h-6" /></div>
+                      <div className="p-3 bg-sky-50 text-sky-600 rounded-xl"><Sparkles className="w-6 h-6" /></div>
                       <div>
                         <h3 className="text-xl font-bold text-slate-800">Bagian Call To Action (Kolaborasi)</h3>
                         <p className="text-sm text-slate-500 mt-1">Atur teks ajakan, tombol, dan gambar background di bagian paling bawah Beranda.</p>
@@ -1475,7 +1595,7 @@ export default function Dashboard() {
               {activeTab === 'about' && (
                 <motion.div key="about" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.2 }} className="space-y-8">
                   <PageHeaderEditor page="about" label="Tentang Kami" formData={formData} onChange={handlePageHeaderChange} onImageUpload={handleImageUpload} />
-                  <div className="bg-white rounded-lg p-6 lg:p-8 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100">
+                  <div className="bg-white rounded-xl p-6 lg:p-8 shadow-sm border border-slate-200/80">
                     <div className="flex items-center gap-4 mb-8 pb-5 border-b border-slate-100">
                       <div className="p-3 bg-emerald-50 text-emerald-600 rounded-md"><Info className="w-6 h-6" /></div>
                       <div>
@@ -1520,7 +1640,7 @@ export default function Dashboard() {
                   </div>
 
                   {/* Core Values Section Editor */}
-                  <div className="bg-white rounded-lg p-6 lg:p-8 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100">
+                  <div className="bg-white rounded-xl p-6 lg:p-8 shadow-sm border border-slate-200/80">
                     <div className="flex items-center gap-4 mb-8 pb-5 border-b border-slate-100">
                       <div className="p-3 bg-indigo-50 text-indigo-600 rounded-md"><Sparkles className="w-6 h-6" /></div>
                       <div>
@@ -1544,7 +1664,7 @@ export default function Dashboard() {
                           <button
                             type="button"
                             onClick={addAboutValue}
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-md transition-colors shrink-0"
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-sky-700 bg-sky-50 hover:bg-sky-100 rounded-lg border border-sky-200/60 transition-colors shrink-0"
                           >
                             <Plus className="w-3.5 h-3.5" /> Tambah Nilai
                           </button>
@@ -1595,7 +1715,7 @@ export default function Dashboard() {
               {activeTab === 'services' && (
                 <motion.div key="services" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.2 }} className="space-y-8">
                   <PageHeaderEditor page="service" label="Layanan" formData={formData} onChange={handlePageHeaderChange} onImageUpload={handleImageUpload} />
-                  <div className="flex justify-between items-center bg-white p-6 rounded-md shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100">
+                  <div className="flex justify-between items-center bg-white p-6 rounded-xl shadow-sm border border-slate-200/80">
                     <div>
                       <h3 className="text-xl font-bold text-slate-800">Daftar Layanan</h3>
                       <p className="text-sm text-slate-500 mt-1">
@@ -1610,7 +1730,7 @@ export default function Dashboard() {
                     </div>
                     <button 
                       onClick={() => addArrayItem('services', { id: Date.now().toString(), title: 'Layanan Baru', description: '', icon: 'Wrench', features: [], image: '', featured: false })}
-                      className="flex items-center gap-2 bg-blue-100 text-blue-700 px-4 py-2 rounded-md font-semibold hover:bg-blue-200 transition-colors"
+                      className="inline-flex items-center gap-2 bg-sky-50 text-sky-700 hover:bg-sky-100 hover:text-sky-800 border border-sky-200/80 px-4 py-2 rounded-lg text-sm font-semibold transition-colors cursor-pointer"
                     >
                       <Plus className="w-5 h-5" /> Tambah Layanan
                     </button>
@@ -1623,11 +1743,11 @@ export default function Dashboard() {
                       <div 
                         key={service.id || index} 
                         id={isLast ? 'services-new-item' : undefined}
-                        className="bg-white rounded-lg p-6 lg:p-8 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100 relative group"
+                        className="bg-white rounded-xl p-6 lg:p-8 shadow-sm border border-slate-200/80 relative group"
                       >
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 pb-4 border-b border-slate-100 gap-4">
                           <div className="flex items-center gap-4 min-w-0 flex-1">
-                            <div className="p-3 bg-blue-50 text-blue-600 rounded-md shrink-0"><ServiceItemIcon className="w-6 h-6" /></div>
+                            <div className="p-3 bg-sky-50 text-sky-600 rounded-xl shrink-0"><ServiceItemIcon className="w-6 h-6" /></div>
                             <h3 className="text-lg font-bold text-slate-800 truncate pr-2" title={`Layanan #${index + 1}: ${service.title}`}>
                               Layanan #{index + 1}: {service.title}
                             </h3>
@@ -1674,8 +1794,8 @@ export default function Dashboard() {
                                       onClick={() => handleArrayChange('services', index, 'icon', item.id)}
                                       className={`flex flex-col items-center justify-center p-2.5 rounded-md border text-center transition-all ${
                                         isSelected
-                                          ? 'bg-blue-600 text-white border-blue-600 shadow-sm'
-                                          : 'bg-white text-slate-600 border-slate-200 hover:bg-blue-50 hover:text-blue-600'
+                                          ? 'bg-sky-600 text-white border-sky-600 shadow-sm'
+                                          : 'bg-white text-slate-600 border-slate-200 hover:bg-sky-50 hover:text-sky-600'
                                       }`}
                                       title={item.name}
                                     >
@@ -1709,7 +1829,7 @@ export default function Dashboard() {
               {activeTab === 'projects' && (
                 <motion.div key="projects" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.2 }} className="space-y-8">
                   <PageHeaderEditor page="project" label="Proyek" formData={formData} onChange={handlePageHeaderChange} onImageUpload={handleImageUpload} />
-                  <div className="flex justify-between items-center bg-white p-6 rounded-md shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100">
+                  <div className="flex justify-between items-center bg-white p-6 rounded-xl shadow-sm border border-slate-200/80">
                     <div>
                       <h3 className="text-xl font-bold text-slate-800">Daftar Proyek</h3>
                       <p className="text-sm text-slate-500 mt-1">
@@ -1724,7 +1844,7 @@ export default function Dashboard() {
                     </div>
                     <button 
                       onClick={() => addArrayItem('projects', { id: Date.now(), title: 'Proyek Baru', category: 'MEP', location: '', year: new Date().getFullYear().toString(), client: '', description: '', image: '', featured: false })}
-                      className="flex items-center gap-2 bg-blue-100 text-blue-700 px-4 py-2 rounded-md font-semibold hover:bg-blue-200 transition-colors"
+                      className="inline-flex items-center gap-2 bg-sky-50 text-sky-700 hover:bg-sky-100 hover:text-sky-800 border border-sky-200/80 px-4 py-2 rounded-lg text-sm font-semibold transition-colors cursor-pointer"
                     >
                       <Plus className="w-5 h-5" /> Tambah Proyek
                     </button>
@@ -1736,7 +1856,7 @@ export default function Dashboard() {
                       <div 
                         key={project.id || index} 
                         id={isLast ? 'projects-new-item' : undefined}
-                        className="bg-white rounded-lg p-6 lg:p-8 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100 relative group"
+                        className="bg-white rounded-xl p-6 lg:p-8 shadow-sm border border-slate-200/80 relative group"
                       >
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 pb-4 border-b border-slate-100 gap-4">
                           <div className="flex items-center gap-4 min-w-0 flex-1">
@@ -1803,9 +1923,9 @@ export default function Dashboard() {
                   <PageHeaderEditor page="contact" label="Kontak" formData={formData} onChange={handlePageHeaderChange} onImageUpload={handleImageUpload} />
                   
                   {/* Teks Pengantar Halaman Kontak */}
-                  <div className="bg-white rounded-lg p-6 lg:p-8 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100">
+                  <div className="bg-white rounded-xl p-6 lg:p-8 shadow-sm border border-slate-200/80">
                     <div className="flex items-center gap-4 mb-8 pb-5 border-b border-slate-100">
-                      <div className="p-3 bg-blue-50 text-[#0284c7] rounded-md"><Sparkles className="w-6 h-6" /></div>
+                      <div className="p-3 bg-sky-50 text-sky-600 rounded-xl"><Sparkles className="w-6 h-6" /></div>
                       <div>
                         <h3 className="text-xl font-bold text-slate-800">Teks Pengantar Halaman Kontak</h3>
                         <p className="text-sm text-slate-500 mt-1">Atur label badge, judul, dan subjudul bagian informasi kontak dan formulir.</p>
@@ -1837,7 +1957,7 @@ export default function Dashboard() {
                     </div>
                   </div>
 
-                  <div className="bg-white rounded-lg p-6 lg:p-8 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100">
+                  <div className="bg-white rounded-xl p-6 lg:p-8 shadow-sm border border-slate-200/80">
                     <div className="flex items-center gap-4 mb-8 pb-5 border-b border-slate-100">
                       <div className="p-3 bg-orange-50 text-orange-600 rounded-md"><Phone className="w-6 h-6" /></div>
                       <div>
@@ -1872,7 +1992,7 @@ export default function Dashboard() {
                   </div>
 
                   {/* Social Media Section */}
-                  <div className="bg-white rounded-lg p-6 lg:p-8 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100">
+                  <div className="bg-white rounded-xl p-6 lg:p-8 shadow-sm border border-slate-200/80">
                     <div className="flex items-center justify-between pb-5 border-b border-slate-100 mb-6">
                       <div className="flex items-center gap-4">
                         <div className="p-3 bg-pink-50 text-pink-600 rounded-md"><Share2 className="w-6 h-6" /></div>
@@ -1883,7 +2003,7 @@ export default function Dashboard() {
                       </div>
                       <button
                         onClick={addCompanySocial}
-                        className="text-sm flex items-center gap-1 text-[var(--primary-blue)] hover:text-blue-700 font-medium bg-blue-50 px-3 py-1.5 rounded-md transition-colors"
+                        className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-sky-700 hover:text-sky-800 bg-sky-50 hover:bg-sky-100/80 px-3 py-1.5 rounded-lg border border-sky-200/60 transition-colors cursor-pointer"
                       >
                         <Plus className="w-4 h-4" /> Tambah Sosmed
                       </button>
@@ -1939,10 +2059,10 @@ export default function Dashboard() {
                   </div>
 
                   {/* Footer Services Links Section */}
-                  <div className="bg-white rounded-lg p-6 lg:p-8 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100">
+                  <div className="bg-white rounded-xl p-6 lg:p-8 shadow-sm border border-slate-200/80">
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-5 border-b border-slate-100 mb-6 gap-4">
                       <div className="flex items-center gap-4">
-                        <div className="p-3 bg-blue-50 text-blue-600 rounded-md"><Globe className="w-6 h-6" /></div>
+                        <div className="p-3 bg-sky-50 text-sky-600 rounded-xl"><Globe className="w-6 h-6" /></div>
                         <div>
                           <h3 className="text-xl font-bold text-slate-800">Tautan Layanan di Footer</h3>
                           <p className="text-sm text-slate-500 mt-1">Atur nama layanan dan hyperlink yang muncul di kolom 'Layanan' pada footer website.</p>
@@ -1951,7 +2071,7 @@ export default function Dashboard() {
                       <button
                         type="button"
                         onClick={addFooterService}
-                        className="text-sm flex items-center justify-center gap-1.5 text-white font-semibold bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-md transition-colors shrink-0"
+                        className="text-sm flex items-center justify-center gap-1.5 text-white font-semibold bg-sky-600 hover:bg-sky-500 px-4 py-2 rounded-lg shadow-sm transition-colors shrink-0"
                       >
                         <Plus className="w-4 h-4" /> Tambah Tautan Footer
                       </button>
@@ -2009,10 +2129,10 @@ export default function Dashboard() {
               {/* INBOX TAB */}
               {activeTab === 'inbox' && (
                 <motion.div key="inbox" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.2 }} className="space-y-6">
-                  <div className="bg-white rounded-lg p-6 lg:p-8 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100">
+                  <div className="bg-white rounded-xl p-6 lg:p-8 shadow-sm border border-slate-200/80">
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-5 border-b border-slate-100">
                       <div className="flex items-center gap-4">
-                        <div className="p-3 bg-blue-50 text-blue-600 rounded-md"><Inbox className="w-6 h-6" /></div>
+                        <div className="p-3 bg-sky-50 text-sky-600 rounded-xl"><Inbox className="w-6 h-6" /></div>
                         <div>
                           <h3 className="text-xl font-bold text-slate-800">Daftar Pesan Masuk</h3>
                           <p className="text-sm text-slate-500 mt-1">Pesan formulir kontak dari pengunjung website.</p>
@@ -2037,10 +2157,10 @@ export default function Dashboard() {
                         {messages.map((msg) => {
                           const isUnread = msg.status !== 'read';
                           return (
-                            <div key={msg.id} className={`p-5 rounded-md border transition-all ${isUnread ? 'bg-blue-50/40 border-blue-200 shadow-sm' : 'bg-white border-slate-200'}`}>
+                            <div key={msg.id} className={`p-5 rounded-md border transition-all ${isUnread ? 'bg-sky-50/40 border-sky-200/80 shadow-sm' : 'bg-white border-slate-200'}`}>
                               <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-3">
                                 <div className="flex items-center gap-2">
-                                  {isUnread && <span className="w-2.5 h-2.5 rounded-full bg-blue-600 shrink-0" />}
+                                  {isUnread && <span className="w-2.5 h-2.5 rounded-full bg-sky-500 shrink-0" />}
                                   <span className="font-bold text-slate-800">{msg.name || 'Tanpa Nama'}</span>
                                   <span className="text-xs px-2 py-0.5 rounded bg-slate-100 text-slate-600">{msg.subject || 'Pesan Baru'}</span>
                                 </div>
@@ -2069,7 +2189,7 @@ export default function Dashboard() {
                                       href={`https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(msg.email)}&su=${encodeURIComponent(`Re: ${msg.subject || 'Pesan Website'}`)}`}
                                       target="_blank"
                                       rel="noopener noreferrer"
-                                      className="inline-flex items-center gap-1 px-3 py-1.5 rounded-md bg-blue-50 text-blue-700 hover:bg-blue-100 font-medium"
+                                      className="inline-flex items-center gap-1 px-3 py-1.5 rounded-md bg-sky-50 text-sky-700 hover:bg-sky-100 border border-sky-200/60 font-medium"
                                       title="Buka langsung di Gmail Browser"
                                     >
                                       <ExternalLink className="w-3.5 h-3.5" /> Buka Gmail
