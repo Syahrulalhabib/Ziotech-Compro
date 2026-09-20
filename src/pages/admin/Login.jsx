@@ -17,7 +17,7 @@ export default function Login() {
   useEffect(() => {
     if (location.state?.sessionExpired) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
-      setError('Sesi berakhir otomatis karena tidak ada aktivitas. Silakan masuk kembali.');
+      setError('Sesi berakhir. Silakan masuk kembali.');
       window.history.replaceState({}, document.title);
     }
   }, [location.state]);
@@ -34,8 +34,7 @@ export default function Login() {
             console.error('Sign out error:', err);
           }
           localStorage.removeItem('admin_last_activity');
-          // eslint-disable-next-line react-hooks/set-state-in-effect
-          setError('Sesi berakhir otomatis karena tidak ada aktivitas. Silakan masuk kembali.');
+          setError('Sesi berakhir. Silakan masuk kembali.');
           return;
         }
         navigate('/admin/dashboard', { replace: true });
