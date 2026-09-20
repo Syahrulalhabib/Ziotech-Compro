@@ -135,7 +135,7 @@ export default function Contact() {
   const contactInfo = [
     { icon: MapPin, title: 'Kantor Operasional', detail: company.address, color: 'text-blue-500', bg: 'bg-blue-50' },
     { icon: Phone, title: 'Kontak Telepon', detail: company.phone, color: 'text-green-500', bg: 'bg-green-50' },
-    { icon: Mail, title: 'Surat Elektronik (Email)', detail: company.email, color: 'text-red-500', bg: 'bg-red-50' },
+    { icon: Mail, title: 'Email', detail: company.email, color: 'text-red-500', bg: 'bg-red-50' },
     { icon: Clock, title: 'Waktu Operasional Kantor', detail: company.workingHours, color: 'text-orange-500', bg: 'bg-orange-50' }
   ];
 
