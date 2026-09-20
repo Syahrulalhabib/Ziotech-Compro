@@ -88,9 +88,13 @@ export default function Footer() {
     isExternal: (item.url || '').startsWith('http://') || (item.url || '').startsWith('https://')
   }));
   return (
-    <footer className="bg-[#0f172a] text-slate-400 border-t border-slate-800/80">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-10 py-14 sm:py-16 border-b border-slate-800/60">
+    <footer className="relative bg-[#020817] text-slate-400 overflow-hidden">
+      {/* Top accent border — mirrors Navbar active underline colour */}
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-sky-500/50 to-transparent" />
+      {/* Subtle radial glow, same vibe as Navbar backdrop */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[220px] bg-sky-500/[0.04] blur-3xl pointer-events-none" />
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-10 py-14 sm:py-16 border-b border-white/[0.06]">
           <div className="sm:col-span-2 lg:col-span-4 flex flex-col gap-5">
             <Link to="/" className="inline-block">
               <img src={logo} alt={company.name} className="h-9 sm:h-10 w-auto" />
@@ -102,7 +106,7 @@ export default function Footer() {
               <div className="flex items-center gap-2.5">
                 {socials.map((item, idx) => (
                   <a key={item.id || idx} href={item.url || '#'} target="_blank" rel="noopener noreferrer" aria-label={item.platform}
-                    className="w-9 h-9 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-400 hover:text-white hover:bg-[#1e3a8a] hover:border-[#1e3a8a] transition-all duration-200">
+                    className="w-9 h-9 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 hover:text-sky-400 hover:bg-sky-500/10 hover:border-sky-500/40 transition-all duration-200">
                     {renderSocialIcon(item.platform)}
                   </a>
                 ))}
@@ -117,7 +121,7 @@ export default function Footer() {
             <ul className="space-y-3">
               {navLinks.map((link) => (
                 <li key={link.path}>
-                  <Link to={link.path} className="text-sm text-slate-400 hover:text-white transition-colors">
+                  <Link to={link.path} className="text-sm text-slate-400 hover:text-sky-400 transition-colors">
                     {link.name}
                   </Link>
                 </li>
@@ -137,14 +141,14 @@ export default function Footer() {
                       href={link.path} 
                       target="_blank" 
                       rel="noopener noreferrer" 
-                      className="text-sm text-slate-400 hover:text-white transition-colors"
+                      className="text-sm text-slate-400 hover:text-sky-400 transition-colors"
                     >
                       {link.name}
                     </a>
                   ) : (
                     <Link 
                       to={link.path} 
-                      className="text-sm text-slate-400 hover:text-white transition-colors"
+                      className="text-sm text-slate-400 hover:text-sky-400 transition-colors"
                     >
                       {link.name}
                     </Link>
@@ -160,13 +164,13 @@ export default function Footer() {
             </h3>
             <ul className="space-y-3.5">
               <li>
-                <a href={`tel:${company.phone}`} className="flex items-start gap-2.5 text-sm text-slate-400 hover:text-white transition-colors group">
+                <a href={`tel:${company.phone}`} className="flex items-start gap-2.5 text-sm text-slate-400 hover:text-sky-400 transition-colors group">
                   <Phone size={15} className="text-slate-500 group-hover:text-[#38bdf8] shrink-0 mt-0.5 transition-colors" />
                   <span>{company.phone}</span>
                 </a>
               </li>
               <li>
-                <a href={`mailto:${company.email}`} className="flex items-start gap-2.5 text-sm text-slate-400 hover:text-white transition-colors group">
+                <a href={`mailto:${company.email}`} className="flex items-start gap-2.5 text-sm text-slate-400 hover:text-sky-400 transition-colors group">
                   <Mail size={15} className="text-slate-500 group-hover:text-[#38bdf8] shrink-0 mt-0.5 transition-colors" />
                   <span className="break-all">{company.email}</span>
                 </a>
@@ -180,8 +184,9 @@ export default function Footer() {
 
         </div>
 
-        <div className="py-5 flex flex-col sm:flex-row justify-between items-center gap-3 text-xs text-slate-600">
+        <div className="py-5 flex flex-col sm:flex-row justify-between items-center gap-3 text-xs text-slate-500 border-t border-white/[0.04]">
           <p>&copy; {new Date().getFullYear()} {company.name}. Hak Cipta Dilindungi.</p>
+          <p className="text-slate-600">Powered by Ziotech</p>
         </div>
 
       </div>
