@@ -69,62 +69,74 @@ const ImageUploadBox = ({ value, onChange, label, onImageUpload, aspect }) => {
         </label>
       )}
       <div className="p-4 sm:p-5 border border-slate-200 rounded-xl bg-white shadow-sm hover:border-slate-300 transition-all group">
-        <div className="flex flex-col md:flex-row gap-5">
-          <div className="flex-1 space-y-3.5">
-            <div>
-              <label className="block text-xs font-medium text-slate-500 mb-1.5">URL Gambar (Opsional)</label>
-              <input
-                type="text"
-                value={value || ''}
-                onChange={(e) => onChange(e.target.value)}
-                placeholder="https://..."
-                className="w-full px-3.5 py-2 bg-slate-50/70 border border-slate-200 rounded-lg focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 focus:bg-white transition-all outline-none text-sm text-slate-800"
-              />
-            </div>
-            
-            <div className="flex items-center gap-4">
-              <div className="h-px bg-slate-100 flex-1"></div>
-              <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Atau Upload</span>
-              <div className="h-px bg-slate-100 flex-1"></div>
-            </div>
-            
-            <div>
-              <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-slate-200 rounded-xl bg-slate-50/60 hover:bg-sky-50/50 hover:border-sky-300 transition-colors cursor-pointer relative overflow-hidden group/upload">
-                <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                  <div className="p-2.5 bg-white rounded-full shadow-sm mb-2 group-hover/upload:scale-110 transition-transform">
-                    <ImageIcon className="w-5 h-5 text-sky-600" />
-                  </div>
-                  <p className="text-sm font-semibold text-slate-700 mb-0.5">Klik untuk upload berkas</p>
-                  <p className="text-xs text-slate-400">PNG, JPG, WebP (Maks. 5MB)</p>
+        <div className="space-y-3.5">
+          <div>
+            <label className="block text-xs font-medium text-slate-500 mb-1.5">URL Gambar (Opsional)</label>
+            <input
+              type="text"
+              value={value || ''}
+              onChange={(e) => onChange(e.target.value)}
+              placeholder="https://..."
+              className="w-full px-3.5 py-2 bg-slate-50/70 border border-slate-200 rounded-lg focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 focus:bg-white transition-all outline-none text-sm text-slate-800"
+            />
+          </div>
+          
+          <div className="flex items-center gap-4">
+            <div className="h-px bg-slate-100 flex-1"></div>
+            <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Atau Upload</span>
+            <div className="h-px bg-slate-100 flex-1"></div>
+          </div>
+          
+          <div>
+            <label className="flex flex-col items-center justify-center w-full min-h-[110px] py-4 px-4 border-2 border-dashed border-slate-200 hover:border-sky-400 rounded-xl bg-slate-50/60 hover:bg-sky-50/40 transition-colors cursor-pointer relative overflow-hidden group/upload text-center">
+              <div className="flex flex-col items-center justify-center text-center">
+                <div className="p-2.5 bg-white rounded-full shadow-sm mb-2 group-hover/upload:scale-110 transition-transform">
+                  <ImageIcon className="w-5 h-5 text-sky-600" />
                 </div>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => onImageUpload(e, onChange, aspect)}
-                  className="hidden"
-                />
-              </label>
-            </div>
+                <p className="text-sm font-semibold text-slate-700 mb-0.5 text-center">Klik untuk upload berkas</p>
+                <p className="text-xs text-slate-400 text-center">PNG, JPG, WebP (Maks. 5MB)</p>
+              </div>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => onImageUpload(e, onChange, aspect)}
+                className="hidden"
+              />
+            </label>
           </div>
 
-          <div className="w-full md:w-48 shrink-0 flex flex-col justify-start">
-            <label className="block text-xs font-medium text-slate-500 mb-1.5">Preview</label>
-            <div className="w-full aspect-video rounded-lg overflow-hidden border border-slate-200 bg-slate-50 relative flex items-center justify-center">
-              {value && !previewError ? (
-                <img src={value} alt="Preview" className="w-full h-full object-contain" onError={() => setPreviewError(true)} />
-              ) : value && previewError ? (
-                <div className="flex flex-col items-center justify-center gap-1.5 p-3 text-center">
-                  <AlertCircle className="w-5 h-5 text-red-400" />
-                  <p className="text-[10px] text-red-500">Gagal dimuat</p>
-                </div>
-              ) : (
-                <div className="flex flex-col items-center justify-center text-slate-300">
-                  <ImageIcon className="w-6 h-6 mb-1 opacity-50" />
-                  <span className="text-[10px] font-medium">Belum ada gambar</span>
-                </div>
-              )}
+          {value && (
+            <div className="pt-2 border-t border-slate-100">
+              <div className="flex items-center justify-between mb-1.5">
+                <span className="text-xs font-medium text-slate-500 flex items-center gap-1.5">
+                  <ImageIcon className="w-3.5 h-3.5 text-slate-400" /> Preview Gambar
+                </span>
+                <button
+                  type="button"
+                  onClick={() => onChange('')}
+                  className="text-xs text-red-500 hover:text-red-700 font-medium hover:underline flex items-center gap-1"
+                >
+                  <Trash2 className="w-3 h-3" /> Hapus Gambar
+                </button>
+              </div>
+              <div className="w-full h-40 sm:h-48 rounded-lg overflow-hidden border border-slate-200 bg-slate-50 relative flex items-center justify-center">
+                {!previewError ? (
+                  <img
+                    src={value}
+                    alt="Preview"
+                    className="w-full h-full object-contain bg-slate-900/5"
+                    onError={() => setPreviewError(true)}
+                  />
+                ) : (
+                  <div className="flex flex-col items-center justify-center gap-1.5 p-3 text-center">
+                    <AlertCircle className="w-5 h-5 text-red-400" />
+                    <p className="text-xs text-red-500 font-medium">Gagal memuat gambar</p>
+                    <p className="text-[11px] text-slate-400">Pastikan URL gambar valid atau upload ulang berkas.</p>
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </div>
@@ -2212,7 +2224,7 @@ export default function Dashboard() {
               {/* INBOX TAB */}
               {activeTab === 'inbox' && (
                 <motion.div key="inbox" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.2 }} className="space-y-6">
-                  <div className="bg-white rounded-xl p-6 lg:p-8 shadow-sm border border-slate-200/80">
+                  <div className="bg-white rounded-xl p-4 sm:p-6 lg:p-8 shadow-sm border border-slate-200/80">
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-5 border-b border-slate-100">
                       <div className="flex items-center gap-4">
                         <div className="p-3 bg-sky-50 text-sky-600 rounded-xl"><Inbox className="w-6 h-6" /></div>
@@ -2240,30 +2252,30 @@ export default function Dashboard() {
                         {messages.map((msg) => {
                           const isUnread = msg.status !== 'read';
                           return (
-                            <div key={msg.id} className={`p-5 rounded-md border transition-all ${isUnread ? 'bg-sky-50/40 border-sky-200/80 shadow-sm' : 'bg-white border-slate-200'}`}>
-                              <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-3">
-                                <div className="flex items-center gap-2">
+                            <div key={msg.id} className={`p-4 sm:p-5 rounded-xl border transition-all ${isUnread ? 'bg-sky-50/40 border-sky-200/80 shadow-sm' : 'bg-white border-slate-200'}`}>
+                              <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+                                <div className="flex items-center gap-2 flex-wrap">
                                   {isUnread && <span className="w-2.5 h-2.5 rounded-full bg-sky-500 shrink-0" />}
-                                  <span className="font-bold text-slate-800">{msg.name || 'Tanpa Nama'}</span>
-                                  <span className="text-xs px-2 py-0.5 rounded bg-slate-100 text-slate-600">{msg.subject || 'Pesan Baru'}</span>
+                                  <span className="font-bold text-slate-800 text-sm sm:text-base">{msg.name || 'Tanpa Nama'}</span>
+                                  <span className="text-xs px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 font-medium">{msg.subject || 'Pesan Baru'}</span>
                                 </div>
-                                <span className="text-xs text-slate-400 flex items-center gap-1">
+                                <span className="text-xs text-slate-400 flex items-center gap-1 shrink-0">
                                   <Clock className="w-3.5 h-3.5" />
                                   {msg.createdAt ? new Date(msg.createdAt).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' }) : '-'}
                                 </span>
                               </div>
-                              <div className="grid sm:grid-cols-2 gap-2 text-xs text-slate-500 mb-3 bg-slate-50 p-2.5 rounded-md">
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-slate-500 mb-3 bg-slate-50 p-2.5 rounded-lg">
                                 <div className="flex items-center gap-2 truncate"><Mail className="w-3.5 h-3.5 text-slate-400 shrink-0" /><span className="truncate">{msg.email || '-'}</span></div>
                                 <div className="flex items-center gap-2 truncate"><Phone className="w-3.5 h-3.5 text-slate-400 shrink-0" /><span className="truncate">{msg.phone || '-'}</span></div>
                               </div>
-                              <div className="p-3.5 bg-white rounded-md border border-slate-100 text-sm text-slate-700 whitespace-pre-wrap leading-relaxed">{msg.message}</div>
-                              <div className="flex items-center justify-between mt-4 pt-3 border-t border-slate-100 text-xs">
-                                <div className="flex items-center gap-2">
-                                  <button onClick={() => handleMarkMessageStatus(msg.id, isUnread ? 'read' : 'unread')} className={`px-3 py-1.5 rounded-md font-medium transition-colors ${isUnread ? 'bg-blue-100 text-blue-700 hover:bg-blue-200' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}>
+                              <div className="p-3.5 bg-white rounded-lg border border-slate-100 text-sm text-slate-700 whitespace-pre-wrap leading-relaxed break-words">{msg.message}</div>
+                              <div className="flex flex-wrap items-center justify-between gap-2.5 mt-4 pt-3 border-t border-slate-100 text-xs">
+                                <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                                  <button onClick={() => handleMarkMessageStatus(msg.id, isUnread ? 'read' : 'unread')} className={`px-3 py-1.5 rounded-lg font-medium transition-colors ${isUnread ? 'bg-blue-100 text-blue-700 hover:bg-blue-200' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}>
                                     {isUnread ? 'Tandai Dibaca' : 'Tandai Belum Dibaca'}
                                   </button>
                                   {msg.email && (
-                                    <a href={`mailto:${msg.email}?subject=Re: ${encodeURIComponent(msg.subject || 'Pesan Website')}`} className="inline-flex items-center gap-1 px-3 py-1.5 rounded-md bg-green-50 text-green-700 hover:bg-green-100 font-medium">
+                                    <a href={`mailto:${msg.email}?subject=Re: ${encodeURIComponent(msg.subject || 'Pesan Website')}`} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-50 text-green-700 hover:bg-green-100 font-medium transition-colors">
                                       <Mail className="w-3.5 h-3.5" /> Balas Email
                                     </a>
                                   )}
@@ -2272,7 +2284,7 @@ export default function Dashboard() {
                                       href={`https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(msg.email)}&su=${encodeURIComponent(`Re: ${msg.subject || 'Pesan Website'}`)}`}
                                       target="_blank"
                                       rel="noopener noreferrer"
-                                      className="inline-flex items-center gap-1 px-3 py-1.5 rounded-md bg-sky-50 text-sky-700 hover:bg-sky-100 border border-sky-200/60 font-medium"
+                                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-sky-50 text-sky-700 hover:bg-sky-100 border border-sky-200/60 font-medium transition-colors"
                                       title="Buka langsung di Gmail Browser"
                                     >
                                       <ExternalLink className="w-3.5 h-3.5" /> Buka Gmail
@@ -2283,15 +2295,14 @@ export default function Dashboard() {
                                       href={`https://wa.me/${msg.phone.replace(/[^0-9]/g, '').replace(/^0/, '62')}`}
                                       target="_blank"
                                       rel="noopener noreferrer"
-                                      className="inline-flex items-center gap-1 px-3 py-1.5 rounded-md bg-emerald-50 text-emerald-700 hover:bg-emerald-100 font-medium"
+                                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100 font-medium transition-colors"
                                       title="Balas via WhatsApp"
                                     >
                                       <Phone className="w-3.5 h-3.5" /> WhatsApp
                                     </a>
                                   )}
-
                                 </div>
-                                <button onClick={() => handleDeleteMessage(msg.id, msg.name)} className="p-1.5 text-red-500 hover:bg-red-50 rounded-md" title="Hapus Pesan">
+                                <button onClick={() => handleDeleteMessage(msg.id, msg.name)} className="p-2 text-red-500 hover:bg-red-50 rounded-lg ml-auto transition-colors" title="Hapus Pesan" aria-label="Hapus Pesan">
                                   <Trash2 className="w-4 h-4" />
                                 </button>
                               </div>

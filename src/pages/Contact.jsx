@@ -133,10 +133,10 @@ export default function Contact() {
   };
 
   const contactInfo = [
-    { icon: MapPin, title: 'Kantor Operasional', detail: company.address, color: 'text-blue-500', bg: 'bg-blue-50' },
-    { icon: Phone, title: 'Kontak Telepon', detail: company.phone, color: 'text-green-500', bg: 'bg-green-50' },
+    { icon: MapPin, title: 'Alamat Kantor', detail: company.address, color: 'text-blue-500', bg: 'bg-blue-50' },
+    { icon: Phone, title: 'Telepon', detail: company.phone, color: 'text-green-500', bg: 'bg-green-50' },
     { icon: Mail, title: 'Email', detail: company.email, color: 'text-red-500', bg: 'bg-red-50' },
-    { icon: Clock, title: 'Waktu Operasional Kantor', detail: company.workingHours, color: 'text-orange-500', bg: 'bg-orange-50' }
+    { icon: Clock, title: 'Waktu Operasional', detail: company.workingHours, color: 'text-orange-500', bg: 'bg-orange-50' }
   ];
 
   const header = data?.pageHeaders?.contact || {};
@@ -226,7 +226,7 @@ export default function Contact() {
                 transition={{ duration: 0.5, delay: 0.1 }}
                 className="bg-white rounded-2xl p-7 sm:p-10 border border-slate-100 shadow-sm"
               >
-                <h2 className="text-xl sm:text-2xl font-extrabold text-[#0f172a] mb-6">Kirim Permintaan Informasi</h2>
+                <h2 className="text-xl sm:text-2xl font-extrabold text-[#0f172a] mb-6">Kontak Kami</h2>
 
                 <AnimatePresence>
                   {isSuccess && (
@@ -356,7 +356,7 @@ export default function Contact() {
               ) : (
                 <div className="absolute inset-0 flex items-center justify-center text-gray-500 flex-col p-4 text-center">
                   <MapPin className="w-10 h-10 mb-3 text-gray-400" />
-                  <p className="font-medium text-slate-700">Peta Lokasi Kantor Operasional</p>
+                  <p className="font-medium text-slate-700">Peta Lokasi Alamat Kantor</p>
                   <p className="text-sm text-slate-400 mt-1">Konfigurasi tautan lokasi Google Maps dapat diatur melalui CMS Admin</p>
                 </div>
               )}
