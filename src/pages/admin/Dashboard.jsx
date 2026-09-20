@@ -245,7 +245,7 @@ export default function Dashboard() {
       if (currentUser) {
         const lastActive = parseInt(localStorage.getItem('admin_last_activity') || '0', 10);
         const INACTIVITY_TIMEOUT_MS = 30 * 60 * 1000; // 30 menit
-        if (!lastActive || Date.now() - lastActive > INACTIVITY_TIMEOUT_MS) {
+        if (lastActive && Date.now() - lastActive > INACTIVITY_TIMEOUT_MS) {
           try {
             await signOut(auth);
           } catch (err) {
@@ -255,6 +255,9 @@ export default function Dashboard() {
           navigate('/admin/login', { state: { sessionExpired: true } });
           setLoadingAuth(false);
           return;
+        }
+        if (!lastActive) {
+          localStorage.setItem('admin_last_activity', Date.now().toString());
         }
         setUser(currentUser);
       } else {
@@ -311,7 +314,7 @@ export default function Dashboard() {
     const handleVisibility = () => {
       if (document.visibilityState === 'visible') {
         const lastActive = parseInt(localStorage.getItem('admin_last_activity') || '0', 10);
-        if (!lastActive || Date.now() - lastActive >= INACTIVITY_TIMEOUT_MS) {
+        if (lastActive && Date.now() - lastActive >= INACTIVITY_TIMEOUT_MS) {
           triggerAutoLogout();
         } else {
           resetTimer();

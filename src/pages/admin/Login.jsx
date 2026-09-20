@@ -23,21 +23,16 @@ export default function Login() {
   }, [location.state]);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         const lastActive = parseInt(localStorage.getItem('admin_last_activity') || '0', 10);
         const MAX_IDLE = 30 * 60 * 1000;
-        if (!lastActive || Date.now() - lastActive > MAX_IDLE) {
-          try {
-            await signOut(auth);
-          } catch (err) {
-            console.error('Sign out error:', err);
-          }
+        if (lastActive && Date.now() - lastActive <= MAX_IDLE) {
+          navigate('/admin/dashboard', { replace: true });
+        } else if (lastActive && Date.now() - lastActive > MAX_IDLE) {
+          signOut(auth).catch(() => {});
           localStorage.removeItem('admin_last_activity');
-          setError('Sesi berakhir. Silakan masuk kembali.');
-          return;
         }
-        navigate('/admin/dashboard', { replace: true });
       }
     });
     return () => unsubscribe();
@@ -48,11 +43,23 @@ export default function Login() {
     setError('');
     setLoading(true);
     try {
-      await signInWithEmailAndPassword(auth, email, password);
       localStorage.setItem('admin_last_activity', Date.now().toString());
-      navigate('/admin/dashboard');
-    } catch {
-      setError('Gagal masuk. Periksa kembali email dan kata sandi Anda.');
+      await signInWithEmailAndPassword(auth, email.trim(), password);
+      navigate('/admin/dashboard', { replace: true });
+    } catch (err) {
+      localStorage.removeItem('admin_last_activity');
+      console.error('Login error:', err);
+      if (
+        err?.code === 'auth/invalid-credential' ||
+        err?.code === 'auth/wrong-password' ||
+        err?.code === 'auth/user-not-found'
+      ) {
+        setError('Email atau kata sandi salah. Silakan periksa kembali.');
+      } else if (err?.code === 'auth/too-many-requests') {
+        setError('Terlalu banyak percobaan gagal. Silakan tunggu beberapa saat.');
+      } else {
+        setError('Gagal masuk. Periksa kembali email dan kata sandi Anda.');
+      }
     } finally {
       setLoading(false);
     }
