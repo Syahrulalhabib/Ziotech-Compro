@@ -240,11 +240,25 @@ export default function Dashboard() {
       setLoadingAuth(false);
     }, 4000);
 
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       clearTimeout(timer);
       if (currentUser) {
+        const lastActive = parseInt(localStorage.getItem('admin_last_activity') || '0', 10);
+        const INACTIVITY_TIMEOUT_MS = 30 * 60 * 1000; // 30 menit
+        if (!lastActive || Date.now() - lastActive > INACTIVITY_TIMEOUT_MS) {
+          try {
+            await signOut(auth);
+          } catch (err) {
+            console.error('Sign out error:', err);
+          }
+          localStorage.removeItem('admin_last_activity');
+          navigate('/admin/login', { state: { sessionExpired: true } });
+          setLoadingAuth(false);
+          return;
+        }
         setUser(currentUser);
       } else {
+        localStorage.removeItem('admin_last_activity');
         navigate('/admin/login');
       }
       setLoadingAuth(false);
@@ -254,6 +268,7 @@ export default function Dashboard() {
       unsubscribe();
     };
   }, [navigate]);
+
   // Auto-logout setelah 30 menit tanpa aktivitas (standar CMS perusahaan)
   useEffect(() => {
     if (!user) return;
@@ -263,6 +278,7 @@ export default function Dashboard() {
 
     const triggerAutoLogout = async () => {
       try {
+        localStorage.removeItem('admin_last_activity');
         await signOut(auth);
         navigate('/admin/login', { state: { sessionExpired: true } });
       } catch (err) {
@@ -272,25 +288,48 @@ export default function Dashboard() {
 
     const resetTimer = () => {
       clearTimeout(timeoutId);
-      timeoutId = setTimeout(triggerAutoLogout, INACTIVITY_TIMEOUT_MS);
+      const lastActive = parseInt(localStorage.getItem('admin_last_activity') || '0', 10);
+      const elapsed = Date.now() - lastActive;
+      if (elapsed >= INACTIVITY_TIMEOUT_MS) {
+        triggerAutoLogout();
+        return;
+      }
+      const remaining = Math.max(1000, INACTIVITY_TIMEOUT_MS - elapsed);
+      timeoutId = setTimeout(triggerAutoLogout, remaining);
     };
 
-    let lastActivity = Date.now();
+    let lastThrottled = Date.now();
     const handleActivity = () => {
       const now = Date.now();
-      if (now - lastActivity > 1000) {
-        lastActivity = now;
+      if (now - lastThrottled > 2000) {
+        lastThrottled = now;
+        localStorage.setItem('admin_last_activity', now.toString());
         resetTimer();
+      }
+    };
+
+    const handleVisibility = () => {
+      if (document.visibilityState === 'visible') {
+        const lastActive = parseInt(localStorage.getItem('admin_last_activity') || '0', 10);
+        if (!lastActive || Date.now() - lastActive >= INACTIVITY_TIMEOUT_MS) {
+          triggerAutoLogout();
+        } else {
+          resetTimer();
+        }
       }
     };
 
     const events = ['mousedown', 'mousemove', 'keydown', 'scroll', 'touchstart', 'click'];
     events.forEach((evt) => window.addEventListener(evt, handleActivity, { passive: true }));
+    document.addEventListener('visibilitychange', handleVisibility);
+    window.addEventListener('focus', handleVisibility);
     resetTimer();
 
     return () => {
       clearTimeout(timeoutId);
       events.forEach((evt) => window.removeEventListener(evt, handleActivity));
+      document.removeEventListener('visibilitychange', handleVisibility);
+      window.removeEventListener('focus', handleVisibility);
     };
   }, [user, navigate]);
 
@@ -390,6 +429,7 @@ export default function Dashboard() {
 
   const handleLogout = async () => {
     try {
+      localStorage.removeItem('admin_last_activity');
       await signOut(auth);
       navigate('/admin/login');
     } catch (error) {

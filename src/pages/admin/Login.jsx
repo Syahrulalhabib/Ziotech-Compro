@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
+import { signInWithEmailAndPassword, onAuthStateChanged, signOut } from 'firebase/auth';
 import { auth } from '../../firebase/config';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { Mail, Lock, Eye, EyeOff, ArrowLeft, ArrowRight, AlertCircle, Loader2 } from 'lucide-react';
@@ -23,8 +23,21 @@ export default function Login() {
   }, [location.state]);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
+        const lastActive = parseInt(localStorage.getItem('admin_last_activity') || '0', 10);
+        const MAX_IDLE = 30 * 60 * 1000;
+        if (!lastActive || Date.now() - lastActive > MAX_IDLE) {
+          try {
+            await signOut(auth);
+          } catch (err) {
+            console.error('Sign out error:', err);
+          }
+          localStorage.removeItem('admin_last_activity');
+          // eslint-disable-next-line react-hooks/set-state-in-effect
+          setError('Sesi berakhir otomatis karena tidak ada aktivitas. Silakan masuk kembali.');
+          return;
+        }
         navigate('/admin/dashboard', { replace: true });
       }
     });
@@ -37,6 +50,7 @@ export default function Login() {
     setLoading(true);
     try {
       await signInWithEmailAndPassword(auth, email, password);
+      localStorage.setItem('admin_last_activity', Date.now().toString());
       navigate('/admin/dashboard');
     } catch {
       setError('Gagal masuk. Periksa kembali email dan kata sandi Anda.');
