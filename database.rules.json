@@ -1,7 +1,7 @@
 {
   "rules": {
     "content": {
-      ".read": true,
+      ".read": "auth != null",
       ".write": "auth != null"
     },
     "messages": {

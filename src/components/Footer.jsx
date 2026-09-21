@@ -70,6 +70,7 @@ export default function Footer() {
     { name: 'Tentang Kami', path: '/about' },
     { name: 'Layanan', path: '/service' },
     { name: 'Proyek', path: '/project' },
+    { name: 'Berita & Artikel', path: '/news' },
     { name: 'Kontak', path: '/contact' },
   ];
   // Ambil dari CMS (company.footerServices) yang bisa diatur admin.

@@ -5,218 +5,24 @@ import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { ref, set, onValue, remove, update } from 'firebase/database';
 import { auth, db } from '../../firebase/config';
 import { useData, defaultData } from '../../context/DataContext';
-import { LogOut, Save, Home, Info, LayoutDashboard, Image as ImageIcon, Type, Menu, X, CheckCircle2, AlertCircle, Briefcase, Wrench, Phone, Plus, Trash2, Star, CalendarClock, Building2, Share2, Globe, MapPin, Inbox, Mail, Clock, ExternalLink, Sparkles, ChevronRight, TrendingUp, Layers } from 'lucide-react';
+import { LogOut, Save, Home, Info, Briefcase, Wrench, Phone, Menu, X, CheckCircle2, AlertCircle, Globe, Inbox, ExternalLink, Sparkles, ChevronRight, Newspaper } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { SERVICE_ICONS, getServiceIcon } from '../../data/serviceIcons';
 import logoZiotech from '../../assets/ziotech.png';
 import LoadingScreen from '../../components/LoadingScreen';
-
+import ConfirmModal from './components/ConfirmModal';
+import HomeTab from './tabs/HomeTab';
+import AboutTab from './tabs/AboutTab';
+import ServicesTab from './tabs/ServicesTab';
+import ProjectsTab from './tabs/ProjectsTab';
+import NewsTab from './tabs/NewsTab';
+import ContactTab from './tabs/ContactTab';
+import InboxTab from './tabs/InboxTab';
 
 const defaultCompany = defaultData?.company || {};
 const defaultPageHeaders = defaultData?.pageHeaders || {};
 const defaultServices = defaultData?.services || [];
 const defaultProjects = defaultData?.projects || [];
-
-// --- COMPONENTS MOVED OUTSIDE to prevent focus loss on every keystroke ---
-const InputField = ({ label, icon: Icon, type = "text", value, onChange, onBlur, placeholder, isTextarea, helperText, min, max, step }) => (
-  <div className="space-y-1.5 w-full">
-    <label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-slate-700">
-      {Icon && <Icon className="w-4 h-4 text-slate-400" />}
-      {label}
-    </label>
-    {isTextarea ? (
-      <textarea
-        value={value ?? ''}
-        onChange={onChange}
-        onBlur={onBlur}
-        placeholder={placeholder}
-        rows="3"
-        className="w-full px-3.5 py-2.5 bg-slate-50/70 border border-slate-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition-all outline-none resize-y text-sm text-slate-800"
-      />
-    ) : (
-      <input
-        type={type}
-        value={value ?? ''}
-        onChange={onChange}
-        onBlur={onBlur}
-        min={min}
-        max={max}
-        step={step}
-        placeholder={placeholder}
-        className="w-full px-3.5 py-2.5 bg-slate-50/70 border border-slate-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition-all outline-none text-sm text-slate-800"
-      />
-    )}
-    {helperText && <p className="text-xs text-slate-500 mt-1">{helperText}</p>}
-  </div>
-);
-
-const ImageUploadBox = ({ value, onChange, label, onImageUpload, aspect }) => {
-  const [previewError, setPreviewError] = useState(false);
-  const [trackedValue, setTrackedValue] = useState(value);
-
-  // Sync previewError reset when value prop changes (derived state pattern)
-  if (value !== trackedValue) {
-    setTrackedValue(value);
-    setPreviewError(false);
-  }
-
-  return (
-    <div className="space-y-1.5 w-full">
-      {label && (
-        <label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-slate-700">
-          <ImageIcon className="w-4 h-4 text-slate-400" />
-          {label}
-        </label>
-      )}
-      <div className="p-4 sm:p-5 border border-slate-200 rounded-xl bg-white shadow-sm hover:border-slate-300 transition-all group">
-        <div className="space-y-3.5">
-          <div>
-            <label className="block text-xs font-medium text-slate-500 mb-1.5">URL Gambar (Opsional)</label>
-            <input
-              type="text"
-              value={value || ''}
-              onChange={(e) => onChange(e.target.value)}
-              placeholder="https://..."
-              className="w-full px-3.5 py-2 bg-slate-50/70 border border-slate-200 rounded-lg focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 focus:bg-white transition-all outline-none text-sm text-slate-800"
-            />
-          </div>
-          
-          <div className="flex items-center gap-4">
-            <div className="h-px bg-slate-100 flex-1"></div>
-            <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Atau Upload</span>
-            <div className="h-px bg-slate-100 flex-1"></div>
-          </div>
-          
-          <div>
-            <label className="flex flex-col items-center justify-center w-full min-h-[110px] py-4 px-4 border-2 border-dashed border-slate-200 hover:border-sky-400 rounded-xl bg-slate-50/60 hover:bg-sky-50/40 transition-colors cursor-pointer relative overflow-hidden group/upload text-center">
-              <div className="flex flex-col items-center justify-center text-center">
-                <div className="p-2.5 bg-white rounded-full shadow-sm mb-2 group-hover/upload:scale-110 transition-transform">
-                  <ImageIcon className="w-5 h-5 text-sky-600" />
-                </div>
-                <p className="text-sm font-semibold text-slate-700 mb-0.5 text-center">Klik untuk upload berkas</p>
-                <p className="text-xs text-slate-400 text-center">PNG, JPG, WebP (Maks. 5MB)</p>
-              </div>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={(e) => onImageUpload(e, onChange, aspect)}
-                className="hidden"
-              />
-            </label>
-          </div>
-
-          {value && (
-            <div className="pt-2 border-t border-slate-100">
-              <div className="flex items-center justify-between mb-1.5">
-                <span className="text-xs font-medium text-slate-500 flex items-center gap-1.5">
-                  <ImageIcon className="w-3.5 h-3.5 text-slate-400" /> Preview Gambar
-                </span>
-                <button
-                  type="button"
-                  onClick={() => onChange('')}
-                  className="text-xs text-red-500 hover:text-red-700 font-medium hover:underline flex items-center gap-1"
-                >
-                  <Trash2 className="w-3 h-3" /> Hapus Gambar
-                </button>
-              </div>
-              <div className="w-full h-40 sm:h-48 rounded-lg overflow-hidden border border-slate-200 bg-slate-50 relative flex items-center justify-center">
-                {!previewError ? (
-                  <img
-                    src={value}
-                    alt="Preview"
-                    className="w-full h-full object-contain bg-slate-900/5"
-                    onError={() => setPreviewError(true)}
-                  />
-                ) : (
-                  <div className="flex flex-col items-center justify-center gap-1.5 p-3 text-center">
-                    <AlertCircle className="w-5 h-5 text-red-400" />
-                    <p className="text-xs text-red-500 font-medium">Gagal memuat gambar</p>
-                    <p className="text-[11px] text-slate-400">Pastikan URL gambar valid atau upload ulang berkas.</p>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-};
-// --- END MOVED COMPONENTS ---
-
-// Reusable editor untuk header (judul, subjudul, background) tiap halaman
-const PageHeaderEditor = ({ page, label, formData, onChange, onImageUpload }) => (
-  <div className="bg-white rounded-xl p-6 lg:p-8 shadow-sm border border-slate-200/80">
-    <div className="flex items-center gap-4 mb-8 pb-5 border-b border-slate-100">
-      <div className="p-3 bg-sky-50 text-sky-600 rounded-xl"><ImageIcon className="w-6 h-6" /></div>
-      <div>
-        <h3 className="text-lg sm:text-xl font-bold text-slate-800">Header Halaman {label}</h3>
-        <p className="text-xs sm:text-sm text-slate-500 mt-0.5">Atur label badge, judul, subjudul, dan gambar background bagian atas halaman {label}.</p>
-      </div>
-    </div>
-    <div className="grid lg:grid-cols-2 gap-6 items-start">
-      <div className="space-y-6">
-        <InputField icon={Type} label="Badge Atas (Label Kecil)" value={formData?.pageHeaders?.[page]?.badge || ''} onChange={(e) => onChange(page, 'badge', e.target.value)} placeholder="cth: PROFIL KORPORASI" />
-        <InputField icon={Type} label="Judul Halaman" value={formData?.pageHeaders?.[page]?.title || ''} onChange={(e) => onChange(page, 'title', e.target.value)} />
-        <InputField icon={Type} label="Subjudul" value={formData?.pageHeaders?.[page]?.subtitle || ''} onChange={(e) => onChange(page, 'subtitle', e.target.value)} isTextarea />
-      </div>
-      <ImageUploadBox label="Gambar Background Header" value={formData?.pageHeaders?.[page]?.image || ''} onChange={(val) => onChange(page, 'image', val)} onImageUpload={onImageUpload} />
-    </div>
-  </div>
-);
-
-const ConfirmModal = ({ isOpen, onClose, onConfirm, title, message, confirmText = "Hapus", isDestructive = true }) => {
-  if (!isOpen) return null;
-
-  return (
-    <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.94, y: 8 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.94, y: 8 }}
-          transition={{ duration: 0.18, ease: "easeOut" }}
-          className="bg-white w-full max-w-md rounded-2xl p-6 sm:p-7 shadow-2xl border border-slate-200 relative"
-        >
-          <div className="flex items-start gap-4">
-            <div className={`p-3 rounded-xl shrink-0 ${isDestructive ? 'bg-red-50 text-red-600' : 'bg-sky-50 text-sky-600'}`}>
-              <AlertCircle className="w-6 h-6" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <h3 className="text-lg font-bold text-slate-800 leading-snug">{title}</h3>
-              <p className="text-sm text-slate-500 mt-1.5 leading-relaxed">{message}</p>
-            </div>
-          </div>
-
-          <div className="flex items-center justify-end gap-3 mt-7 pt-4 border-t border-slate-100">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2.5 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-100 active:scale-95 transition-all cursor-pointer"
-            >
-              Batal
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                onConfirm();
-                onClose();
-              }}
-              className={`px-5 py-2.5 rounded-lg text-sm font-semibold text-white shadow-sm active:scale-95 transition-all cursor-pointer ${
-                isDestructive
-                  ? 'bg-red-600 hover:bg-red-700 shadow-red-500/20'
-                  : 'bg-sky-600 hover:bg-sky-500 shadow-sky-500/20'
-              }`}
-            >
-              {confirmText}
-            </button>
-          </div>
-        </motion.div>
-      </div>
-    </AnimatePresence>
-  );
-};
-
+const defaultNews = defaultData?.news || [];
 
 export default function Dashboard() {
   const [user, setUser] = useState(null);
@@ -237,6 +43,56 @@ export default function Dashboard() {
     confirmText: 'Hapus',
     onConfirm: () => {}
   });
+  const [newsSearch, setNewsSearch] = useState('');
+
+  const toggleNewsFeatured = (index) => {
+    setFormData((prev) => {
+      const news = [...(prev.news || [])];
+      news[index] = { ...news[index], featured: !news[index].featured };
+      return { ...prev, news };
+    });
+  };
+
+  const handleHeroTitleChange = (index, value) => {
+    setFormData((prev) => {
+      const titles = [...(prev.home?.heroTitles || defaultData?.home?.heroTitles || [])];
+      titles[index] = value;
+      return {
+        ...prev,
+        home: {
+          ...prev.home,
+          heroTitles: titles
+        }
+      };
+    });
+  };
+
+  const addHeroTitle = () => {
+    setFormData((prev) => ({
+      ...prev,
+      home: {
+        ...prev.home,
+        heroTitles: [
+          ...(prev.home?.heroTitles || defaultData?.home?.heroTitles || []),
+          'Segmen Baru'
+        ]
+      }
+    }));
+  };
+
+  const removeHeroTitle = (index) => {
+    setFormData((prev) => {
+      const titles = [...(prev.home?.heroTitles || defaultData?.home?.heroTitles || [])];
+      titles.splice(index, 1);
+      return {
+        ...prev,
+        home: {
+          ...prev.home,
+          heroTitles: titles
+        }
+      };
+    });
+  };
 
   const scrollContainerRef = useRef(null);
 
@@ -384,6 +240,10 @@ export default function Dashboard() {
   }, [user]);
 
   useEffect(() => {
+    // JANGAN inisialisasi formData saat data Firebase masih dalam proses loading!
+    // Ini mencegah konten yang sudah diisi admin tertimpa oleh data default bawaan sistem.
+    if (dataLoading) return;
+
     const sourceData = rawData || data;
     if (sourceData && !formData) {
       const parsedData = JSON.parse(JSON.stringify(sourceData));
@@ -403,6 +263,10 @@ export default function Dashboard() {
         ...p,
         featured: Boolean(p.featured)
       }));
+      const news = cleanArray(parsedData.news, defaultNews).map(n => ({
+        ...n,
+        featured: Boolean(n.featured)
+      }));
 
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setFormData({
@@ -420,10 +284,12 @@ export default function Dashboard() {
         },
         services: services.length > 0 ? services : defaultServices,
         projects: projects.length > 0 ? projects : defaultProjects,
+        news: news.length > 0 ? news : defaultNews,
         pageHeaders: {
           about: { ...defaultPageHeaders.about, ...(parsedData.pageHeaders?.about || {}) },
           service: { ...defaultPageHeaders.service, ...(parsedData.pageHeaders?.service || {}) },
           project: { ...defaultPageHeaders.project, ...(parsedData.pageHeaders?.project || {}) },
+          news: { ...defaultPageHeaders.news, ...(parsedData.pageHeaders?.news || {}) },
           contact: { ...defaultPageHeaders.contact, ...(parsedData.pageHeaders?.contact || {}) }
         },
         contactSettings: {
@@ -432,15 +298,15 @@ export default function Dashboard() {
         },
         home: {
           ...defaultData.home,
-          heroTitles: [],
-          heroImages: [],
           ...parsedData.home,
-          clientPartners: cleanArray(parsedData.home?.clientPartners, defaultData?.home?.clientPartners || []),
+          heroTitles: cleanArray(parsedData.home?.heroTitles, defaultData?.home?.heroTitles || []),
+          heroImages: cleanArray(parsedData.home?.heroImages, defaultData?.home?.heroImages || []),
+          clientPartners: cleanArray(parsedData.home?.clientPartners, []),
           stats: cleanArray(parsedData.home?.stats, defaultData?.home?.stats || [])
         }
       });
     }
-  }, [rawData, data, formData]);
+  }, [dataLoading, rawData, data, formData]);
 
   const handleLogout = async () => {
     try {
@@ -560,8 +426,8 @@ export default function Dashboard() {
 
   const removeArrayItem = (section, index) => {
     const item = formData?.[section]?.[index];
-    const itemName = item?.title || item?.name || `${section === 'services' ? 'Layanan' : 'Proyek'} #${index + 1}`;
-    const sectionLabel = section === 'services' ? 'Layanan' : section === 'projects' ? 'Proyek' : 'Item';
+    const itemName = item?.title || item?.name || `${section === 'services' ? 'Layanan' : section === 'projects' ? 'Proyek' : 'Berita'} #${index + 1}`;
+    const sectionLabel = section === 'services' ? 'Layanan' : section === 'projects' ? 'Proyek' : section === 'news' ? 'Berita/Artikel' : 'Item';
 
     promptConfirm({
       title: `Hapus ${sectionLabel}?`,
@@ -788,7 +654,7 @@ export default function Dashboard() {
     handleArrayChange('services', serviceIndex, 'features', featuresArray);
   };
 
-  const handleImageUpload = useCallback((e, callback) => {
+  const handleImageUpload = useCallback((e, callback, aspectOrType) => {
     const input = e.target;
     const file = input.files && input.files[0];
     if (!file) return;
@@ -801,11 +667,25 @@ export default function Dashboard() {
       return;
     }
 
+    const isLogo = aspectOrType === 'logo';
+    const isTransparentFormat = 
+      isLogo ||
+      file.type === 'image/png' || 
+      file.type === 'image/webp' || 
+      file.type === 'image/svg+xml' || 
+      (file.name && file.name.toLowerCase().endsWith('.png'));
+
     const reader = new FileReader();
     reader.onerror = () => {
       showToast('error', 'Gagal membaca file. Coba lagi atau tempel URL gambar.');
     };
     reader.onload = () => {
+      // Jika format PNG/WebP/SVG dan ukuran wajar (<= 2MB), gunakan raw file dataURL langsung tanpa canvas
+      if (isTransparentFormat && file.size <= 2 * 1024 * 1024) {
+        callback(reader.result);
+        return;
+      }
+
       const img = new Image();
       img.onerror = () => {
         showToast('error', 'Format gambar tidak dapat diproses browser (mis. HEIC dari iPhone). Konversi ke JPG/PNG atau gunakan URL.');
@@ -813,7 +693,7 @@ export default function Dashboard() {
       img.onload = () => {
         try {
           // Resize & kompres gambar via canvas agar base64 kecil dan aman disimpan ke Firebase
-          const MAX_DIM = 1920;
+          const MAX_DIM = isTransparentFormat ? 1000 : 1920;
           let width = img.naturalWidth || img.width;
           let height = img.naturalHeight || img.height;
           if (width > MAX_DIM || height > MAX_DIM) {
@@ -824,14 +704,16 @@ export default function Dashboard() {
           const canvas = document.createElement('canvas');
           canvas.width = width;
           canvas.height = height;
-          canvas.getContext('2d').drawImage(img, 0, 0, width, height);
-          // Default JPEG terkompresi; PNG hanya dipakai jika ukurannya wajar (logo/transparansi)
-          let dataUrl = canvas.toDataURL('image/jpeg', 0.82);
-          if (file.type === 'image/png') {
-            const pngUrl = canvas.toDataURL('image/png');
-            if (pngUrl.length < 1500000) dataUrl = pngUrl;
+          const ctx = canvas.getContext('2d');
+          // Selalu bersihkan canvas agar transparansi alpha 100% terjaga
+          ctx.clearRect(0, 0, width, height);
+          ctx.drawImage(img, 0, 0, width, height);
+
+          if (isTransparentFormat) {
+            callback(canvas.toDataURL('image/png'));
+          } else {
+            callback(canvas.toDataURL('image/jpeg', 0.82));
           }
-          callback(dataUrl);
         } catch (err) {
           console.error('Image processing error:', err);
           showToast('error', 'Gagal memproses gambar. Coba file lain atau gunakan URL.');
@@ -958,6 +840,17 @@ export default function Dashboard() {
           </button>
 
           <button 
+            onClick={() => { setActiveTab('news'); setIsMobileMenuOpen(false); }} 
+            className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm transition-all cursor-pointer ${
+              activeTab === 'news' 
+                ? 'bg-sky-600 text-white font-semibold shadow-md shadow-sky-950/40' 
+                : 'text-slate-300 hover:bg-slate-900 hover:text-white font-medium'
+            }`}
+          >
+            <Newspaper className="w-4 h-4" /> <span>Berita & Artikel</span>
+          </button>
+
+          <button 
             onClick={() => { setActiveTab('contact'); setIsMobileMenuOpen(false); }} 
             className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm transition-all cursor-pointer ${
               activeTab === 'contact' 
@@ -1066,6 +959,7 @@ export default function Dashboard() {
                   { id: 'about', label: 'Tentang Kami', icon: Info },
                   { id: 'services', label: 'Layanan (Services)', icon: Wrench },
                   { id: 'projects', label: 'Proyek (Projects)', icon: Briefcase },
+                  { id: 'news', label: 'Berita & Artikel', icon: Newspaper },
                   { id: 'contact', label: 'Kontak & Perusahaan', icon: Phone },
                   { id: 'inbox', label: 'Pesan Masuk', icon: Inbox }
                 ].map((item, idx) => {
@@ -1152,6 +1046,7 @@ export default function Dashboard() {
                   {activeTab === 'about' && 'Tentang Kami'}
                   {activeTab === 'services' && 'Layanan'}
                   {activeTab === 'projects' && 'Proyek'}
+                  {activeTab === 'news' && 'Berita & Artikel'}
                   {activeTab === 'contact' && 'Kontak & Perusahaan'}
                   {activeTab === 'inbox' && 'Pesan Masuk'}
                 </span>
@@ -1161,6 +1056,7 @@ export default function Dashboard() {
                 {activeTab === 'about' && 'Edit Tentang Kami'}
                 {activeTab === 'services' && 'Edit Layanan (Services)'}
                 {activeTab === 'projects' && 'Edit Portofolio Proyek'}
+                {activeTab === 'news' && 'Edit Berita & Artikel'}
                 {activeTab === 'contact' && 'Edit Kontak & Profil Perusahaan'}
                 {activeTab === 'inbox' && 'Pesan Masuk (Inbox)'}
               </h2>
@@ -1197,1134 +1093,21 @@ export default function Dashboard() {
             
             <AnimatePresence mode="wait">
               
-              {/* HOME TAB */}
-              {activeTab === 'home' && (
-                <motion.div key="home" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.2 }} className="space-y-8">
-                  <div className="bg-white rounded-xl p-6 lg:p-8 shadow-sm border border-slate-200/80">
-                    <div className="flex items-center gap-4 mb-8 pb-5 border-b border-slate-100">
-                      <div className="p-3 bg-sky-50 text-sky-600 rounded-xl"><LayoutDashboard className="w-6 h-6" /></div>
-                      <div>
-                        <h3 className="text-xl font-bold text-slate-800">Hero Section</h3>
-                        <p className="text-sm text-slate-500 mt-1">Bagian paling atas yang pertama kali dilihat pengunjung.</p>
-                      </div>
-                    </div>
-                    <div className="space-y-6">
-                      <InputField icon={Type} label="Judul Utama (Headline)" value={formData.home?.heroTitle} onChange={(e) => handleChange('home', 'heroTitle', e.target.value)} />
-                      <InputField icon={Type} label="Sub-judul (Deskripsi Singkat)" value={formData.home?.heroSubtitle} onChange={(e) => handleChange('home', 'heroSubtitle', e.target.value)} isTextarea />
-                      <InputField 
-                        icon={CalendarClock} 
-                        label="Interval Gambar (milidetik, cth: 5000 = 5 detik)" 
-                        type="number"
-                        min="1000"
-                        step="500"
-                        placeholder="5000"
-                        helperText="Durasi tiap slide gambar berganti otomatis (minimal 1000 ms)."
-                        value={formData.home?.heroInterval ?? ''} 
-                        onChange={(e) => handleChange('home', 'heroInterval', e.target.value === '' ? '' : Number(e.target.value))} 
-                        onBlur={(e) => {
-                          const val = Number(e.target.value);
-                          if (!val || val < 1000) {
-                            handleChange('home', 'heroInterval', 5000);
-                          }
-                        }}
-                      />
-                      
-                      <div className="space-y-4 pt-2">
-                        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                          <div className="flex-1">
-                            <label className="block text-sm font-semibold text-slate-700">Gambar Background Hero (Slider)</label>
-                            <p className="text-xs text-slate-500 mt-1 mb-0">Format lanskap (disarankan 16:9 atau 1920Ã—1080 px) agar pas di layar.</p>
-                          </div>
-                          <button
-                            onClick={() => {
-                              const currentImages = formData.home?.heroImages || [];
-                              handleChange('home', 'heroImages', [...currentImages, '']);
-                            }}
-                            className="shrink-0 inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-sky-700 hover:text-sky-800 bg-sky-50 hover:bg-sky-100/80 px-3 py-1.5 rounded-lg border border-sky-200/60 transition-colors cursor-pointer"
-                          >
-                            <Plus className="w-4 h-4" /> Tambah Gambar
-                          </button>
-                        </div>
-                        
-                        {(formData.home?.heroImages || []).map((img, idx) => (
-                          <div key={idx} className="relative group p-4 border border-slate-200 rounded-md bg-slate-50">
-                            <button
-                              onClick={() => {
-                                const currentImages = [...(formData.home?.heroImages || [])];
-                                currentImages.splice(idx, 1);
-                                handleChange('home', 'heroImages', currentImages);
-                              }}
-                              className="absolute top-2 right-2 p-1.5 bg-red-100 text-red-600 rounded-md opacity-0 group-hover:opacity-100 transition-opacity z-10 hover:bg-red-200"
-                              title="Hapus Gambar"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
-                            <ImageUploadBox
-                              aspect={16/9}
-                              label={`Gambar Slide ${idx + 1}`} 
-                              value={img} 
-                              onChange={(val) => {
-                                const currentImages = [...(formData.home?.heroImages || [])];
-                                currentImages[idx] = val;
-                                handleChange('home', 'heroImages', currentImages);
-                              }} 
-                              onImageUpload={handleImageUpload} 
-                            />
-                          </div>
-                        ))}
-                        {(!formData.home?.heroImages || formData.home?.heroImages.length === 0) && (
-                          <div className="text-center p-8 border-2 border-dashed border-slate-200 rounded-md bg-slate-50 text-slate-500 text-sm">
-                            Belum ada gambar slider. Klik Tambah Gambar untuk memulai.
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="bg-white rounded-xl p-6 lg:p-8 shadow-sm border border-slate-200/80">
-                    <div className="flex items-center gap-4 mb-8 pb-5 border-b border-slate-100">
-                      <div className="p-3 bg-sky-50 text-[#0284c7] rounded-md"><Sparkles className="w-6 h-6" /></div>
-                      <div>
-                        <h3 className="text-xl font-bold text-slate-800">Visual & Teks Editorial Intro (Inovasi & Kualitas)</h3>
-                        <p className="text-sm text-slate-500 mt-1">Kelola gambar kotak dan teks editorial intro di bawah hero beranda.</p>
-                      </div>
-                    </div>
-                    <div className="space-y-6">
-                      <InputField 
-                        icon={Type} 
-                        label="Label Badge Kategori Intro" 
-                        value={formData.home?.introBadge ?? 'KOMPETENSI & TATA KELOLA'} 
-                        onChange={(e) => handleChange('home', 'introBadge', e.target.value)} 
-                        placeholder="cth: KOMPETENSI & TATA KELOLA"
-                      />
-                      <InputField 
-                        icon={Type} 
-                        label="Label Tag Foto (Overlay Bawah Foto)" 
-                        value={formData.home?.introTag ?? 'INNOVATION & INTEGRITY'} 
-                        onChange={(e) => handleChange('home', 'introTag', e.target.value)} 
-                        placeholder="INNOVATION & INTEGRITY"
-                      />
-                      <ImageUploadBox 
-                        aspect={1}
-                        label="Gambar Intro (Rasio 1:1 / Persegi)" 
-                        value={formData.home?.introImageUrl || ''} 
-                        onChange={(val) => handleChange('home', 'introImageUrl', val)} 
-                        onImageUpload={handleImageUpload} 
-                      />
-                      <p className="text-xs text-slate-400">
-                        *Jika gambar dikosongkan, beranda otomatis menampilkan grafis geometris Pertamina style.
-                      </p>
-                      <div className="pt-4 border-t border-slate-100 space-y-6">
-                        <InputField 
-                          icon={Type} 
-                          label="Judul Intro" 
-                          value={formData.home?.introTitle ?? 'Menghadirkan Solusi Teknik dan Konstruksi Terbaik untuk Negeri'} 
-                          onChange={(e) => handleChange('home', 'introTitle', e.target.value)} 
-                          placeholder="Menghadirkan Solusi Teknik dan Konstruksi Terbaik untuk Negeri"
-                        />
-                        <InputField 
-                          icon={Type} 
-                          label="Paragraf 1" 
-                          value={formData.home?.introDescription ?? 'PT. Ziotech Global Inovasi hadir sebagai mitra strategis dengan komitmen pada kualitas, efisiensi, dan inovasi berkelanjutan khususnya di spesialisasi Mechanical, Electrical & Plumbing (MEP).'} 
-                          onChange={(e) => handleChange('home', 'introDescription', e.target.value)} 
-                          isTextarea
-                        />
-                        <InputField 
-                          icon={Type} 
-                          label="Paragraf 2" 
-                          value={formData.home?.introDescription2 ?? 'Dengan tim profesional bersertifikasi, dedikasi tinggi, dan standar mutu ketat, kami siap memberikan solusi engineering terbaik yang efisien, tepat waktu, dan berorientasi jangka panjang.'} 
-                          onChange={(e) => handleChange('home', 'introDescription2', e.target.value)} 
-                          isTextarea
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="bg-white rounded-xl p-6 lg:p-8 shadow-sm border border-slate-200/80">
-                    <div className="flex items-center gap-4 mb-8 pb-5 border-b border-slate-100">
-                      <div className="p-3 bg-indigo-50 text-indigo-600 rounded-md"><Info className="w-6 h-6" /></div>
-                      <div>
-                        <h3 className="text-xl font-bold text-slate-800">Sekilas Perusahaan (Tentang Ziotech di Beranda)</h3>
-                        <p className="text-sm text-slate-500 mt-1">Atur teks narasi dan gambar banner bagian 'Tentang Ziotech' di halaman Beranda.</p>
-                      </div>
-                    </div>
-                    <div className="space-y-6">
-                      <InputField 
-                        icon={Type} 
-                        label="Label Badge Sekilas Perusahaan" 
-                        value={formData.home?.aboutSectionBadge || 'SEKILAS PERUSAHAAN'} 
-                        onChange={(e) => handleChange('home', 'aboutSectionBadge', e.target.value)} 
-                        placeholder="cth: SEKILAS PERUSAHAAN"
-                      />
-                      <InputField 
-                        icon={Type} 
-                        label="Judul Bagian" 
-                        value={formData.home?.aboutSectionTitle || 'Tentang Kami'} 
-                        onChange={(e) => handleChange('home', 'aboutSectionTitle', e.target.value)} 
-                        placeholder="cth: Tentang Kami"
-                      />
-                      <InputField 
-                        icon={Type} 
-                        label="Deskripsi / Paragraf Ringkasan" 
-                        value={formData.home?.aboutSectionDescription || ''} 
-                        onChange={(e) => handleChange('home', 'aboutSectionDescription', e.target.value)} 
-                        placeholder="Didirikan dengan semangat profesionalisme..." 
-                        isTextarea
-                      />
-                      <ImageUploadBox label="Gambar Preview / Background Sekilas About" value={formData.home?.aboutPreviewImageUrl} onChange={(val) => handleChange('home', 'aboutPreviewImageUrl', val)} onImageUpload={handleImageUpload} />
-                    </div>
-                  </div>
-
-                  {/* Statistik & Angka Kinerja (Quick Facts) */}
-                  <div className="bg-white rounded-xl p-6 lg:p-8 shadow-sm border border-slate-200/80">
-                    <div className="flex items-center justify-between pb-5 border-b border-slate-100 mb-6">
-                      <div className="flex items-center gap-4">
-                        <div className="p-3 bg-sky-50 text-sky-600 rounded-xl"><TrendingUp className="w-6 h-6" /></div>
-                        <div>
-                          <h3 className="text-xl font-bold text-slate-800">Statistik & Kinerja Perusahaan</h3>
-                          <p className="text-sm text-slate-500 mt-1">Kelola angka-angka statistik di Beranda. Efek animasi angka bergulir tetap otomatis bekerja.</p>
-                        </div>
-                      </div>
-                      <button
-                        onClick={addHomeStat}
-                        className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-sky-700 hover:text-sky-800 bg-sky-50 hover:bg-sky-100/80 px-3 py-1.5 rounded-lg border border-sky-200/60 transition-colors cursor-pointer"
-                      >
-                        <Plus className="w-4 h-4" /> Tambah Statistik
-                      </button>
-                    </div>
-
-                    <div className="space-y-6">
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <InputField 
-                          icon={Type} 
-                          label="Badge Bagian Statistik" 
-                          value={formData.home?.quickFactsBadge ?? 'KREDIBILITAS & PERFORMA'} 
-                          onChange={(e) => handleChange('home', 'quickFactsBadge', e.target.value)} 
-                        />
-                        <InputField 
-                          icon={Type} 
-                          label="Judul Bagian Statistik" 
-                          value={formData.home?.quickFactsTitle ?? 'Kinerja Terpercaya untuk Kebutuhan Industri'} 
-                          onChange={(e) => handleChange('home', 'quickFactsTitle', e.target.value)} 
-                        />
-                      </div>
-                      <InputField 
-                        icon={Type} 
-                        label="Deskripsi Bagian Statistik" 
-                        value={formData.home?.quickFactsSubtitle ?? 'Kapasitas teknis yang teruji melalui ragam proyek strategis dan kemitraan berkelanjutan bersama para klien industri terkemuka.'} 
-                        onChange={(e) => handleChange('home', 'quickFactsSubtitle', e.target.value)} 
-                        isTextarea
-                      />
-
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-2">
-                        {(formData.home?.stats || defaultData?.home?.stats || []).map((stat, idx) => (
-                          <div key={stat.id || idx} className="p-5 border border-slate-200 rounded-md bg-slate-50/70 relative group space-y-4">
-                            <div className="flex items-center justify-between border-b border-slate-200/80 pb-3">
-                              <span className="text-xs font-bold text-sky-700 bg-sky-100/70 px-2.5 py-1 rounded-md uppercase tracking-wider">
-                                Kartu #{idx + 1}
-                              </span>
-                              <button
-                                onClick={() => removeHomeStat(idx)}
-                                className="p-1.5 bg-red-100 text-red-600 rounded-md opacity-80 hover:opacity-100 transition-opacity hover:bg-red-200"
-                                title="Hapus Kartu Statistik"
-                              >
-                                <Trash2 className="w-4 h-4" />
-                              </button>
-                            </div>
-                            
-                            <InputField 
-                              label="Kategori / Label Atas" 
-                              value={stat.category || ''} 
-                              onChange={(e) => handleHomeStatChange(idx, 'category', e.target.value)} 
-                              placeholder="cth: PENGALAMAN LAPANGAN"
-                            />
-
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                              <InputField 
-                                label="Nilai / Angka" 
-                                value={stat.value || ''} 
-                                onChange={(e) => handleHomeStatChange(idx, 'value', e.target.value)} 
-                                placeholder="cth: 10+, 50+, 99%"
-                                helperText="Animasi bergulir otomatis (cth: 10+, 99%)."
-                              />
-                              <InputField 
-                                label="Satuan / Teks Bawah Angka" 
-                                value={stat.unit || ''} 
-                                onChange={(e) => handleHomeStatChange(idx, 'unit', e.target.value)} 
-                                placeholder="cth: Tahun, Proyek Selesai"
-                              />
-                            </div>
-
-                            <InputField 
-                              label="Keterangan / Deskripsi" 
-                              value={stat.label || ''} 
-                              onChange={(e) => handleHomeStatChange(idx, 'label', e.target.value)} 
-                              placeholder="cth: Dedikasi melayani sektor infrastruktur..."
-                              isTextarea
-                            />
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-
-
-                  {/* Bagian Pilar Utama (Focus Pillars) */}
-                  <div className="bg-white rounded-xl p-6 lg:p-8 shadow-sm border border-slate-200/80">
-                    <div className="flex items-center gap-4 mb-6 pb-5 border-b border-slate-100">
-                      <div className="p-3 bg-amber-50 text-amber-600 rounded-md"><Layers className="w-6 h-6" /></div>
-                      <div>
-                        <h3 className="text-xl font-bold text-slate-800">Bagian Pilar Utama (4 Editorial Focus)</h3>
-                        <p className="text-sm text-slate-500 mt-1">Atur label badge dan judul bagian 4 kartu pilar utama di Beranda.</p>
-                      </div>
-                    </div>
-                    <div className="space-y-6">
-                      <InputField 
-                        icon={Type} 
-                        label="Label Badge Pilar Utama" 
-                        value={formData.home?.ourFocusBadge || 'PILAR UTAMA'} 
-                        onChange={(e) => handleChange('home', 'ourFocusBadge', e.target.value)} 
-                        placeholder="cth: PILAR UTAMA"
-                      />
-                      <InputField 
-                        icon={Type} 
-                        label="Judul Bagian Pilar Utama" 
-                        value={formData.home?.ourFocusTitle || 'Spesialisasi dan Ruang Lingkup Kerja'} 
-                        onChange={(e) => handleChange('home', 'ourFocusTitle', e.target.value)} 
-                        placeholder="cth: Spesialisasi dan Ruang Lingkup Kerja"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Bagian Layanan Unggulan (Services Showcase) */}
-                  <div className="bg-white rounded-xl p-6 lg:p-8 shadow-sm border border-slate-200/80">
-                    <div className="flex items-center gap-4 mb-6 pb-5 border-b border-slate-100">
-                      <div className="p-3 bg-sky-50 text-sky-600 rounded-xl"><Wrench className="w-6 h-6" /></div>
-                      <div>
-                        <h3 className="text-xl font-bold text-slate-800">Bagian Layanan Unggulan (Services)</h3>
-                        <p className="text-sm text-slate-500 mt-1">Atur judul, badge, dan pengantar bagian Layanan Unggulan di Beranda.</p>
-                      </div>
-                    </div>
-                    <div className="space-y-6">
-                      <InputField 
-                        icon={Type} 
-                        label="Label Badge Layanan Unggulan" 
-                        value={formData.home?.serviceBadge || 'KOMPETENSI UTAMA'} 
-                        onChange={(e) => handleChange('home', 'serviceBadge', e.target.value)} 
-                        placeholder="cth: KOMPETENSI UTAMA"
-                      />
-                      <InputField 
-                        icon={Type} 
-                        label="Judul Bagian Layanan Unggulan" 
-                        value={formData.home?.serviceTitle || 'Solusi Rekayasa Terpadu untuk Kebutuhan Industri'} 
-                        onChange={(e) => handleChange('home', 'serviceTitle', e.target.value)} 
-                        placeholder="cth: Solusi Rekayasa Terpadu untuk Kebutuhan Industri"
-                      />
-                      <InputField 
-                        icon={Type} 
-                        label="Deskripsi / Subjudul Layanan Unggulan" 
-                        value={formData.home?.serviceSubtitle || ''} 
-                        onChange={(e) => handleChange('home', 'serviceSubtitle', e.target.value)} 
-                        placeholder="cth: Spektrum layanan komprehensif mulai dari rancang bangun, instalasi mekanikal-elektrikal..." 
-                        isTextarea
-                      />
-                    </div>
-                  </div>
-
-                  {/* Bagian Portofolio & Rekam Jejak (Projects Showcase) */}
-                  <div className="bg-white rounded-xl p-6 lg:p-8 shadow-sm border border-slate-200/80">
-                    <div className="flex items-center gap-4 mb-6 pb-5 border-b border-slate-100">
-                      <div className="p-3 bg-violet-50 text-violet-600 rounded-md"><Briefcase className="w-6 h-6" /></div>
-                      <div>
-                        <h3 className="text-xl font-bold text-slate-800">Bagian Portofolio Proyek (Projects Showcase)</h3>
-                        <p className="text-sm text-slate-500 mt-1">Atur judul, badge, dan pengantar showcase proyek di Beranda.</p>
-                      </div>
-                    </div>
-                    <div className="space-y-6">
-                      <InputField 
-                        icon={Type} 
-                        label="Label Badge Portofolio Proyek" 
-                        value={formData.home?.portfolioBadge || 'PORTOFOLIO & REKAM JEJAK'} 
-                        onChange={(e) => handleChange('home', 'portfolioBadge', e.target.value)} 
-                        placeholder="cth: PORTOFOLIO & REKAM JEJAK"
-                      />
-                      <InputField 
-                        icon={Type} 
-                        label="Judul Bagian Portofolio Proyek" 
-                        value={formData.home?.portfolioTitle || 'Proyek Unggulan Terkini'} 
-                        onChange={(e) => handleChange('home', 'portfolioTitle', e.target.value)} 
-                        placeholder="cth: Proyek Unggulan Terkini"
-                      />
-                      <InputField 
-                        icon={Type} 
-                        label="Deskripsi / Subjudul Portofolio Proyek" 
-                        value={formData.home?.portfolioSubtitle || ''} 
-                        onChange={(e) => handleChange('home', 'portfolioSubtitle', e.target.value)} 
-                        placeholder="cth: Dokumentasi keberhasilan penyelesaian proyek konstruksi dan engineering..." 
-                        isTextarea
-                      />
-                    </div>
-                  </div>
-
-                  {/* Mitra / Client Logos Section */}
-                  <div className="bg-white rounded-xl p-6 lg:p-8 shadow-sm border border-slate-200/80">
-                    <div className="flex items-center justify-between pb-5 border-b border-slate-100 mb-6">
-                      <div className="flex items-center gap-4">
-                        <div className="p-3 bg-sky-50 text-sky-600 rounded-xl"><Building2 className="w-6 h-6" /></div>
-                        <div>
-                          <h3 className="text-xl font-bold text-slate-800">Mitra & Klien Terpercaya</h3>
-                          <p className="text-sm text-slate-500 mt-1">Kelola daftar perusahaan klien yang ditampilkan di Beranda.</p>
-                        </div>
-                      </div>
-                      <button
-                        onClick={addHomePartner}
-                        className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-sky-700 hover:text-sky-800 bg-sky-50 hover:bg-sky-100/80 px-3 py-1.5 rounded-lg border border-sky-200/60 transition-colors cursor-pointer"
-                      >
-                        <Plus className="w-4 h-4" /> Tambah Mitra
-                      </button>
-                    </div>
-
-                    <div className="space-y-6">
-                      <InputField 
-                        icon={Type} 
-                        label="Label Badge Kemitraan" 
-                        value={formData.home?.clientPartnersBadge || "KEMITRAAN STRATEGIS"} 
-                        onChange={(e) => handleChange('home', 'clientPartnersBadge', e.target.value)} 
-                        placeholder="cth: KEMITRAAN STRATEGIS"
-                      />
-                      <InputField 
-                        icon={Type} 
-                        label="Judul Bagian Mitra" 
-                        value={formData.home?.clientPartnersTitle || "Dipercaya Oleh Berbagai Perusahaan Terkemuka"} 
-                        onChange={(e) => handleChange('home', 'clientPartnersTitle', e.target.value)} 
-                      />
-
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {(formData.home?.clientPartners || []).map((partner, idx) => (
-                          <div key={partner.id || idx} className="p-4 border border-slate-200 rounded-md bg-slate-50 relative group flex flex-col justify-between">
-                            <button
-                              onClick={() => removeHomePartner(idx)}
-                              className="absolute top-2 right-2 p-1.5 bg-red-100 text-red-600 rounded-md opacity-0 group-hover:opacity-100 transition-opacity z-10 hover:bg-red-200"
-                              title="Hapus Mitra"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
-                            <div className="space-y-3">
-                              <InputField 
-                                label={`Nama Perusahaan ${idx + 1}`} 
-                                value={partner.name || ''} 
-                                onChange={(e) => handleHomePartnerChange(idx, 'name', e.target.value)} 
-                              />
-                              <ImageUploadBox 
-                                label="Logo Perusahaan (Opsional, jika kosong teks nama ditampilkan)" 
-                                value={partner.logo || ''} 
-                                onChange={(val) => handleHomePartnerChange(idx, 'logo', val)} 
-                                onImageUpload={handleImageUpload} 
-                              />
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-
-                      {(!formData.home?.clientPartners || formData.home?.clientPartners.length === 0) && (
-                        <div className="text-center p-8 border-2 border-dashed border-slate-200 rounded-md bg-slate-50 text-slate-500 text-sm">
-                          Belum ada daftar mitra. Klik 'Tambah Mitra' untuk menambahkan.
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Call to Action (CTA) Section Editor */}
-                  <div className="bg-white rounded-xl p-6 lg:p-8 shadow-sm border border-slate-200/80">
-                    <div className="flex items-center gap-4 mb-6 pb-5 border-b border-slate-100">
-                      <div className="p-3 bg-sky-50 text-sky-600 rounded-xl"><Sparkles className="w-6 h-6" /></div>
-                      <div>
-                        <h3 className="text-xl font-bold text-slate-800">Bagian Call To Action (Kolaborasi)</h3>
-                        <p className="text-sm text-slate-500 mt-1">Atur teks ajakan, tombol, dan gambar background di bagian paling bawah Beranda.</p>
-                      </div>
-                    </div>
-                    <div className="space-y-6">
-                      <div className="grid md:grid-cols-2 gap-6">
-                        <InputField 
-                          icon={Type} 
-                          label="Badge CTA" 
-                          value={formData.home?.ctaBadge || 'KONSULTASI PROYEK'} 
-                          onChange={(e) => handleChange('home', 'ctaBadge', e.target.value)} 
-                          placeholder="cth: KONSULTASI PROYEK"
-                        />
-                        <InputField 
-                          icon={Type} 
-                          label="Teks Tombol Aksi" 
-                          value={formData.home?.ctaButton || 'Hubungi Sekarang'} 
-                          onChange={(e) => handleChange('home', 'ctaButton', e.target.value)} 
-                          placeholder="cth: Hubungi Sekarang"
-                        />
-                      </div>
-                      <InputField 
-                        icon={Type} 
-                        label="Judul Ajakan CTA" 
-                        value={formData.home?.ctaTitle || 'Siap Berkolaborasi untuk Mewujudkan Efisiensi Fasilitas Industri Anda?'} 
-                        onChange={(e) => handleChange('home', 'ctaTitle', e.target.value)} 
-                        placeholder="cth: Siap Berkolaborasi untuk Mewujudkan Efisiensi Fasilitas Industri Anda?"
-                      />
-                      <InputField 
-                        icon={Type} 
-                        label="Deskripsi / Paragraf Singkat" 
-                        value={formData.home?.ctaSubtitle || ''} 
-                        onChange={(e) => handleChange('home', 'ctaSubtitle', e.target.value)} 
-                        placeholder="cth: Konsultasikan rancangan teknis, pengadaan suku cadang..." 
-                        isTextarea
-                      />
-                      <ImageUploadBox
-                        label="Gambar Background CTA (Landscape, 16:9)"
-                        value={formData.home?.ctaBgImageUrl || ''}
-                        onChange={(val) => handleChange('home', 'ctaBgImageUrl', val)}
-                        onImageUpload={handleImageUpload}
-                      />
-                    </div>
-                  </div>
-                </motion.div>
-              )}
-
-                            {/* ABOUT TAB */}
-              {activeTab === 'about' && (
-                <motion.div key="about" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.2 }} className="space-y-8">
-                  <PageHeaderEditor page="about" label="Tentang Kami" formData={formData} onChange={handlePageHeaderChange} onImageUpload={handleImageUpload} />
-                  <div className="bg-white rounded-xl p-6 lg:p-8 shadow-sm border border-slate-200/80">
-                    <div className="flex items-center gap-4 mb-8 pb-5 border-b border-slate-100">
-                      <div className="p-3 bg-emerald-50 text-emerald-600 rounded-md"><Info className="w-6 h-6" /></div>
-                      <div>
-                        <h3 className="text-xl font-bold text-slate-800">Informasi Perusahaan</h3>
-                        <p className="text-sm text-slate-500 mt-1">Deskripsi lengkap, visi, dan misi perusahaan.</p>
-                      </div>
-                    </div>
-                    <div className="space-y-6">
-                      <div className="grid md:grid-cols-2 gap-6">
-                        <InputField icon={Type} label="Badge Bagian (Label Kecil)" value={formData.about?.badge || 'SIAPA KAMI'} onChange={(e) => handleChange('about', 'badge', e.target.value)} placeholder="cth: SIAPA KAMI" />
-                        <InputField icon={Type} label="Judul Utama Bagian" value={formData.about?.mainTitle || 'Dedikasi Menghadirkan Rekayasa Teknik Berstandar Tinggi'} onChange={(e) => handleChange('about', 'mainTitle', e.target.value)} placeholder="cth: Dedikasi Menghadirkan Rekayasa..." />
-                      </div>
-                      <InputField icon={Type} label="Deskripsi Lengkap" value={formData.about?.description} onChange={(e) => handleChange('about', 'description', e.target.value)} isTextarea />
-                      <div className="grid md:grid-cols-2 gap-6">
-                        <InputField 
-                          icon={Type} 
-                          label="Badge Pengalaman - Angka/Teks" 
-                          value={formData.about?.experienceYears || '10+'} 
-                          onChange={(e) => handleChange('about', 'experienceYears', e.target.value)} 
-                          placeholder="cth: 10+" 
-                        />
-                        <InputField 
-                          icon={Type} 
-                          label="Badge Pengalaman - Label Keterangan" 
-                          value={formData.about?.experienceLabel || 'Tahun Pengalaman Kerja'} 
-                          onChange={(e) => handleChange('about', 'experienceLabel', e.target.value)} 
-                          placeholder="cth: Tahun Pengalaman Kerja" 
-                        />
-                      </div>
-                      <div className="grid md:grid-cols-2 gap-6">
-                        <div className="space-y-4">
-                          <InputField icon={Type} label="Judul Visi" value={formData.about?.visionTitle || 'Visi Perusahaan'} onChange={(e) => handleChange('about', 'visionTitle', e.target.value)} />
-                          <InputField icon={Type} label="Isi Visi Perusahaan" value={formData.about?.vision} onChange={(e) => handleChange('about', 'vision', e.target.value)} isTextarea />
-                        </div>
-                        <div className="space-y-4">
-                          <InputField icon={Type} label="Judul Misi" value={formData.about?.missionTitle || 'Misi Perusahaan'} onChange={(e) => handleChange('about', 'missionTitle', e.target.value)} />
-                          <InputField icon={Type} label="Isi Misi Perusahaan" value={formData.about?.mission} onChange={(e) => handleChange('about', 'mission', e.target.value)} isTextarea />
-                        </div>
-                      </div>
-                      <ImageUploadBox label="Gambar Utama Halaman About" value={formData.about?.image} onChange={(val) => handleChange('about', 'image', val)} onImageUpload={handleImageUpload} />
-                    </div>
-                  </div>
-
-                  {/* Core Values Section Editor */}
-                  <div className="bg-white rounded-xl p-6 lg:p-8 shadow-sm border border-slate-200/80">
-                    <div className="flex items-center gap-4 mb-8 pb-5 border-b border-slate-100">
-                      <div className="p-3 bg-indigo-50 text-indigo-600 rounded-md"><Sparkles className="w-6 h-6" /></div>
-                      <div>
-                        <h3 className="text-xl font-bold text-slate-800">Bagian Nilai-Nilai Utama (Core Values)</h3>
-                        <p className="text-sm text-slate-500 mt-1">Atur teks pengantar dan 4 kartu nilai inti perusahaan di halaman Tentang Kami.</p>
-                      </div>
-                    </div>
-                    <div className="space-y-6">
-                      <InputField icon={Type} label="Badge Nilai-Nilai" value={formData.about?.valuesBadge || 'NILAI INTI KAMI'} onChange={(e) => handleChange('about', 'valuesBadge', e.target.value)} placeholder="cth: NILAI INTI KAMI" />
-                      <InputField icon={Type} label="Judul Nilai-Nilai" value={formData.about?.valuesTitle || 'Prinsip Kerja & Integritas Profesional'} onChange={(e) => handleChange('about', 'valuesTitle', e.target.value)} />
-                      <InputField icon={Type} label="Deskripsi / Subjudul Nilai-Nilai" value={formData.about?.valuesSubtitle || 'Landasan fundamental yang memandu setiap rekayasa teknis, pengambilan keputusan, dan komitmen kemitraan kami.'} onChange={(e) => handleChange('about', 'valuesSubtitle', e.target.value)} isTextarea />
-                      
-                      <div className="pt-6 border-t border-slate-100">
-                        <div className="flex items-center justify-between mb-4">
-                          <div>
-                            <label className="text-sm font-semibold text-slate-700 block">
-                              Kartu Nilai-Nilai Perusahaan
-                            </label>
-                            <p className="text-xs text-slate-400">Sesuaikan judul dan penjelasan masing-masing nilai korporasi.</p>
-                          </div>
-                          <button
-                            type="button"
-                            onClick={addAboutValue}
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-sky-700 bg-sky-50 hover:bg-sky-100 rounded-lg border border-sky-200/60 transition-colors shrink-0"
-                          >
-                            <Plus className="w-3.5 h-3.5" /> Tambah Nilai
-                          </button>
-                        </div>
-                        <div className="grid md:grid-cols-2 gap-4">
-                          {(formData.about?.values || defaultData?.about?.values || []).map((val, idx) => (
-                            <div key={val.id || idx} className="relative p-5 rounded-md bg-slate-50 border border-slate-200/70 space-y-3">
-                              <div className="flex items-center justify-between">
-                                <span className="text-xs font-bold text-blue-600 uppercase tracking-wider">
-                                  Nilai #{idx + 1}
-                                </span>
-                                {(formData.about?.values || []).length > 1 && (
-                                  <button
-                                    type="button"
-                                    onClick={() => removeAboutValue(idx)}
-                                    className="text-slate-400 hover:text-red-500 p-1 rounded-md hover:bg-red-50 transition-colors"
-                                    title="Hapus nilai ini"
-                                  >
-                                    <Trash2 className="w-4 h-4" />
-                                  </button>
-                                )}
-                              </div>
-                              <InputField
-                                icon={Type}
-                                label="Judul Nilai"
-                                value={val.title || ''}
-                                onChange={(e) => handleAboutValueChange(idx, 'title', e.target.value)}
-                                placeholder="cth: Integritas & Akuntabilitas"
-                              />
-                              <InputField
-                                icon={Type}
-                                label="Deskripsi Nilai"
-                                value={val.desc || ''}
-                                onChange={(e) => handleAboutValueChange(idx, 'desc', e.target.value)}
-                                placeholder="cth: Menjaga transparansi..."
-                                isTextarea
-                              />
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
-              )}
-
-              {/* SERVICES TAB */}
-              {activeTab === 'services' && (
-                <motion.div key="services" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.2 }} className="space-y-8">
-                  <PageHeaderEditor page="service" label="Layanan" formData={formData} onChange={handlePageHeaderChange} onImageUpload={handleImageUpload} />
-                  <div className="flex justify-between items-center bg-white p-6 rounded-xl shadow-sm border border-slate-200/80">
-                    <div>
-                      <h3 className="text-xl font-bold text-slate-800">Daftar Layanan</h3>
-                      <p className="text-sm text-slate-500 mt-1">
-                        Kelola layanan yang ditampilkan pada halaman Services.
-                        {(formData.services || []).filter(s => s.featured).length > 0 && (
-                          <span className="inline-flex items-center gap-1 ml-2 text-amber-600 font-semibold">
-                            <Star className="w-3.5 h-3.5 fill-amber-500 text-amber-500" />
-                            {(formData.services || []).filter(s => s.featured).length} layanan tampil di Beranda
-                          </span>
-                        )}
-                      </p>
-                    </div>
-                    <button 
-                      onClick={() => addArrayItem('services', { id: Date.now().toString(), title: 'Layanan Baru', description: '', icon: 'Wrench', features: [], image: '', featured: false })}
-                      className="inline-flex items-center gap-2 bg-sky-50 text-sky-700 hover:bg-sky-100 hover:text-sky-800 border border-sky-200/80 px-4 py-2 rounded-lg text-sm font-semibold transition-colors cursor-pointer"
-                    >
-                      <Plus className="w-5 h-5" /> Tambah Layanan
-                    </button>
-                  </div>
-
-                  {formData.services?.map((service, index) => {
-                    const isLast = index === (formData.services?.length || 0) - 1;
-                    const ServiceItemIcon = getServiceIcon(service.icon, index);
-                    return (
-                      <div 
-                        key={service.id || index} 
-                        id={isLast ? 'services-new-item' : undefined}
-                        className="bg-white rounded-xl p-6 lg:p-8 shadow-sm border border-slate-200/80 relative group"
-                      >
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 pb-4 border-b border-slate-100 gap-4">
-                          <div className="flex items-center gap-4 min-w-0 flex-1">
-                            <div className="p-3 bg-sky-50 text-sky-600 rounded-xl shrink-0"><ServiceItemIcon className="w-6 h-6" /></div>
-                            <h3 className="text-lg font-bold text-slate-800 truncate pr-2" title={`Layanan #${index + 1}: ${service.title}`}>
-                              Layanan #{index + 1}: {service.title}
-                            </h3>
-                          </div>
-                          <div className="flex items-center gap-2.5 shrink-0 self-start sm:self-auto">
-                            <button
-                              type="button"
-                              onClick={() => handleArrayChange('services', index, 'featured', !service.featured)}
-                              className={`flex items-center gap-2.5 pl-3 pr-4 py-2 rounded-md text-xs font-semibold border transition-all active:scale-95 whitespace-nowrap ${
-                                service.featured
-                                  ? 'bg-amber-50 text-amber-700 border-amber-300 hover:bg-amber-100'
-                                  : 'bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100'
-                              }`}
-                              title={service.featured ? 'Sembunyikan dari halaman Beranda' : 'Tampilkan di halaman Beranda (Layanan Unggulan)'}
-                            >
-                              <span className={`relative inline-block w-9 h-5 rounded-full transition-colors ${service.featured ? 'bg-amber-500' : 'bg-slate-300'}`}>
-                                <span className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${service.featured ? 'translate-x-4' : ''}`}></span>
-                              </span>
-                              <Star className={`w-4 h-4 ${service.featured ? 'fill-amber-500 text-amber-500' : 'text-slate-400'}`} />
-                              <span>{service.featured ? 'Tampil di Beranda' : 'Tidak Tampil'}</span>
-                            </button>
-                            <button 
-                              onClick={() => removeArrayItem('services', index)}
-                              className="p-2 text-red-500 hover:bg-red-50 rounded-md transition-colors border border-transparent hover:border-red-100 shrink-0"
-                              title="Hapus Layanan"
-                            >
-                              <Trash2 className="w-5 h-5" />
-                            </button>
-                          </div>
-                        </div>
-                        <div className="grid md:grid-cols-2 gap-8">
-                          <div className="space-y-6">
-                            <InputField label="Nama Layanan" value={service.title} onChange={(e) => handleArrayChange('services', index, 'title', e.target.value)} />
-                            <div>
-                              <label className="block text-sm font-semibold text-slate-700 mb-2">Pilih Icon Layanan</label>
-                              <div className="grid grid-cols-5 sm:grid-cols-5 gap-2 p-3 bg-slate-50 rounded-md border border-slate-200">
-                                {SERVICE_ICONS.map((item) => {
-                                  const IconComponent = item.icon;
-                                  const isSelected = (service.icon || 'Wrench') === item.id;
-                                  return (
-                                    <button
-                                      key={item.id}
-                                      type="button"
-                                      onClick={() => handleArrayChange('services', index, 'icon', item.id)}
-                                      className={`flex flex-col items-center justify-center p-2.5 rounded-md border text-center transition-all ${
-                                        isSelected
-                                          ? 'bg-sky-600 text-white border-sky-600 shadow-sm'
-                                          : 'bg-white text-slate-600 border-slate-200 hover:bg-sky-50 hover:text-sky-600'
-                                      }`}
-                                      title={item.name}
-                                    >
-                                      <IconComponent className="w-5 h-5 mb-1" />
-                                      <span className="text-[10px] leading-tight font-medium truncate w-full">{item.id}</span>
-                                    </button>
-                                  );
-                                })}
-                              </div>
-                            </div>
-                            <InputField label="Deskripsi" value={service.description} onChange={(e) => handleArrayChange('services', index, 'description', e.target.value)} isTextarea />
-                            <InputField 
-                              label="Ruang Lingkup (Pisahkan dengan Enter)" 
-                              value={(service.features || []).join('\n')} 
-                              onChange={(e) => handleFeaturesChange(index, e.target.value)} 
-                              isTextarea 
-                              placeholder="Desain HVAC&#10;Pemasangan Pipa&#10;Perawatan Rutin"
-                            />
-                          </div>
-                          <div>
-                            <ImageUploadBox label="Gambar Layanan" value={service.image} onChange={(val) => handleArrayChange('services', index, 'image', val)} onImageUpload={handleImageUpload} />
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </motion.div>
-              )}
-
-              {/* PROJECTS TAB */}
-              {activeTab === 'projects' && (
-                <motion.div key="projects" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.2 }} className="space-y-8">
-                  <PageHeaderEditor page="project" label="Proyek" formData={formData} onChange={handlePageHeaderChange} onImageUpload={handleImageUpload} />
-                  <div className="flex justify-between items-center bg-white p-6 rounded-xl shadow-sm border border-slate-200/80">
-                    <div>
-                      <h3 className="text-xl font-bold text-slate-800">Daftar Proyek</h3>
-                      <p className="text-sm text-slate-500 mt-1">
-                        Kelola portofolio proyek yang telah dikerjakan.
-                        {(formData.projects || []).filter(p => p.featured).length > 0 && (
-                          <span className="inline-flex items-center gap-1 ml-2 text-amber-600 font-semibold">
-                            <Star className="w-3.5 h-3.5 fill-amber-500 text-amber-500" />
-                            {(formData.projects || []).filter(p => p.featured).length} proyek tampil di Beranda
-                          </span>
-                        )}
-                      </p>
-                    </div>
-                    <button 
-                      onClick={() => addArrayItem('projects', { id: Date.now(), title: 'Proyek Baru', category: 'MEP', location: '', year: new Date().getFullYear().toString(), client: '', description: '', image: '', featured: false })}
-                      className="inline-flex items-center gap-2 bg-sky-50 text-sky-700 hover:bg-sky-100 hover:text-sky-800 border border-sky-200/80 px-4 py-2 rounded-lg text-sm font-semibold transition-colors cursor-pointer"
-                    >
-                      <Plus className="w-5 h-5" /> Tambah Proyek
-                    </button>
-                  </div>
-
-                  {formData.projects?.map((project, index) => {
-                    const isLast = index === (formData.projects?.length || 0) - 1;
-                    return (
-                      <div 
-                        key={project.id || index} 
-                        id={isLast ? 'projects-new-item' : undefined}
-                        className="bg-white rounded-xl p-6 lg:p-8 shadow-sm border border-slate-200/80 relative group"
-                      >
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 pb-4 border-b border-slate-100 gap-4">
-                          <div className="flex items-center gap-4 min-w-0 flex-1">
-                            <div className="p-3 bg-purple-50 text-purple-600 rounded-md shrink-0"><Briefcase className="w-6 h-6" /></div>
-                            <h3 className="text-lg font-bold text-slate-800 truncate pr-2" title={`Proyek #${index + 1}: ${project.title}`}>
-                              Proyek #{index + 1}: {project.title}
-                            </h3>
-                          </div>
-                          <div className="flex items-center gap-2.5 shrink-0 self-start sm:self-auto">
-                            <button
-                              type="button"
-                              onClick={() => handleArrayChange('projects', index, 'featured', !project.featured)}
-                              className={`flex items-center gap-2.5 pl-3 pr-4 py-2 rounded-md text-xs font-semibold border transition-all active:scale-95 whitespace-nowrap ${
-                                project.featured
-                                  ? 'bg-amber-50 text-amber-700 border-amber-300 hover:bg-amber-100'
-                                  : 'bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100'
-                              }`}
-                              title={project.featured ? 'Sembunyikan dari halaman Beranda' : 'Tampilkan di halaman Beranda (Proyek Unggulan)'}
-                            >
-                              {/* Toggle switch */}
-                              <span className={`relative inline-block w-9 h-5 rounded-full transition-colors ${project.featured ? 'bg-amber-500' : 'bg-slate-300'}`}>
-                                <span className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${project.featured ? 'translate-x-4' : ''}`}></span>
-                              </span>
-                              <Star className={`w-4 h-4 ${project.featured ? 'fill-amber-500 text-amber-500' : 'text-slate-400'}`} />
-                              <span>{project.featured ? 'Tampil di Beranda' : 'Tidak Tampil'}</span>
-                            </button>
-
-                            <button
-                              type="button"
-                              onClick={() => removeArrayItem('projects', index)}
-                              className="p-2 text-red-500 hover:bg-red-50 rounded-md transition-colors border border-transparent hover:border-red-100 shrink-0"
-                              title="Hapus Proyek"
-                            >
-                              <Trash2 className="w-5 h-5" />
-                            </button>
-                          </div>
-                        </div>
-                      <div className="grid md:grid-cols-2 gap-8">
-                        <div className="space-y-4">
-                          <InputField label="Nama Proyek" value={project.title} onChange={(e) => handleArrayChange('projects', index, 'title', e.target.value)} />
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <InputField label="Kategori (Misal: MEP, Konstruksi)" value={project.category} onChange={(e) => handleArrayChange('projects', index, 'category', e.target.value)} />
-                            <InputField label="Tahun" value={project.year} onChange={(e) => handleArrayChange('projects', index, 'year', e.target.value)} />
-                          </div>
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <InputField label="Klien" value={project.client} onChange={(e) => handleArrayChange('projects', index, 'client', e.target.value)} />
-                            <InputField label="Lokasi" value={project.location} onChange={(e) => handleArrayChange('projects', index, 'location', e.target.value)} />
-                          </div>
-                          <InputField label="Deskripsi Singkat" value={project.description} onChange={(e) => handleArrayChange('projects', index, 'description', e.target.value)} isTextarea />
-                        </div>
-                        <div>
-                          <ImageUploadBox label="Gambar Proyek" value={project.image} onChange={(val) => handleArrayChange('projects', index, 'image', val)} onImageUpload={handleImageUpload} />
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-                </motion.div>
-              )}
-
-              {/* CONTACT TAB */}
-              {activeTab === 'contact' && (
-                <motion.div key="contact" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.2 }} className="space-y-8">
-                  <PageHeaderEditor page="contact" label="Kontak" formData={formData} onChange={handlePageHeaderChange} onImageUpload={handleImageUpload} />
-                  
-                  {/* Teks Pengantar Halaman Kontak */}
-                  <div className="bg-white rounded-xl p-6 lg:p-8 shadow-sm border border-slate-200/80">
-                    <div className="flex items-center gap-4 mb-8 pb-5 border-b border-slate-100">
-                      <div className="p-3 bg-sky-50 text-sky-600 rounded-xl"><Sparkles className="w-6 h-6" /></div>
-                      <div>
-                        <h3 className="text-xl font-bold text-slate-800">Teks Pengantar Halaman Kontak</h3>
-                        <p className="text-sm text-slate-500 mt-1">Atur label badge, judul, dan subjudul bagian informasi kontak dan formulir.</p>
-                      </div>
-                    </div>
-                    <div className="space-y-6">
-                      <InputField 
-                        icon={Type} 
-                        label="Label Badge Pengantar" 
-                        value={formData.contactSettings?.badge || 'HUBUNGI KAMI'} 
-                        onChange={(e) => handleChange('contactSettings', 'badge', e.target.value)} 
-                        placeholder="cth: HUBUNGI KAMI" 
-                      />
-                      <InputField 
-                        icon={Type} 
-                        label="Judul Utama Pengantar" 
-                        value={formData.contactSettings?.title || 'Diskusikan Kebutuhan Proyek Anda'} 
-                        onChange={(e) => handleChange('contactSettings', 'title', e.target.value)} 
-                        placeholder="cth: Diskusikan Kebutuhan Proyek Anda" 
-                      />
-                      <InputField 
-                        icon={Type} 
-                        label="Subjudul / Keterangan Singkat" 
-                        value={formData.contactSettings?.subtitle || ''} 
-                        onChange={(e) => handleChange('contactSettings', 'subtitle', e.target.value)} 
-                        placeholder="cth: Tim kami siap berdiskusi dan memberikan solusi rekayasa terbaik..." 
-                        isTextarea 
-                      />
-                    </div>
-                  </div>
-
-                  <div className="bg-white rounded-xl p-6 lg:p-8 shadow-sm border border-slate-200/80">
-                    <div className="flex items-center gap-4 mb-8 pb-5 border-b border-slate-100">
-                      <div className="p-3 bg-orange-50 text-orange-600 rounded-md"><Phone className="w-6 h-6" /></div>
-                      <div>
-                        <h3 className="text-xl font-bold text-slate-800">Informasi Kontak & Perusahaan</h3>
-                        <p className="text-sm text-slate-500 mt-1">Atur alamat, email, no HP dan info terkait di halaman kontak.</p>
-                      </div>
-                    </div>
-                    <div className="space-y-6">
-                      <InputField icon={Type} label="Nama Perusahaan" value={formData.company?.name} onChange={(e) => handleChange('company', 'name', e.target.value)} />
-                      <InputField icon={Type} label="Alamat Kantor" value={formData.company?.address} onChange={(e) => handleChange('company', 'address', e.target.value)} isTextarea />
-                      <div className="grid md:grid-cols-2 gap-6">
-                        <InputField icon={Phone} label="Nomor Telepon / WhatsApp" value={formData.company?.phone} onChange={(e) => handleChange('company', 'phone', e.target.value)} />
-                        <InputField icon={Type} label="Email Perusahaan" value={formData.company?.email} onChange={(e) => handleChange('company', 'email', e.target.value)} />
-                      </div>
-                      <InputField icon={Type} label="Jam Operasional" value={formData.company?.workingHours} onChange={(e) => handleChange('company', 'workingHours', e.target.value)} />
-                      <div className="space-y-1.5">
-                        <InputField 
-                          icon={MapPin} 
-                          label="Embed Link / URL Google Maps" 
-                          value={formData.company?.googleMapsEmbedUrl} 
-                          onChange={(e) => handleChange('company', 'googleMapsEmbedUrl', e.target.value)} 
-                          placeholder="Contoh: https://maps.google.com/maps?q=PT+Ziotech... atau kode <iframe src='...'>"
-                        />
-                        <div className="text-xs text-slate-500 space-y-1 bg-slate-50 p-3 rounded-md border border-slate-200">
-                          <p className="font-semibold text-slate-700">Cara menyematkan lokasi tepat:</p>
-                          <p>1. Buka titik lokasi di <b>Google Maps</b> di browser.</p>
-                          <p>2. Klik <b>Bagikan (Share)</b> &rarr; pilih tab <b>Sematkan peta (Embed a map)</b> &rarr; klik <b>Salin HTML (Copy HTML)</b>, lalu tempel di sini.</p>
-                          <p>3. Atau Anda juga bisa langsung menempelkan URL alamat / koordinat (<code className="bg-white px-1 rounded border border-slate-200">-6.2088, 106.8456</code>).</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Social Media Section */}
-                  <div className="bg-white rounded-xl p-6 lg:p-8 shadow-sm border border-slate-200/80">
-                    <div className="flex items-center justify-between pb-5 border-b border-slate-100 mb-6">
-                      <div className="flex items-center gap-4">
-                        <div className="p-3 bg-pink-50 text-pink-600 rounded-md"><Share2 className="w-6 h-6" /></div>
-                        <div>
-                          <h3 className="text-xl font-bold text-slate-800">Media Sosial Footer</h3>
-                          <p className="text-sm text-slate-500 mt-1">Kelola link sosial media yang ditampilkan di footer website.</p>
-                        </div>
-                      </div>
-                      <button
-                        onClick={addCompanySocial}
-                        className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-sky-700 hover:text-sky-800 bg-sky-50 hover:bg-sky-100/80 px-3 py-1.5 rounded-lg border border-sky-200/60 transition-colors cursor-pointer"
-                      >
-                        <Plus className="w-4 h-4" /> Tambah Sosmed
-                      </button>
-                    </div>
-
-                    <div className="space-y-4">
-                      {(formData.company?.socials || []).map((item, idx) => (
-                        <div key={item.id || idx} className="p-4 border border-slate-200 rounded-md bg-slate-50 relative group flex flex-col md:flex-row gap-4 items-start md:items-center">
-                          <button
-                            onClick={() => removeCompanySocial(idx)}
-                            className="absolute top-2 right-2 md:static md:order-last p-2 bg-red-50 text-red-600 rounded-md opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-100"
-                            title="Hapus Sosmed"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                          
-                          <div className="w-full md:w-48 shrink-0">
-                            <label className="block text-xs font-semibold text-slate-600 mb-1">Platform</label>
-                            <select
-                              value={item.platform || 'instagram'}
-                              onChange={(e) => handleCompanySocialChange(idx, 'platform', e.target.value)}
-                              className="w-full px-3 py-2 text-sm bg-white border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 font-medium text-slate-700"
-                            >
-                              <option value="linkedin">LinkedIn</option>
-                              <option value="instagram">Instagram</option>
-                              <option value="facebook">Facebook</option>
-                              <option value="twitter">X / Twitter</option>
-                              <option value="youtube">YouTube</option>
-                              <option value="tiktok">TikTok</option>
-                              <option value="other">Lainnya (Web/Icon)</option>
-                            </select>
-                          </div>
-
-                          <div className="flex-1 w-full">
-                            <label className="block text-xs font-semibold text-slate-600 mb-1">URL / Tautan Lengkap</label>
-                            <input
-                              type="text"
-                              value={item.url || ''}
-                              placeholder="https://..."
-                              onChange={(e) => handleCompanySocialChange(idx, 'url', e.target.value)}
-                              className="w-full px-3 py-2 text-sm bg-white border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 font-medium text-slate-700"
-                            />
-                          </div>
-                        </div>
-                      ))}
-
-                      {(!formData.company?.socials || formData.company?.socials.length === 0) && (
-                        <div className="text-center p-8 border-2 border-dashed border-slate-200 rounded-md bg-slate-50 text-slate-500 text-sm">
-                          Belum ada sosial media. Klik 'Tambah Sosmed' untuk menambahkan tautan.
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Footer Services Links Section */}
-                  <div className="bg-white rounded-xl p-6 lg:p-8 shadow-sm border border-slate-200/80">
-                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-5 border-b border-slate-100 mb-6 gap-4">
-                      <div className="flex items-center gap-4">
-                        <div className="p-3 bg-sky-50 text-sky-600 rounded-xl"><Globe className="w-6 h-6" /></div>
-                        <div>
-                          <h3 className="text-xl font-bold text-slate-800">Tautan Layanan di Footer</h3>
-                          <p className="text-sm text-slate-500 mt-1">Atur nama layanan dan hyperlink yang muncul di kolom 'Layanan' pada footer website.</p>
-                        </div>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={addFooterService}
-                        className="text-sm flex items-center justify-center gap-1.5 text-white font-semibold bg-sky-600 hover:bg-sky-500 px-4 py-2 rounded-lg shadow-sm transition-colors shrink-0"
-                      >
-                        <Plus className="w-4 h-4" /> Tambah Tautan Footer
-                      </button>
-                    </div>
-
-                    <div className="space-y-4">
-                      {(formData.company?.footerServices || []).map((item, idx) => (
-                        <div key={item.id || idx} className="p-4 sm:p-5 border border-slate-200 rounded-md bg-slate-50 relative group flex flex-col md:flex-row gap-4 items-start md:items-center transition-all hover:border-slate-300">
-                          <div className="flex-1 w-full">
-                            <label className="block text-xs font-semibold text-slate-700 mb-1.5">
-                              Judul / Label Teks yang Tampil
-                            </label>
-                            <input
-                              type="text"
-                              value={item.title || ''}
-                              placeholder="cth: Mechanical, Electrical & Plumbing"
-                              onChange={(e) => handleFooterServiceChange(idx, 'title', e.target.value)}
-                              className="w-full px-3.5 py-2.5 text-sm bg-white border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 font-medium text-slate-800"
-                            />
-                          </div>
-
-                          <div className="flex-1 w-full">
-                            <label className="block text-xs font-semibold text-slate-700 mb-1.5">
-                              Hyperlink / URL Tujuan (Internal <code className="text-blue-600 font-mono">/service/1</code> atau Eksternal <code className="text-blue-600 font-mono">https://...</code>)
-                            </label>
-                            <input
-                              type="text"
-                              value={item.url || ''}
-                              placeholder="cth: /service/1 atau https://..."
-                              onChange={(e) => handleFooterServiceChange(idx, 'url', e.target.value)}
-                              className="w-full px-3.5 py-2.5 text-sm bg-white border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 font-mono text-xs text-slate-800"
-                            />
-                          </div>
-
-                          <button
-                            type="button"
-                            onClick={() => removeFooterService(idx)}
-                            className="p-2.5 text-red-500 hover:bg-red-50 rounded-md transition-colors border border-transparent hover:border-red-200 self-end md:self-center shrink-0 mt-1 md:mt-5"
-                            title="Hapus tautan ini"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        </div>
-                      ))}
-
-                      {(!formData.company?.footerServices || formData.company?.footerServices.length === 0) && (
-                        <div className="text-center p-8 border-2 border-dashed border-slate-200 rounded-md bg-slate-50 text-slate-500 text-sm">
-                          Belum ada tautan layanan khusus yang dikonfigurasi. Footer otomatis menampilkan 5 layanan teratas dari database. Klik <b>'Tambah Tautan Footer'</b> untuk mengatur secara khusus.
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </motion.div>
-              )}
-              {/* INBOX TAB */}
-              {activeTab === 'inbox' && (
-                <motion.div key="inbox" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.2 }} className="space-y-6">
-                  <div className="bg-white rounded-xl p-4 sm:p-6 lg:p-8 shadow-sm border border-slate-200/80">
-                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-5 border-b border-slate-100">
-                      <div className="flex items-center gap-4">
-                        <div className="p-3 bg-sky-50 text-sky-600 rounded-xl"><Inbox className="w-6 h-6" /></div>
-                        <div>
-                          <h3 className="text-xl font-bold text-slate-800">Daftar Pesan Masuk</h3>
-                          <p className="text-sm text-slate-500 mt-1">Pesan formulir kontak dari pengunjung website.</p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs font-semibold px-3 py-1.5 rounded-md bg-slate-100 text-slate-600">Total: {messages.length}</span>
-                        {unreadCount > 0 && (
-                          <span className="text-xs font-semibold px-3 py-1.5 rounded-md bg-red-50 text-red-600 border border-red-100">{unreadCount} baru</span>
-                        )}
-                      </div>
-                    </div>
-
-                    {messages.length === 0 ? (
-                      <div className="text-center py-16 text-slate-400">
-                        <Inbox className="w-12 h-12 mx-auto mb-3 stroke-1 text-slate-300" />
-                        <p className="font-medium text-slate-600">Belum ada pesan masuk</p>
-                        <p className="text-xs text-slate-400 mt-1">Setiap pesan baru akan masuk ke sini secara realtime.</p>
-                      </div>
-                    ) : (
-                      <div className="mt-6 space-y-4">
-                        {messages.map((msg) => {
-                          const isUnread = msg.status !== 'read';
-                          return (
-                            <div key={msg.id} className={`p-4 sm:p-5 rounded-xl border transition-all ${isUnread ? 'bg-sky-50/40 border-sky-200/80 shadow-sm' : 'bg-white border-slate-200'}`}>
-                              <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
-                                <div className="flex items-center gap-2 flex-wrap">
-                                  {isUnread && <span className="w-2.5 h-2.5 rounded-full bg-sky-500 shrink-0" />}
-                                  <span className="font-bold text-slate-800 text-sm sm:text-base">{msg.name || 'Tanpa Nama'}</span>
-                                  <span className="text-xs px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 font-medium">{msg.subject || 'Pesan Baru'}</span>
-                                </div>
-                                <span className="text-xs text-slate-400 flex items-center gap-1 shrink-0">
-                                  <Clock className="w-3.5 h-3.5" />
-                                  {msg.createdAt ? new Date(msg.createdAt).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' }) : '-'}
-                                </span>
-                              </div>
-                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-slate-500 mb-3 bg-slate-50 p-2.5 rounded-lg">
-                                <div className="flex items-center gap-2 truncate"><Mail className="w-3.5 h-3.5 text-slate-400 shrink-0" /><span className="truncate">{msg.email || '-'}</span></div>
-                                <div className="flex items-center gap-2 truncate"><Phone className="w-3.5 h-3.5 text-slate-400 shrink-0" /><span className="truncate">{msg.phone || '-'}</span></div>
-                              </div>
-                              <div className="p-3.5 bg-white rounded-lg border border-slate-100 text-sm text-slate-700 whitespace-pre-wrap leading-relaxed break-words">{msg.message}</div>
-                              <div className="flex flex-wrap items-center justify-between gap-2.5 mt-4 pt-3 border-t border-slate-100 text-xs">
-                                <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
-                                  <button onClick={() => handleMarkMessageStatus(msg.id, isUnread ? 'read' : 'unread')} className={`px-3 py-1.5 rounded-lg font-medium transition-colors ${isUnread ? 'bg-blue-100 text-blue-700 hover:bg-blue-200' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}>
-                                    {isUnread ? 'Tandai Dibaca' : 'Tandai Belum Dibaca'}
-                                  </button>
-                                  {msg.email && (
-                                    <a href={`mailto:${msg.email}?subject=Re: ${encodeURIComponent(msg.subject || 'Pesan Website')}`} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-50 text-green-700 hover:bg-green-100 font-medium transition-colors">
-                                      <Mail className="w-3.5 h-3.5" /> Balas Email
-                                    </a>
-                                  )}
-                                  {msg.email && (
-                                    <a
-                                      href={`https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(msg.email)}&su=${encodeURIComponent(`Re: ${msg.subject || 'Pesan Website'}`)}`}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-sky-50 text-sky-700 hover:bg-sky-100 border border-sky-200/60 font-medium transition-colors"
-                                      title="Buka langsung di Gmail Browser"
-                                    >
-                                      <ExternalLink className="w-3.5 h-3.5" /> Buka Gmail
-                                    </a>
-                                  )}
-                                  {msg.phone && msg.phone !== '-' && (
-                                    <a
-                                      href={`https://wa.me/${msg.phone.replace(/[^0-9]/g, '').replace(/^0/, '62')}`}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100 font-medium transition-colors"
-                                      title="Balas via WhatsApp"
-                                    >
-                                      <Phone className="w-3.5 h-3.5" /> WhatsApp
-                                    </a>
-                                  )}
-                                </div>
-                                <button onClick={() => handleDeleteMessage(msg.id, msg.name)} className="p-2 text-red-500 hover:bg-red-50 rounded-lg ml-auto transition-colors" title="Hapus Pesan" aria-label="Hapus Pesan">
-                                  <Trash2 className="w-4 h-4" />
-                                </button>
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    )}
-                  </div>
-                </motion.div>
-              )}
-
-
+              {activeTab === 'home' && <HomeTab formData={formData} handleChange={handleChange} handleImageUpload={handleImageUpload} handleHeroTitleChange={handleHeroTitleChange} addHeroTitle={addHeroTitle} removeHeroTitle={removeHeroTitle} handleHomeStatChange={handleHomeStatChange} addHomeStat={addHomeStat} removeHomeStat={removeHomeStat} handleHomePartnerChange={handleHomePartnerChange} addHomePartner={addHomePartner} removeHomePartner={removeHomePartner} />}
+              {activeTab === 'about' && <AboutTab formData={formData} handleChange={handleChange} handlePageHeaderChange={handlePageHeaderChange} handleImageUpload={handleImageUpload} handleAboutValueChange={handleAboutValueChange} addAboutValue={addAboutValue} removeAboutValue={removeAboutValue} />}
+              {activeTab === 'services' && <ServicesTab formData={formData} handlePageHeaderChange={handlePageHeaderChange} handleImageUpload={handleImageUpload} handleArrayChange={handleArrayChange} addArrayItem={addArrayItem} removeArrayItem={removeArrayItem} handleFeaturesChange={handleFeaturesChange} />}
+              {activeTab === 'projects' && <ProjectsTab formData={formData} handlePageHeaderChange={handlePageHeaderChange} handleImageUpload={handleImageUpload} handleArrayChange={handleArrayChange} addArrayItem={addArrayItem} removeArrayItem={removeArrayItem} />}
+              {activeTab === 'news' && <NewsTab formData={formData} handleChange={handleChange} handlePageHeaderChange={handlePageHeaderChange} handleImageUpload={handleImageUpload} handleArrayChange={handleArrayChange} addArrayItem={addArrayItem} removeArrayItem={removeArrayItem} toggleNewsFeatured={toggleNewsFeatured} newsSearch={newsSearch} setNewsSearch={setNewsSearch} />}
+              {activeTab === 'contact' && <ContactTab formData={formData} handleChange={handleChange} handlePageHeaderChange={handlePageHeaderChange} handleImageUpload={handleImageUpload} handleCompanySocialChange={handleCompanySocialChange} addCompanySocial={addCompanySocial} removeCompanySocial={removeCompanySocial} handleFooterServiceChange={handleFooterServiceChange} addFooterService={addFooterService} removeFooterService={removeFooterService} />}
+              {activeTab === 'inbox' && <InboxTab messages={messages} unreadCount={unreadCount} handleMarkMessageStatus={handleMarkMessageStatus} handleDeleteMessage={handleDeleteMessage} />}
             </AnimatePresence>
-
           </div>
         </div>
       </main>
-      {/* Confirm Action Modal */}
+
       <ConfirmModal
         isOpen={confirmModal.isOpen}
-        onClose={() => setConfirmModal((prev) => ({ ...prev, isOpen: false }))}
+        onClose={() => setConfirmModal(prev => ({ ...prev, isOpen: false }))}
         onConfirm={confirmModal.onConfirm}
         title={confirmModal.title}
         message={confirmModal.message}
@@ -2334,7 +1117,3 @@ export default function Dashboard() {
     </div>
   );
 }
-
-
-
-

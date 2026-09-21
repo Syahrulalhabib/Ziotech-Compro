@@ -2,6 +2,7 @@ import { useLocation } from 'react-router-dom';
 import Navbar from './Navbar';
 import Footer from './Footer';
 import LoadingScreen from './LoadingScreen';
+import FloatingWhatsApp from './FloatingWhatsApp';
 import { useData } from '../context/DataContext';
 
 export default function Layout({ children }) {
@@ -20,6 +21,7 @@ export default function Layout({ children }) {
         {children}
       </main>
       {!isAdmin && <Footer />}
+      {!isAdmin && <FloatingWhatsApp />}
     </div>
   );
 }

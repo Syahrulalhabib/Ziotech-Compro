@@ -23,7 +23,7 @@ export default function ProjectDetail() {
   }
 
   return (
-    <div className="pt-20 md:pt-32 pb-12 sm:pb-20 bg-gray-50 min-h-screen overflow-hidden">
+    <div className="pt-28 md:pt-32 pb-12 sm:pb-20 bg-gray-50 min-h-screen overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Back Button */}

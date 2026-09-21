@@ -9,6 +9,8 @@ import Service from './pages/Service';
 import ServiceDetail from './pages/ServiceDetail';
 import Project from './pages/Project';
 import ProjectDetail from './pages/ProjectDetail';
+import News from './pages/News';
+import NewsDetail from './pages/NewsDetail';
 import Contact from './pages/Contact';
 import Login from './pages/admin/Login';
 import Dashboard from './pages/admin/Dashboard';
@@ -28,6 +30,10 @@ function App() {
               <Route path="/service/:id" element={<ServiceDetail />} />
               <Route path="/project" element={<Project />} />
               <Route path="/project/:id" element={<ProjectDetail />} />
+              <Route path="/news" element={<News />} />
+              <Route path="/news/:id" element={<NewsDetail />} />
+              <Route path="/berita" element={<Navigate to="/news" replace />} />
+              <Route path="/berita/:id" element={<NewsDetail />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
               <Route path="/admin/login" element={<Login />} />

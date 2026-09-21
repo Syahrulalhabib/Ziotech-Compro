@@ -75,6 +75,9 @@ const defaultData = {
     portfolioBadge: "REKAM JEJAK",
     portfolioTitle: "Portofolio Proyek Unggulan",
     portfolioSubtitle: "Dokumentasi hasil pengerjaan proyek strategis di berbagai fasilitas komersial, pabrik industri, dan infrastruktur penunjang.",
+    newsBadge: "RUANG BERITA & INFORMASI",
+    newsTitle: "Berita & Informasi Terkini",
+    newsSubtitle: "Dapatkan pembaruan siaran pers, liputan kegiatan operasional, dan inisiatif keberlanjutan perusahaan.",
     clientPartnersBadge: "KEMITRAAN STRATEGIS",
     clientPartnersTitle: "Dipercaya Oleh Berbagai Perusahaan Terkemuka",
     clientPartners: [
@@ -153,6 +156,12 @@ const defaultData = {
       title: "Hubungi Kami",
       subtitle: "Tim representatif dan insinyur kami siap mendiskusikan kebutuhan teknis maupun skema kerja sama proyek Anda.",
       image: "https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80"
+    },
+    news: {
+      badge: "BERITA & PUBLIKASI",
+      title: "Ruang Berita & Publikasi",
+      subtitle: "Siaran pers terkini, publikasi majalah, serta liputan kegiatan operasional perusahaan.",
+      image: "https://images.unsplash.com/photo-1504711434969-e33886168f5c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80"
     }
   },
   contactSettings: {
@@ -280,6 +289,104 @@ const defaultData = {
       image: 'https://images.unsplash.com/photo-1517524008697-84bbe3c3fd98?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
     }
   ],
+  news: [
+    {
+      id: 1,
+      type: "News",
+      category: "Press Release",
+      title: "Kolaborasi Pertamina dan ITDC rangkul komunitas serta penggemar motorsport dalam rangkaian Road to Pertamina Grand Prix of Indonesia 2026",
+      date: "20 September 2026",
+      author: "Corporate Communication",
+      excerpt: "PT Ziotech bersama ITDC dan Pertamina memperkuat sinergi dengan merangkul komunitas motorsport nasional jelang perhelatan akbar internasional di Mandalika.",
+      content: "Menyambut perhelatan balap motor internasional kasta tertinggi Pertamina Grand Prix of Indonesia 2026 di Pertamina Mandalika International Circuit, kolaborasi lintas sektor terus diperkuat bersama komunitas motorsport dan pemangku kepentingan industri nasional.\n\nMelalui sinergi terintegrasi antara Pertamina, ITDC, dan mitra rekayasa fasilitas PT Ziotech Global Inovasi, berbagai persiapan fasilitas paddock, keandalan sistem kelistrikan berdaya tinggi (MEP), serta penataan infrastruktur utilitas berstandar K3LH tinggi telah dipersiapkan secara maksimal.\n\nInisiatif ini dirancang bukan semata sebagai ajang adu kecepatan balap dunia, melainkan ekosistem terpadu yang memicu pertumbuhan ekonomi masyarakat lokal, optimalisasi pariwisata terpadu Nusa Tenggara Barat, dan unjuk kebolehan talenta rekayasa engineering anak bangsa di hadapan komunitas internasional.",
+      image: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
+      featured: true
+    },
+    {
+      id: 2,
+      type: "News",
+      category: "Press Release",
+      title: "Pertamina Mandalika Racing Series, Wadah Ekosistem Motorsport Nasional Menuju Panggung Dunia",
+      date: "20 September 2026",
+      author: "Media Relations",
+      excerpt: "Ajang Mandalika Racing Series menjadi platform strategis pembinaan talenta pembalap muda dan pengujian performa teknologi sirkuit berkelas internasional.",
+      content: "Kejuaraan Pertamina Mandalika Racing Series kembali digelar dengan partisipasi ratusan pembalap muda dari berbagai penjuru tanah air. Seri kejuaraan ini menjadi tonggak penting dalam pembinaan berjenjang atlet balap motor Indonesia menuju panggung kompetisi global.\n\nDidukung oleh infrastruktur sirkuit berstandar FIM Grade A, keandalan sistem timing dan kelistrikan tanpa henti menjadi faktor kunci suksesnya penyelenggaraan.",
+      image: "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      featured: true
+    },
+    {
+      id: 3,
+      type: "News",
+      category: "Press Release",
+      title: "Road to Pertamina Eco RunFest 2026: Mengajak Masyarakat Wujudkan Aksi Nyata Jaga Lingkungan",
+      date: "20 September 2026",
+      author: "CSR & Sustainability",
+      excerpt: "Gerakan kepedulian lingkungan bertajuk Eco RunFest 2026 melibatkan ribuan partisipan dalam aksi bersih sampah dan kampanye pengurangan jejak karbon.",
+      content: "Menjelang puncak festival tahunan pelestarian lingkungan, Road to Pertamina Eco RunFest 2026 mengajak seluruh lapisan masyarakat untuk berperan aktif dalam program pemilahan sampah, daur ulang material plastik sirkular, dan penghijauan ruang terbuka publik.\n\nDengan mengusung konsep Zero Waste to Landfill, seluruh sampah botol kemasan dan material plastik yang terkumpul dikonversi menjadi energi alternatif dan produk bernilai guna bagi masyarakat sekitar.",
+      image: "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      featured: true
+    },
+    {
+      id: 4,
+      type: "News",
+      category: "Press Release",
+      title: "Raih Posisi Puncak Fortune Indonesia 100 Gala 2026, Bukti Kinerja Pertamina di antara Perusahaan Tanah Air",
+      date: "19 September 2026",
+      author: "Corporate Secretary",
+      excerpt: "Penghargaan bergengsi Fortune Indonesia 100 diraih atas pertumbuhan laba solid, efisiensi operasional, dan kepemimpinan transisi energi nasional.",
+      content: "Komitmen konsisten dalam mempertahankan efisiensi operasional dan keandalan tata kelola mengantarkan perseroan meraih predikat teratas pada malam penganugerahan bergengsi Fortune Indonesia 100 Gala 2026.\n\nDewan juri menggarisbawahi keunggulan manajemen risiko, implementasi tata kelola berkelanjutan (ESG), dan ketahanan finansial di tengah dinamika pasar energi industri sebagai penentu pencapaian ini.",
+      image: "https://images.unsplash.com/photo-1511578314322-379afb476865?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      featured: true
+    },
+    {
+      id: 5,
+      type: "News",
+      category: "Press Release",
+      title: "Bawa Misi Kemanusiaan Saat Bencana lewat Media Sosial, Komunikasi Digital Pertamina Raih Penghargaan IABC 2026",
+      date: "19 September 2026",
+      author: "Public Relations",
+      excerpt: "Inisiatif pemanfaatan kanal komunikasi digital dalam tanggap darurat bencana meraih apresiasi bergengsi tingkat internasional dari IABC.",
+      content: "Keberhasilan kampanye penyaluran bantuan kemanusiaan serta transparansi pelaporan penanggulangan darurat bencana melalui ekosistem digital media sosial dinobatkan sebagai kampanye komunikasi publik terbaik oleh International Association of Business Communicators (IABC) 2026.\n\nKecepatan informasi real-time dan akurasi titik distribusi bantuan energi serta logistik medis menjadi penopang utama efektivitas aksi tanggap darurat bagi masyarakat terdampak.",
+      image: "https://images.unsplash.com/photo-1577495508048-b635879837f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      featured: true
+    },
+    {
+      id: 6,
+      type: "News",
+      category: "CSR News",
+      title: "Pemberdayaan UMKM Binaan dan Elektrifikasi Panel Surya Mandiri di Kawasan Pesisir",
+      date: "15 September 2026",
+      author: "CSR Ziotech",
+      excerpt: "Pemasangan instalasi sistem solar cell mandiri untuk sentra nelayan lokal mendorong peningkatan produktivitas cold storage dan penurunan biaya energi.",
+      content: "Sebagai bagian dari program Tanggung Jawab Sosial dan Lingkungan (TJSL), program elektrifikasi energi terbarukan berbasis panel surya mandiri telah berhasil diserahterimakan kepada koperasi nelayan pesisir.\n\nInstalasi yang dikerjakan oleh tim rekayasa teknik ini mampu menyuplai daya listrik berkelanjutan untuk fasilitas pendingin ikan, menjaga kesegaran hasil tangkapan tanpa ketergantungan diesel fosil.",
+      image: "https://images.unsplash.com/photo-1509391365360-2e959784a276?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      featured: false
+    },
+    {
+      id: 7,
+      type: "News",
+      category: "Energia News",
+      title: "Inovasi Efisiensi Distribusi Daya Listrik pada Fasilitas Kilang Petrokimia",
+      date: "10 September 2026",
+      author: "Divisi Rekayasa Teknik",
+      excerpt: "Penerapan sistem otomasi transformator pintar dan audit termal berkala memangkas konsumsi rugi-rugi transmisi industri hingga 18%.",
+      content: "Efisiensi energi pada industri padat modal membutuhkan pengawasan presisi tinggi pada jaringan utilitas. Penerapan teknologi pemantauan termal inframerah dan otomasi gardu distribusi listrik terbukti mampu mencegah downtime tak terencana sekaligus menekan emisi gas buang secara signifikan.",
+      image: "https://images.unsplash.com/photo-1581094794329-c8112a89af12?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      featured: false
+    },
+    {
+      id: 8,
+      type: "Magazine",
+      category: "Energia Magazine",
+      title: "Majalah Energia Edisi Q3 2026: Transformasi Digital & Keberlanjutan Infrastruktur Nasional",
+      date: "01 September 2026",
+      author: "Redaksi Majalah",
+      excerpt: "Simak ulasan mendalam mengenai masa depan integrasi IoT di industri MEP, tata kelola K3LH, dan wawancara eksklusif bersama para pakar rekayasa.",
+      content: "Edisi terkini Majalah Energia membedah peta jalan transformasi dekarbonisasi industri konstruksi dan MEP di Asia Tenggara. Dilengkapi studi kasus implementasi sensor prediktif getaran turbin, panduan standar efisiensi energi gedung hijau (Green Building), serta infografis mendalam. Unduh edisi digital lengkap untuk wawasan komprehensif.",
+      image: "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      featured: false
+    }
+  ],
   company: {
     name: "PT. Ziotech Global Inovasi",
     address: "Jl. Contoh Alamat No. 123, Jakarta, Indonesia",
@@ -303,20 +410,23 @@ const defaultData = {
 };
 
 export function DataProvider({ children }) {
-  const [rawData, setRawData] = useState(defaultData);
+  const [rawData, setRawData] = useState(null);
   const [loading, setLoading] = useState(() => Boolean(import.meta.env.VITE_FIREBASE_API_KEY));
 
   useEffect(() => {
     // Pastikan app id firebase valid sebelum fetching (mencegah error jika .env kosong)
     if (!import.meta.env.VITE_FIREBASE_API_KEY) {
       console.warn("Firebase config not found, using default data.");
+      setRawData(defaultData);
+      setLoading(false);
       return;
     }
 
     // Safety timeout: jangan biarkan loading screen menggantung selamanya jika koneksi lambat
     const safetyTimer = setTimeout(() => {
+      setRawData((current) => current || defaultData);
       setLoading(false);
-    }, 2500);
+    }, 3000);
 
     try {
       const dataRef = ref(db, 'content');
@@ -356,7 +466,7 @@ export function DataProvider({ children }) {
                 }
                 return fallback?.features || [];
               })(),
-              image: svc.image || fallback?.image || ''
+              image: (svc.image !== undefined && svc.image !== null) ? svc.image : (fallback?.image || '')
             };
           });
 
@@ -368,7 +478,19 @@ export function DataProvider({ children }) {
               ...fallback,
               ...proj,
               featured: Boolean(proj.featured),
-              image: proj.image || fallback?.image || ''
+              image: (proj.image !== undefined && proj.image !== null) ? proj.image : (fallback?.image || '')
+            };
+          });
+
+          const news = safeArray(dbData.news, defaultData.news).map(item => {
+            const fallback =
+              defaultData.news.find(d => String(d.id) === String(item.id)) ||
+              defaultData.news.find(d => d.title === item.title);
+            return {
+              ...fallback,
+              ...item,
+              featured: Boolean(item.featured),
+              image: (item.image !== undefined && item.image !== null) ? item.image : (fallback?.image || '')
             };
           });
 
@@ -380,11 +502,14 @@ export function DataProvider({ children }) {
             });
           }
 
-          // Merge home: pastikan field lama tetap dapat nilai default
+          // Merge home: jika admin pernah menyimpan home, jangan paksakan default mitra lama
+          const hasSavedHome = Boolean(dbData.home);
           const home = { 
             ...defaultData.home, 
             ...(dbData.home || {}),
-            clientPartners: safeArray(dbData.home?.clientPartners, defaultData.home.clientPartners),
+            heroTitles: safeArray(dbData.home?.heroTitles, defaultData.home.heroTitles),
+            heroImages: safeArray(dbData.home?.heroImages, defaultData.home.heroImages),
+            clientPartners: safeArray(dbData.home?.clientPartners, hasSavedHome ? [] : defaultData.home.clientPartners),
             stats: safeArray(dbData.home?.stats, defaultData.home.stats)
           };
 
@@ -408,17 +533,18 @@ export function DataProvider({ children }) {
             ...(dbData.contactSettings || {})
           };
 
-          setRawData(prev => ({
-            ...prev,
+          setRawData({
+            ...defaultData,
             ...dbData,
             home,
             about,
             pageHeaders,
             services,
             projects,
+            news,
             company,
             contactSettings
-          }));
+          });
         } else {
           // Firebase connected tapi node 'content' kosong — pakai defaultData, stop loading
           setRawData(defaultData);
@@ -426,6 +552,7 @@ export function DataProvider({ children }) {
         setLoading(false);
       }, (error) => {
         console.error("Error fetching data: ", error);
+        setRawData((current) => current || defaultData);
         setLoading(false);
       });
 
@@ -433,12 +560,13 @@ export function DataProvider({ children }) {
     } catch (error) {
       console.error("Firebase init error: ", error);
       // eslint-disable-next-line react-hooks/set-state-in-effect
+      setRawData(defaultData);
       setLoading(false);
     }
   }, []);
 
   return (
-    <DataContext.Provider value={{ data: rawData, rawData, loading }}>
+    <DataContext.Provider value={{ data: rawData || defaultData, rawData, loading }}>
       {children}
     </DataContext.Provider>
   );

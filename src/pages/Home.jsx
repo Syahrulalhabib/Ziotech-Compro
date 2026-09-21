@@ -4,7 +4,8 @@ import { useData } from '../context/DataContext';
 import { useCountUp } from '../hooks/useCountUp';
 import { 
   ArrowRight, 
-  ArrowUpRight 
+  ArrowUpRight,
+  Calendar
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { getServiceIcon } from '../data/serviceIcons';
@@ -31,10 +32,39 @@ function StatCounter({ value, className }) {
   );
 }
 
+/**
+ * Komponen rendering logo mitra dengan auto-cleaner transparan real-time.
+ * Mencegah kotak abu-abu (#eaeff4, #e2e8f0, dsb) atau putih dari file gambar
+ * agar logo selalu tampil transparan murni dan menyatu dengan kartu.
+ */
+/**
+ * Komponen rendering logo mitra.
+ * Menggunakan tag <img> standar agar aset transparan dari cPanel / public assets
+ * tampil tajam dan murni tanpa distorsi filter/canvas.
+ */
+function PartnerLogoImage({ src, alt }) {
+  if (!src) return null;
+
+  // Mendukung path lokal cpanel / public (cth: "/assets/partners/pertamina.png")
+  const resolvedSrc = (src.startsWith('http://') || src.startsWith('https://') || src.startsWith('/') || src.startsWith('data:'))
+    ? src
+    : `/${src}`;
+
+  return (
+    <img 
+      src={resolvedSrc} 
+      alt={alt || 'Mitra'} 
+      className="max-h-12 max-w-[85%] w-auto object-contain transition-all duration-300 group-hover:scale-105"
+      loading="lazy"
+    />
+  );
+}
+
 export default function Home() {
   const { data } = useData();
   const [currentHeroIndex, setCurrentHeroIndex] = useState(0);
   const [activeTabCategory, setActiveTabCategory] = useState('ALL');
+  const [activeNewsCategory, setActiveNewsCategory] = useState('Press Release');
 
   const touchStartX = useRef(0);
   const touchStartY = useRef(0);
@@ -148,6 +178,19 @@ export default function Home() {
   const filteredProjects = activeTabCategory === 'ALL'
     ? featuredProjects
     : featuredProjects.filter(p => (p.category || '').toUpperCase().includes(activeTabCategory));
+
+  const allNews = Array.isArray(data?.news) ? data.news : [];
+  const newsCategories = Array.from(new Set(allNews.map(n => n.category).filter(Boolean)));
+  const currentNewsCategory = (activeNewsCategory && newsCategories.some(c => c.toLowerCase() === activeNewsCategory.toLowerCase()))
+    ? activeNewsCategory
+    : (newsCategories[0] || '');
+  const filteredNews = allNews.filter(item => 
+    !currentNewsCategory || (item.category || '').toLowerCase() === currentNewsCategory.toLowerCase()
+  );
+  const featuredNews = filteredNews.find(n => n.featured) || filteredNews[0] || null;
+  const gridNews = filteredNews
+    .filter(n => n.id !== featuredNews?.id)
+    .slice(0, 4);
 
   // Focus Pillars dinamis dari CMS — ikut layanan yang ada di database
   const FP_FALLBACK_IMAGES = [
@@ -707,8 +750,124 @@ export default function Home() {
         </div>
       </section>
 
+      {/* 8. RUANG BERITA & PUBLIKASI (Pertamina Corporate Newsroom Style) */}
+      <section className="py-20 sm:py-28 bg-white border-b border-slate-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-12 gap-6 items-end pb-8 mb-8 border-b border-slate-200/80">
+            <div className="lg:col-span-6">
+              <span className="text-[11px] font-bold tracking-widest text-slate-400 uppercase mb-2 block">
+                {data?.home?.newsBadge || 'RUANG BERITA & INFORMASI'}
+              </span>
+              <h2 className="text-2xl sm:text-4xl font-extrabold text-[#0f172a] leading-tight">
+                {data?.home?.newsTitle || 'Berita & Informasi Terkini'}
+              </h2>
+            </div>
+            <div className="lg:col-span-4">
+              <p className="text-slate-500 text-sm sm:text-base leading-relaxed">
+                {data?.home?.newsSubtitle || 'Dapatkan pembaruan siaran pers, liputan kegiatan operasional, dan inisiatif keberlanjutan perusahaan.'}
+              </p>
+            </div>
+            <div className="lg:col-span-2 lg:text-right">
+              <Link to="/news" className="pertamina-btn-pill">
+                Semua Berita <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
+          </div>
+
+          {/* Category Filter Pills */}
+          <div className="flex flex-wrap items-center gap-2.5 mb-8 sm:mb-10">
+            {newsCategories.map((cat) => {
+              const isActive = (currentNewsCategory || '').toLowerCase() === cat.toLowerCase();
+              return (
+                <button
+                  key={cat}
+                  type="button"
+                  onClick={() => setActiveNewsCategory(cat)}
+                  className={`px-5 py-2 rounded-full text-xs sm:text-sm font-medium transition-all cursor-pointer ${
+                    isActive 
+                      ? 'bg-[#002d72] text-white shadow-sm' 
+                      : 'bg-[#f1f4f9] text-slate-700 hover:bg-slate-200'
+                  }`}
+                >
+                  {cat}
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 items-stretch">
+            {filteredNews.length > 0 ? (
+              <>
+                {/* Featured Big Card (Left, Spanning full height of right 2x2 grid) */}
+                <div className="lg:col-span-6 flex flex-col">
+                  {featuredNews && (
+                    <Link
+                      to={`/news/${featuredNews.id}`}
+                      className="group relative flex-1 min-h-[440px] sm:min-h-[480px] lg:min-h-[516px] rounded-2xl overflow-hidden shadow-sm block bg-slate-900"
+                    >
+                      <img
+                        src={featuredNews.image}
+                        alt={featuredNews.title}
+                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/45 to-transparent" />
+                      <div className="absolute bottom-0 inset-x-0 p-6 sm:p-7 text-white">
+                        <span className="text-[11px] font-bold tracking-wider text-white uppercase block mb-2">
+                          {featuredNews.category || 'PRESS RELEASE'}
+                        </span>
+                        <h3 className="text-xl sm:text-2xl font-bold text-white mb-3 leading-snug line-clamp-3 group-hover:text-sky-300 transition-colors">
+                          {featuredNews.title}
+                        </h3>
+                        <div className="text-xs font-normal text-white/90 flex items-center gap-2">
+                          <Calendar className="w-3.5 h-3.5 text-white shrink-0" />
+                          <span>{featuredNews.date}</span>
+                        </div>
+                      </div>
+                    </Link>
+                  )}
+                </div>
+
+                {/* 2x2 Cards Grid (Right) */}
+                <div className="lg:col-span-6 grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
+                  {gridNews.map((item) => (
+                    <Link
+                      key={item.id}
+                      to={`/news/${item.id}`}
+                      className="group relative h-[235px] sm:h-[248px] rounded-2xl overflow-hidden shadow-sm block bg-slate-900"
+                    >
+                      <img
+                        src={item.image}
+                        alt={item.title}
+                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent" />
+                      <div className="absolute bottom-0 inset-x-0 p-4 sm:p-5 text-white">
+                        <span className="text-[10px] sm:text-[11px] font-bold tracking-wider text-white uppercase block mb-1.5">
+                          {item.category || 'PRESS RELEASE'}
+                        </span>
+                        <h4 className="text-xs sm:text-sm font-bold text-white leading-snug mb-2.5 line-clamp-3 group-hover:text-sky-300 transition-colors">
+                          {item.title}
+                        </h4>
+                        <div className="text-xs font-normal text-white/90 flex items-center gap-2">
+                          <Calendar className="w-3.5 h-3.5 text-white shrink-0" />
+                          <span>{item.date}</span>
+                        </div>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </>
+            ) : (
+              <div className="lg:col-span-12 py-12 text-center text-slate-400">
+                Belum ada berita untuk kategori ini.
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+
       {/* 8. GRUP BISNIS & MITRA KERJA (Pertamina "Grup Bisnis Kami / Subholding" Style) */}
-      <section className="py-20 sm:py-24 bg-[#f8fafc] border-b border-slate-100">
+      <section className="py-20 sm:py-24 bg-white border-b border-slate-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="pb-8 mb-10 border-b border-slate-200">
             <span className="text-[11px] font-bold tracking-widest text-slate-400 uppercase mb-2 block">
@@ -719,7 +878,7 @@ export default function Home() {
             </h2>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-6">
+          <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6">
             {(homeData?.clientPartners && homeData.clientPartners.length > 0 ? homeData.clientPartners : [
               { name: 'PERTAMINA' },
               { name: 'PLN' },
@@ -729,13 +888,12 @@ export default function Home() {
             ]).map((partner, idx) => (
               <div 
                 key={partner.id || idx}
-                className="bg-white rounded-xl border border-slate-200/80 p-6 flex items-center justify-center h-28 hover:border-[#0284c7] hover:shadow-sm transition-all duration-300 group"
+                className="bg-white rounded-xl border border-slate-200/90 p-5 flex items-center justify-center h-28 w-[calc(50%-0.5rem)] sm:w-56 md:w-60 lg:w-64 max-w-[260px] shrink-0 hover:border-[#0284c7] hover:shadow-lg transition-all duration-300 group overflow-hidden"
               >
                 {partner.logo ? (
-                  <img 
+                  <PartnerLogoImage 
                     src={partner.logo} 
-                    alt={partner.name} 
-                    className="max-h-12 w-auto object-contain grayscale group-hover:grayscale-0 transition-all duration-300"
+                    alt={partner.name || 'Mitra'} 
                   />
                 ) : (
                   <span className="text-sm sm:text-base font-extrabold tracking-wider text-slate-600 group-hover:text-[#1e3a8a] transition-colors text-center">

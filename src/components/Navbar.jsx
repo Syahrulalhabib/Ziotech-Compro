@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useData } from '../context/DataContext';
-import { Menu, X, ChevronRight, Home, Building2, Wrench, Briefcase, Phone } from 'lucide-react';
+import { Menu, X, ChevronRight, Home, Building2, Wrench, Briefcase, Newspaper, Phone } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import logo from '../assets/ziotech.png';
 
@@ -20,6 +20,7 @@ export default function Navbar() {
     { name: 'Tentang Kami', path: '/about', icon: Building2 },
     { name: 'Layanan', path: '/service', icon: Wrench },
     { name: 'Proyek', path: '/project', icon: Briefcase },
+    { name: 'Berita', path: '/news', icon: Newspaper },
     { name: 'Kontak', path: '/contact', icon: Phone },
   ];
 
@@ -51,12 +52,17 @@ export default function Navbar() {
     }
   };
 
+  // Hanya halaman utama dengan dark hero banner yang navbar-nya transparan di posisi paling atas.
+  // Halaman konten/detail (berita detail, layanan detail, proyek detail, dll) langsung memakai header solid Ziotech.
+  const isDarkHeroPage = ['/', '/about', '/service', '/project', '/news', '/contact'].includes(location.pathname);
+  const isSolid = !isDarkHeroPage || scrolled;
+
   return (
     <>
       <header
         className={`fixed top-0 w-full z-50 transition-all duration-300 ${
-          scrolled
-            ? 'bg-slate-950/80 backdrop-blur-md border-b border-white/10 shadow-lg py-2.5'
+          isSolid
+            ? 'bg-slate-950/85 backdrop-blur-md border-b border-white/10 shadow-lg py-2.5'
             : 'bg-transparent py-4 md:py-5'
         }`}
       >
@@ -67,7 +73,7 @@ export default function Navbar() {
             <img
               src={logo}
               alt={company.name}
-              className={`transition-all duration-500 group-hover:scale-105 ${scrolled ? 'h-12 md:h-14' : 'h-14 md:h-16'}`}
+              className={`transition-all duration-500 group-hover:scale-105 ${isSolid ? 'h-12 md:h-14' : 'h-14 md:h-16'}`}
             />
           </button>
 
