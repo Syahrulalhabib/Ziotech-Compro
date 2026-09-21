@@ -39,7 +39,7 @@ const HomeTab = ({ formData, handleChange, handleImageUpload, handleHeroTitleCha
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div className="flex-1">
           <label className="block text-sm font-semibold text-slate-700">Gambar Background Hero (Slider)</label>
-          <p className="text-xs text-slate-500 mt-1 mb-0">Format lanskap (disarankan 16:9 atau 1920Ã—1080 px) agar pas di layar.</p>
+          <p className="text-xs text-slate-500 mt-1 mb-0">Format lanskap (disarankan 16:9 atau 1920x1080 px) agar pas di layar.</p>
         </div>
         <button
           onClick={() => {
@@ -225,7 +225,7 @@ const HomeTab = ({ formData, handleChange, handleImageUpload, handleHeroTitleCha
 
 {/* Statistik & Angka Kinerja (Quick Facts) */}
 <div className="bg-white rounded-xl p-6 lg:p-8 shadow-sm border border-slate-200/80">
-  <div className="flex items-center justify-between pb-5 border-b border-slate-100 mb-6">
+  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-5 border-b border-slate-100 mb-6 gap-4">
     <div className="flex items-center gap-4">
       <div className="p-3 bg-sky-50 text-sky-600 rounded-xl"><TrendingUp className="w-6 h-6" /></div>
       <div>
@@ -235,7 +235,7 @@ const HomeTab = ({ formData, handleChange, handleImageUpload, handleHeroTitleCha
     </div>
     <button
       onClick={addHomeStat}
-      className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-sky-700 hover:text-sky-800 bg-sky-50 hover:bg-sky-100/80 px-3 py-1.5 rounded-lg border border-sky-200/60 transition-colors cursor-pointer"
+      className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-sky-700 hover:text-sky-800 bg-sky-50 hover:bg-sky-100/80 px-3 py-1.5 rounded-lg border border-sky-200/60 transition-colors cursor-pointer shrink-0 self-start sm:self-auto"
     >
       <Plus className="w-4 h-4" /> Tambah Statistik
     </button>
@@ -416,7 +416,7 @@ const HomeTab = ({ formData, handleChange, handleImageUpload, handleHeroTitleCha
 
 {/* Mitra / Client Logos Section */}
 <div className="bg-white rounded-xl p-6 lg:p-8 shadow-sm border border-slate-200/80">
-  <div className="flex items-center justify-between pb-5 border-b border-slate-100 mb-6">
+  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-5 border-b border-slate-100 mb-6 gap-4">
     <div className="flex items-center gap-4">
       <div className="p-3 bg-sky-50 text-sky-600 rounded-xl"><Building2 className="w-6 h-6" /></div>
       <div>
@@ -426,7 +426,7 @@ const HomeTab = ({ formData, handleChange, handleImageUpload, handleHeroTitleCha
     </div>
     <button
       onClick={addHomePartner}
-      className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-sky-700 hover:text-sky-800 bg-sky-50 hover:bg-sky-100/80 px-3 py-1.5 rounded-lg border border-sky-200/60 transition-colors cursor-pointer"
+      className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-sky-700 hover:text-sky-800 bg-sky-50 hover:bg-sky-100/80 px-3 py-1.5 rounded-lg border border-sky-200/60 transition-colors cursor-pointer shrink-0 self-start sm:self-auto"
     >
       <Plus className="w-4 h-4" /> Tambah Mitra
     </button>

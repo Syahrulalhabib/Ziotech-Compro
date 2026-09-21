@@ -33,11 +33,6 @@ function StatCounter({ value, className }) {
 }
 
 /**
- * Komponen rendering logo mitra dengan auto-cleaner transparan real-time.
- * Mencegah kotak abu-abu (#eaeff4, #e2e8f0, dsb) atau putih dari file gambar
- * agar logo selalu tampil transparan murni dan menyatu dengan kartu.
- */
-/**
  * Komponen rendering logo mitra.
  * Menggunakan tag <img> standar agar aset transparan dari cPanel / public assets
  * tampil tajam dan murni tanpa distorsi filter/canvas.

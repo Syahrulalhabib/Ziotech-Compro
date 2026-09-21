@@ -9,15 +9,13 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState(() => location.state?.sessionExpired ? 'Sesi berakhir. Silakan masuk kembali.' : '');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
     if (location.state?.sessionExpired) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setError('Sesi berakhir. Silakan masuk kembali.');
       window.history.replaceState({}, document.title);
     }
   }, [location.state]);

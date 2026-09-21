@@ -56,7 +56,7 @@ export default function Service() {
             
             return (
               <motion.div 
-                key={service.id}
+                key={service.id || idx}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-100px" }}

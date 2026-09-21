@@ -67,7 +67,7 @@ const AboutTab = ({ formData, handleChange, handlePageHeaderChange, handleImageU
     <InputField icon={Type} label="Deskripsi / Subjudul Nilai-Nilai" value={formData.about?.valuesSubtitle || 'Landasan fundamental yang memandu setiap rekayasa teknis, pengambilan keputusan, dan komitmen kemitraan kami.'} onChange={(e) => handleChange('about', 'valuesSubtitle', e.target.value)} isTextarea />
     
     <div className="pt-6 border-t border-slate-100">
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
         <div>
           <label className="text-sm font-semibold text-slate-700 block">
             Kartu Nilai-Nilai Perusahaan
@@ -77,7 +77,7 @@ const AboutTab = ({ formData, handleChange, handlePageHeaderChange, handleImageU
         <button
           type="button"
           onClick={addAboutValue}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-sky-700 bg-sky-50 hover:bg-sky-100 rounded-lg border border-sky-200/60 transition-colors shrink-0"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-sky-700 bg-sky-50 hover:bg-sky-100 rounded-lg border border-sky-200/60 transition-colors shrink-0 self-start sm:self-auto cursor-pointer"
         >
           <Plus className="w-3.5 h-3.5" /> Tambah Nilai
         </button>

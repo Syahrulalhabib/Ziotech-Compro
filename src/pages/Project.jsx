@@ -10,7 +10,7 @@ export default function Project() {
 
   const projects = Array.isArray(data?.projects) ? data.projects : [];
 
-  const categories = ['Semua', ...new Set(projects.map(p => p.category))];
+  const categories = ['Semua', ...new Set(projects.map(p => p.category).filter(Boolean))];
 
   const filteredProjects = activeCategory === 'Semua'
     ? projects

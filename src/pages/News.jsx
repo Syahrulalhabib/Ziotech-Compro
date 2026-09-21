@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { useData } from '../context/DataContext';
 import { Link } from 'react-router-dom';
-import { Calendar, ArrowRight, Search, BookOpen, Newspaper } from 'lucide-react';
+import { Calendar, ArrowRight, Search, Newspaper } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function News() {
@@ -9,7 +9,7 @@ export default function News() {
   const [activeCategory, setActiveCategory] = useState('Semua');
   const [searchQuery, setSearchQuery] = useState('');
 
-  const allNews = Array.isArray(data?.news) ? data.news : [];
+  const allNews = useMemo(() => Array.isArray(data?.news) ? data.news : [], [data]);
   const header = data?.pageHeaders?.news || {
     badge: 'BERITA & PUBLIKASI',
     title: 'Ruang Berita & Publikasi',

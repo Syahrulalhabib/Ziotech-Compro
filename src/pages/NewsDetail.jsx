@@ -41,9 +41,6 @@ export default function NewsDetail() {
     );
   }
 
-  const shareUrl = encodeURIComponent(window.location.href);
-  const shareTitle = encodeURIComponent(article.title || '');
-
   return (
     <div className="pt-28 sm:pt-36 pb-16 sm:pb-24 bg-[#f8fafc] min-h-screen">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">

@@ -24,6 +24,20 @@ const defaultServices = defaultData?.services || [];
 const defaultProjects = defaultData?.projects || [];
 const defaultNews = defaultData?.news || [];
 
+const PAGE_TABS = [
+  { id: 'home', label: 'Beranda (Home)', icon: Home, title: 'Edit Beranda', crumb: 'Beranda' },
+  { id: 'about', label: 'Tentang Kami', icon: Info, title: 'Edit Tentang Kami', crumb: 'Tentang Kami' },
+  { id: 'services', label: 'Layanan (Services)', icon: Wrench, title: 'Edit Layanan (Services)', crumb: 'Layanan' },
+  { id: 'projects', label: 'Proyek (Projects)', icon: Briefcase, title: 'Edit Portofolio Proyek', crumb: 'Proyek' },
+  { id: 'news', label: 'Berita & Artikel', icon: Newspaper, title: 'Edit Berita & Artikel', crumb: 'Berita & Artikel' },
+  { id: 'contact', label: 'Kontak & Perusahaan', icon: Phone, title: 'Edit Kontak & Profil Perusahaan', crumb: 'Kontak & Perusahaan' },
+];
+
+const ALL_TABS = [
+  ...PAGE_TABS,
+  { id: 'inbox', label: 'Pesan Masuk', icon: Inbox, title: 'Pesan Masuk (Inbox)', crumb: 'Pesan Masuk' },
+];
+
 export default function Dashboard() {
   const [user, setUser] = useState(null);
   const [loadingAuth, setLoadingAuth] = useState(true);
@@ -50,47 +64,6 @@ export default function Dashboard() {
       const news = [...(prev.news || [])];
       news[index] = { ...news[index], featured: !news[index].featured };
       return { ...prev, news };
-    });
-  };
-
-  const handleHeroTitleChange = (index, value) => {
-    setFormData((prev) => {
-      const titles = [...(prev.home?.heroTitles || defaultData?.home?.heroTitles || [])];
-      titles[index] = value;
-      return {
-        ...prev,
-        home: {
-          ...prev.home,
-          heroTitles: titles
-        }
-      };
-    });
-  };
-
-  const addHeroTitle = () => {
-    setFormData((prev) => ({
-      ...prev,
-      home: {
-        ...prev.home,
-        heroTitles: [
-          ...(prev.home?.heroTitles || defaultData?.home?.heroTitles || []),
-          'Segmen Baru'
-        ]
-      }
-    }));
-  };
-
-  const removeHeroTitle = (index) => {
-    setFormData((prev) => {
-      const titles = [...(prev.home?.heroTitles || defaultData?.home?.heroTitles || [])];
-      titles.splice(index, 1);
-      return {
-        ...prev,
-        home: {
-          ...prev.home,
-          heroTitles: titles
-        }
-      };
     });
   };
 
@@ -444,210 +417,61 @@ export default function Dashboard() {
     });
   };
 
-  const handleHomePartnerChange = (index, field, value) => {
+  const updateNestedArray = (section, key, updater) => {
     setFormData((prev) => {
-      const partners = [...(prev.home?.clientPartners || [])];
-      partners[index] = { ...partners[index], [field]: value };
+      const current = prev[section]?.[key] || defaultData?.[section]?.[key] || [];
+      const updated = updater([...current]);
       return {
         ...prev,
-        home: {
-          ...prev.home,
-          clientPartners: partners
+        [section]: {
+          ...prev[section],
+          [key]: updated
         }
       };
     });
   };
 
-  const addHomePartner = () => {
-    setFormData((prev) => ({
-      ...prev,
-      home: {
-        ...prev.home,
-        clientPartners: [
-          ...(prev.home?.clientPartners || []),
-          { id: Date.now(), name: 'Nama Mitra', logo: '' }
-        ]
-      }
-    }));
-  };
+  const handleHeroTitleChange = (index, value) =>
+    updateNestedArray('home', 'heroTitles', (arr) => { arr[index] = value; return arr; });
+  const addHeroTitle = () =>
+    updateNestedArray('home', 'heroTitles', (arr) => [...arr, 'Segmen Baru']);
+  const removeHeroTitle = (index) =>
+    updateNestedArray('home', 'heroTitles', (arr) => { arr.splice(index, 1); return arr; });
 
-  const removeHomePartner = (index) => {
-    setFormData((prev) => {
-      const partners = [...(prev.home?.clientPartners || [])];
-      partners.splice(index, 1);
-      return {
-        ...prev,
-        home: {
-          ...prev.home,
-          clientPartners: partners
-        }
-      };
-    });
-  };
+  const handleHomePartnerChange = (index, field, value) =>
+    updateNestedArray('home', 'clientPartners', (arr) => { arr[index] = { ...arr[index], [field]: value }; return arr; });
+  const addHomePartner = () =>
+    updateNestedArray('home', 'clientPartners', (arr) => [...arr, { id: Date.now(), name: 'Nama Mitra', logo: '' }]);
+  const removeHomePartner = (index) =>
+    updateNestedArray('home', 'clientPartners', (arr) => { arr.splice(index, 1); return arr; });
 
-  const handleHomeStatChange = (index, field, value) => {
-    setFormData((prev) => {
-      const stats = [...(prev.home?.stats || defaultData?.home?.stats || [])];
-      stats[index] = { ...stats[index], [field]: value };
-      return {
-        ...prev,
-        home: {
-          ...prev.home,
-          stats
-        }
-      };
-    });
-  };
+  const handleHomeStatChange = (index, field, value) =>
+    updateNestedArray('home', 'stats', (arr) => { arr[index] = { ...arr[index], [field]: value }; return arr; });
+  const addHomeStat = () =>
+    updateNestedArray('home', 'stats', (arr) => [...arr, { id: Date.now(), category: 'KATEGORI BARU', value: '10+', unit: 'Satuan', label: 'Deskripsi singkat pencapaian' }]);
+  const removeHomeStat = (index) =>
+    updateNestedArray('home', 'stats', (arr) => { arr.splice(index, 1); return arr; });
 
-  const addHomeStat = () => {
-    setFormData((prev) => ({
-      ...prev,
-      home: {
-        ...prev.home,
-        stats: [
-          ...(prev.home?.stats || defaultData?.home?.stats || []),
-          { id: Date.now(), category: 'KATEGORI BARU', value: '10+', unit: 'Satuan', label: 'Deskripsi singkat pencapaian' }
-        ]
-      }
-    }));
-  };
+  const handleAboutValueChange = (index, field, value) =>
+    updateNestedArray('about', 'values', (arr) => { arr[index] = { ...arr[index], [field]: value }; return arr; });
+  const addAboutValue = () =>
+    updateNestedArray('about', 'values', (arr) => [...arr, { id: Date.now(), title: '', desc: '' }]);
+  const removeAboutValue = (index) =>
+    updateNestedArray('about', 'values', (arr) => { arr.splice(index, 1); return arr; });
 
-  const removeHomeStat = (index) => {
-    setFormData((prev) => {
-      const stats = [...(prev.home?.stats || defaultData?.home?.stats || [])];
-      stats.splice(index, 1);
-      return {
-        ...prev,
-        home: {
-          ...prev.home,
-          stats
-        }
-      };
-    });
-  };
+  const handleCompanySocialChange = (index, field, value) =>
+    updateNestedArray('company', 'socials', (arr) => { arr[index] = { ...arr[index], [field]: value }; return arr; });
+  const addCompanySocial = () =>
+    updateNestedArray('company', 'socials', (arr) => [...arr, { id: Date.now(), platform: 'instagram', url: 'https://' }]);
+  const removeCompanySocial = (index) =>
+    updateNestedArray('company', 'socials', (arr) => { arr.splice(index, 1); return arr; });
 
-  const handleAboutValueChange = (index, field, value) => {
-    setFormData((prev) => {
-      const values = [...(prev.about?.values || defaultData?.about?.values || [])];
-      values[index] = { ...values[index], [field]: value };
-      return {
-        ...prev,
-        about: {
-          ...prev.about,
-          values
-        }
-      };
-    });
-  };
-
-  const addAboutValue = () => {
-    setFormData((prev) => ({
-      ...prev,
-      about: {
-        ...prev.about,
-        values: [
-          ...(prev.about?.values || defaultData?.about?.values || []),
-          { id: Date.now(), title: '', desc: '' }
-        ]
-      }
-    }));
-  };
-
-  const removeAboutValue = (index) => {
-    setFormData((prev) => {
-      const values = [...(prev.about?.values || defaultData?.about?.values || [])];
-      values.splice(index, 1);
-      return {
-        ...prev,
-        about: {
-          ...prev.about,
-          values
-        }
-      };
-    });
-  };
-
-  const handleCompanySocialChange = (index, field, value) => {
-    setFormData((prev) => {
-      const socials = [...(prev.company?.socials || [])];
-      socials[index] = { ...socials[index], [field]: value };
-      return {
-        ...prev,
-        company: {
-          ...prev.company,
-          socials
-        }
-      };
-    });
-  };
-
-  const addCompanySocial = () => {
-    setFormData((prev) => ({
-      ...prev,
-      company: {
-        ...prev.company,
-        socials: [
-          ...(prev.company?.socials || []),
-          { id: Date.now(), platform: 'instagram', url: 'https://' }
-        ]
-      }
-    }));
-  };
-
-  const removeCompanySocial = (index) => {
-    setFormData((prev) => {
-      const socials = [...(prev.company?.socials || [])];
-      socials.splice(index, 1);
-      return {
-        ...prev,
-        company: {
-          ...prev.company,
-          socials
-        }
-      };
-    });
-  };
-
-  const handleFooterServiceChange = (index, field, value) => {
-    setFormData((prev) => {
-      const footerServices = [...(prev.company?.footerServices || [])];
-      footerServices[index] = { ...footerServices[index], [field]: value };
-      return {
-        ...prev,
-        company: {
-          ...prev.company,
-          footerServices
-        }
-      };
-    });
-  };
-
-  const addFooterService = () => {
-    setFormData((prev) => ({
-      ...prev,
-      company: {
-        ...prev.company,
-        footerServices: [
-          ...(prev.company?.footerServices || []),
-          { id: Date.now(), title: 'Nama Layanan Baru', url: '/service/1' }
-        ]
-      }
-    }));
-  };
-
-  const removeFooterService = (index) => {
-    setFormData((prev) => {
-      const footerServices = [...(prev.company?.footerServices || [])];
-      footerServices.splice(index, 1);
-      return {
-        ...prev,
-        company: {
-          ...prev.company,
-          footerServices
-        }
-      };
-    });
-  };
+  const handleFooterServiceChange = (index, field, value) =>
+    updateNestedArray('company', 'footerServices', (arr) => { arr[index] = { ...arr[index], [field]: value }; return arr; });
+  const addFooterService = () =>
+    updateNestedArray('company', 'footerServices', (arr) => [...arr, { id: Date.now(), title: 'Nama Layanan Baru', url: '/service/1' }]);
+  const removeFooterService = (index) =>
+    updateNestedArray('company', 'footerServices', (arr) => { arr.splice(index, 1); return arr; });
 
   const handleFeaturesChange = (serviceIndex, featuresString) => {
     const featuresArray = featuresString.split('\n').filter(f => f.trim() !== '');
@@ -771,9 +595,6 @@ export default function Dashboard() {
               <span className="text-[10px] text-slate-400 font-semibold tracking-wider uppercase">Portal Admin</span>
             </div>
           </div>
-          <button onClick={() => setIsMobileMenuOpen(false)} className="lg:hidden text-slate-400 hover:text-white">
-            <X className="w-6 h-6" />
-          </button>
         </div>
 
         {/* Shortcut to public website */}
@@ -795,71 +616,23 @@ export default function Dashboard() {
         <div className="flex-1 overflow-y-auto py-4 px-4 space-y-1.5 dark-scroll">
           <p className="px-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Manajemen Halaman</p>
           
-          <button 
-            onClick={() => { setActiveTab('home'); setIsMobileMenuOpen(false); }} 
-            className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm transition-all cursor-pointer ${
-              activeTab === 'home' 
-                ? 'bg-sky-600 text-white font-semibold shadow-md shadow-sky-950/40' 
-                : 'text-slate-300 hover:bg-slate-900 hover:text-white font-medium'
-            }`}
-          >
-            <Home className="w-4 h-4" /> <span>Beranda (Home)</span>
-          </button>
-          
-          <button 
-            onClick={() => { setActiveTab('about'); setIsMobileMenuOpen(false); }} 
-            className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm transition-all cursor-pointer ${
-              activeTab === 'about' 
-                ? 'bg-sky-600 text-white font-semibold shadow-md shadow-sky-950/40' 
-                : 'text-slate-300 hover:bg-slate-900 hover:text-white font-medium'
-            }`}
-          >
-            <Info className="w-4 h-4" /> <span>Tentang Kami</span>
-          </button>
-
-          <button 
-            onClick={() => { setActiveTab('services'); setIsMobileMenuOpen(false); }} 
-            className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm transition-all cursor-pointer ${
-              activeTab === 'services' 
-                ? 'bg-sky-600 text-white font-semibold shadow-md shadow-sky-950/40' 
-                : 'text-slate-300 hover:bg-slate-900 hover:text-white font-medium'
-            }`}
-          >
-            <Wrench className="w-4 h-4" /> <span>Layanan (Services)</span>
-          </button>
-
-          <button 
-            onClick={() => { setActiveTab('projects'); setIsMobileMenuOpen(false); }} 
-            className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm transition-all cursor-pointer ${
-              activeTab === 'projects' 
-                ? 'bg-sky-600 text-white font-semibold shadow-md shadow-sky-950/40' 
-                : 'text-slate-300 hover:bg-slate-900 hover:text-white font-medium'
-            }`}
-          >
-            <Briefcase className="w-4 h-4" /> <span>Proyek (Projects)</span>
-          </button>
-
-          <button 
-            onClick={() => { setActiveTab('news'); setIsMobileMenuOpen(false); }} 
-            className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm transition-all cursor-pointer ${
-              activeTab === 'news' 
-                ? 'bg-sky-600 text-white font-semibold shadow-md shadow-sky-950/40' 
-                : 'text-slate-300 hover:bg-slate-900 hover:text-white font-medium'
-            }`}
-          >
-            <Newspaper className="w-4 h-4" /> <span>Berita & Artikel</span>
-          </button>
-
-          <button 
-            onClick={() => { setActiveTab('contact'); setIsMobileMenuOpen(false); }} 
-            className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm transition-all cursor-pointer ${
-              activeTab === 'contact' 
-                ? 'bg-sky-600 text-white font-semibold shadow-md shadow-sky-950/40' 
-                : 'text-slate-300 hover:bg-slate-900 hover:text-white font-medium'
-            }`}
-          >
-            <Phone className="w-4 h-4" /> <span>Kontak & Perusahaan</span>
-          </button>
+          {PAGE_TABS.map((tab) => {
+            const Icon = tab.icon;
+            const isActive = activeTab === tab.id;
+            return (
+              <button 
+                key={tab.id}
+                onClick={() => { setActiveTab(tab.id); setIsMobileMenuOpen(false); }} 
+                className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm transition-all cursor-pointer ${
+                  isActive 
+                    ? 'bg-sky-600 text-white font-semibold shadow-md shadow-sky-950/40' 
+                    : 'text-slate-300 hover:bg-slate-900 hover:text-white font-medium'
+                }`}
+              >
+                <Icon className="w-4 h-4" /> <span>{tab.label}</span>
+              </button>
+            );
+          })}
 
           <div className="pt-4 mt-4 border-t border-slate-800/80">
             <p className="px-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Interaksi</p>
@@ -954,15 +727,7 @@ export default function Dashboard() {
                   </a>
                 </div>
 
-                {[
-                  { id: 'home', label: 'Beranda (Home)', icon: Home },
-                  { id: 'about', label: 'Tentang Kami', icon: Info },
-                  { id: 'services', label: 'Layanan (Services)', icon: Wrench },
-                  { id: 'projects', label: 'Proyek (Projects)', icon: Briefcase },
-                  { id: 'news', label: 'Berita & Artikel', icon: Newspaper },
-                  { id: 'contact', label: 'Kontak & Perusahaan', icon: Phone },
-                  { id: 'inbox', label: 'Pesan Masuk', icon: Inbox }
-                ].map((item, idx) => {
+                {ALL_TABS.map((item, idx) => {
                   const Icon = item.icon;
                   const isActive = activeTab === item.id;
                   return (
@@ -1001,7 +766,7 @@ export default function Dashboard() {
                 <motion.div
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.05 + 6 * 0.05 }}
+                  transition={{ delay: 0.05 + ALL_TABS.length * 0.05 }}
                   className="mt-6 px-6"
                 >
                   <div className="bg-slate-900 rounded-xl p-3.5 mb-3 flex items-center gap-3 border border-white/10">
@@ -1042,23 +807,11 @@ export default function Dashboard() {
                 <span>Admin CMS</span>
                 <ChevronRight className="w-3 h-3 text-slate-400" />
                 <span className="text-slate-700">
-                  {activeTab === 'home' && 'Beranda'}
-                  {activeTab === 'about' && 'Tentang Kami'}
-                  {activeTab === 'services' && 'Layanan'}
-                  {activeTab === 'projects' && 'Proyek'}
-                  {activeTab === 'news' && 'Berita & Artikel'}
-                  {activeTab === 'contact' && 'Kontak & Perusahaan'}
-                  {activeTab === 'inbox' && 'Pesan Masuk'}
+                  {ALL_TABS.find((t) => t.id === activeTab)?.crumb}
                 </span>
               </div>
               <h2 className="text-base sm:text-xl font-bold text-slate-900 truncate max-w-[200px] sm:max-w-none">
-                {activeTab === 'home' && 'Edit Beranda'}
-                {activeTab === 'about' && 'Edit Tentang Kami'}
-                {activeTab === 'services' && 'Edit Layanan (Services)'}
-                {activeTab === 'projects' && 'Edit Portofolio Proyek'}
-                {activeTab === 'news' && 'Edit Berita & Artikel'}
-                {activeTab === 'contact' && 'Edit Kontak & Profil Perusahaan'}
-                {activeTab === 'inbox' && 'Pesan Masuk (Inbox)'}
+                {ALL_TABS.find((t) => t.id === activeTab)?.title}
               </h2>
             </div>
           </div>

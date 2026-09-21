@@ -3,6 +3,12 @@ import { Image as ImageIcon, Trash2, AlertCircle } from 'lucide-react';
 
 const ImageUploadBox = ({ value, onChange, label, onImageUpload, aspect, isLogo = false }) => {
   const [previewError, setPreviewError] = useState(false);
+  const [prevValue, setPrevValue] = useState(value);
+
+  if (value !== prevValue) {
+    setPrevValue(value);
+    setPreviewError(false);
+  }
   const resolvedSrc = (value && !value.startsWith('http://') && !value.startsWith('https://') && !value.startsWith('/') && !value.startsWith('data:'))
     ? `/${value}`
     : value;

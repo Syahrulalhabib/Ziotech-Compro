@@ -79,7 +79,7 @@ const ContactTab = ({ formData, handleChange, handlePageHeaderChange, handleImag
 
 {/* Social Media Section */}
 <div className="bg-white rounded-xl p-6 lg:p-8 shadow-sm border border-slate-200/80">
-  <div className="flex items-center justify-between pb-5 border-b border-slate-100 mb-6">
+  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-5 border-b border-slate-100 mb-6 gap-4">
     <div className="flex items-center gap-4">
       <div className="p-3 bg-pink-50 text-pink-600 rounded-md"><Share2 className="w-6 h-6" /></div>
       <div>
@@ -89,7 +89,7 @@ const ContactTab = ({ formData, handleChange, handlePageHeaderChange, handleImag
     </div>
     <button
       onClick={addCompanySocial}
-      className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-sky-700 hover:text-sky-800 bg-sky-50 hover:bg-sky-100/80 px-3 py-1.5 rounded-lg border border-sky-200/60 transition-colors cursor-pointer"
+      className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-sky-700 hover:text-sky-800 bg-sky-50 hover:bg-sky-100/80 px-3 py-1.5 rounded-lg border border-sky-200/60 transition-colors cursor-pointer shrink-0 self-start sm:self-auto"
     >
       <Plus className="w-4 h-4" /> Tambah Sosmed
     </button>

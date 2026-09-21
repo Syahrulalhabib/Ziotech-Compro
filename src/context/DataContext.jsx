@@ -410,15 +410,13 @@ const defaultData = {
 };
 
 export function DataProvider({ children }) {
-  const [rawData, setRawData] = useState(null);
+  const [rawData, setRawData] = useState(() => import.meta.env.VITE_FIREBASE_API_KEY ? null : defaultData);
   const [loading, setLoading] = useState(() => Boolean(import.meta.env.VITE_FIREBASE_API_KEY));
 
   useEffect(() => {
     // Pastikan app id firebase valid sebelum fetching (mencegah error jika .env kosong)
     if (!import.meta.env.VITE_FIREBASE_API_KEY) {
       console.warn("Firebase config not found, using default data.");
-      setRawData(defaultData);
-      setLoading(false);
       return;
     }
 
@@ -559,9 +557,10 @@ export function DataProvider({ children }) {
       return () => { clearTimeout(safetyTimer); unsubscribe(); };
     } catch (error) {
       console.error("Firebase init error: ", error);
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setRawData(defaultData);
-      setLoading(false);
+      queueMicrotask(() => {
+        setRawData(defaultData);
+        setLoading(false);
+      });
     }
   }, []);
 

@@ -8,7 +8,7 @@ const tabMotion = { initial: { opacity: 0, y: 10 }, animate: { opacity: 1, y: 0 
 const ServicesTab = ({ formData, handlePageHeaderChange, handleImageUpload, handleArrayChange, addArrayItem, removeArrayItem, handleFeaturesChange }) => (
   <motion.div key="services" {...tabMotion} className="space-y-8">
 <PageHeaderEditor page="service" label="Layanan" formData={formData} onChange={handlePageHeaderChange} onImageUpload={handleImageUpload} />
-<div className="flex justify-between items-center bg-white p-6 rounded-xl shadow-sm border border-slate-200/80">
+<div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-xl shadow-sm border border-slate-200/80">
   <div>
     <h3 className="text-xl font-bold text-slate-800">Daftar Layanan</h3>
     <p className="text-sm text-slate-500 mt-1">
@@ -23,7 +23,7 @@ const ServicesTab = ({ formData, handlePageHeaderChange, handleImageUpload, hand
   </div>
   <button 
     onClick={() => addArrayItem('services', { id: Date.now().toString(), title: 'Layanan Baru', description: '', icon: 'Wrench', features: [], image: '', featured: false })}
-    className="inline-flex items-center gap-2 bg-sky-50 text-sky-700 hover:bg-sky-100 hover:text-sky-800 border border-sky-200/80 px-4 py-2 rounded-lg text-sm font-semibold transition-colors cursor-pointer"
+    className="inline-flex items-center gap-2 bg-sky-50 text-sky-700 hover:bg-sky-100 hover:text-sky-800 border border-sky-200/80 px-4 py-2 rounded-lg text-sm font-semibold transition-colors cursor-pointer shrink-0"
   >
     <Plus className="w-5 h-5" /> Tambah Layanan
   </button>
