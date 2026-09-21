@@ -62,7 +62,7 @@ export default function ServiceDetail() {
                   </p>
                 </div>
 
-                {service.features && service.features.length > 0 && (
+                {Array.isArray(service.features) && service.features.length > 0 && (
                   <div>
                     <h2 className="text-2xl font-bold text-[var(--primary-dark)] mb-6">Ruang Lingkup Pekerjaan</h2>
                     <div className="grid sm:grid-cols-2 gap-4">

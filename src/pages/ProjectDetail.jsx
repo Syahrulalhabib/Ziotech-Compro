@@ -22,8 +22,6 @@ export default function ProjectDetail() {
     );
   }
 
-  if (!project) return null;
-
   return (
     <div className="pt-20 md:pt-32 pb-12 sm:pb-20 bg-gray-50 min-h-screen overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -70,7 +68,7 @@ export default function ProjectDetail() {
                   </p>
                 </div>
                 
-                {project.details && (
+                {Array.isArray(project.details) && project.details.length > 0 && (
                   <div>
                     <h2 className="text-2xl font-bold text-[var(--primary-dark)] mb-4">Cakupan Solusi & Eksekusi Lapangan</h2>
                     <ul className="space-y-3">

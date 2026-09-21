@@ -1,4 +1,36 @@
-Options -MultiViews
-RewriteEngine On
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteRule ^ index.html [L]
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+  RewriteRule ^index\.html$ - [L]
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule . /index.html [L]
+</IfModule>
+
+# Disable directory browsing and MultiViews
+Options -Indexes -MultiViews
+
+# Ensure correct MIME types for modern web assets
+<IfModule mod_mime.c>
+  AddType application/javascript js mjs
+  AddType text/css css
+  AddType image/svg+xml svg svgz
+  AddType font/woff woff
+  AddType font/woff2 woff2
+</IfModule>
+
+# Cache-Control headers
+<IfModule mod_headers.c>
+  # Never cache index.html so users always get the latest version
+  <FilesMatch "\.(html)$">
+    Header set Cache-Control "no-cache, no-store, must-revalidate"
+    Header set Pragma "no-cache"
+    Header set Expires 0
+  </FilesMatch>
+
+  # Cache static assets with hash in filename
+  <FilesMatch "\.(js|css|png|jpg|jpeg|gif|svg|ico|webp|woff|woff2)$">
+    Header set Cache-Control "max-age=31536000, public, immutable"
+  </FilesMatch>
+</IfModule>
+
