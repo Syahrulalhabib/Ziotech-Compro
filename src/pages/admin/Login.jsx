@@ -6,13 +6,13 @@ import { Mail, Lock, Eye, EyeOff, ArrowLeft, ArrowRight, AlertCircle, Loader2 } 
 import logoZiotech from '../../assets/ziotech.png';
 
 export default function Login() {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState(() => location.state?.sessionExpired ? 'Sesi berakhir. Silakan masuk kembali.' : '');
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
-  const location = useLocation();
 
   useEffect(() => {
     if (location.state?.sessionExpired) {
